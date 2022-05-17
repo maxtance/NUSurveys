@@ -1,0 +1,19 @@
+#imgUpload {
+    display: none;
+}
+  
+#labelImgUpload {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+    border-radius: 1rem;
+    border-style: solid;
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.isDragged {
+    background-color: #ffffff;
+}

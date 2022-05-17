@@ -1,3 +1,4 @@
+import NavBarWrapper from "../../helpers/NavBarWrapper";
 import styles from "./Sidebar.module.css";
 
 function Sidebar() {
@@ -57,4 +58,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default NavBarWrapper(Sidebar);

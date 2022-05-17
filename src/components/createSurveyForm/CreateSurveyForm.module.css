@@ -1,0 +1,21 @@
+#surveyForm {
+    padding: 3%;
+    background-color: white;
+}
+
+.sectionHeader {
+    font-size: 160%;
+    margin-bottom: 30px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+#section2 {
+    margin-top: 50px;
+}
+
+#min-age {
+    width: 10px;
+}
