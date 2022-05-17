@@ -1,54 +1,23 @@
 import "./App.css";
-import "./components/Navbar";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar/Navbar";
+import Sidebar from "./components/sidebar/Sidebar";
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      <div>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1>
-        <h1>
-          Random stuff.
-        </h1><h1>
-          Random stuff.
-        </h1><h1>
-          Random stuff.
-        </h1><h1>
-          Random stuff.
-        </h1><h1>
-          Random stuff.
-        </h1><h1>
-          Random stuff.
-        </h1>
+      <header>
+        <Navbar />
+      </header>
 
-      </div>
+      <main>
+        <article></article>
+        <aside>
+          <Sidebar />
+        </aside>
+      </main>
 
+      <footer></footer>
     </div>
-
   );
 }
 
