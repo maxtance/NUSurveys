@@ -1,0 +1,42 @@
+#imgUpload {
+    display: none;
+}
+  
+#labelImgUpload {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background-color: #cccccc;
+    width: 75%;
+    margin: 0 auto;
+}
+
+.isDragged {
+    background-color: #ffffff;
+}
+
+.dragArea {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: Roboto;
+}
+
+.dragAreaText {
+    font-size: 14px;
+    line-height: 18px;
+    margin-bottom: 20px;
+}
+
+.iconParent {
+    margin: 0 auto;
+}
+
+.icon {
+    display: block;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 15px;
+
+}
