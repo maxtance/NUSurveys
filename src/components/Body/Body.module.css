@@ -1,0 +1,59 @@
+.submitButton {
+    padding: 15px 15px;
+}
+
+/* main body */
+.container {
+    display: flex;
+    flex-direction: column;
+    background: rgb(242, 242, 242);
+    padding: 2rem;
+}
+
+.searchBarForm {
+    text-align: right;
+}
+
+.searchBar{
+    width: 30%;
+}
+
+.surveyListings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 16rem));
+    gap: 2rem;
+    justify-content: space-around;
+}
+
+.surveyCard {
+    overflow: hidden;
+    border-radius: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-style: solid;
+}
+
+.surveyCard__image {
+    height: 5rem;
+    width: 100%;
+    object-fit: cover;
+}
+
+.surveyCard__title {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.surveyCard__description {
+    padding: 0 1rem;
+}
+
+.surveyCard__btn {
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1rem;
+    margin: 0.5rem;
+    border: 2px solid;
+    border-radius: 0.2rem;
+}
