@@ -1,12 +1,13 @@
 import styles from "./Navbar.module.css";
+import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
-          <img src="https://placekitten.com/120/40" />
-        </a>
+        <Link to="/">
+          <img src="https://placekitten.com/120/40" alt="NUSurveys" />
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -23,16 +24,30 @@ function Navbar() {
           id="navbarNav"
         >
           <ul className="navbar-nav">
-            <li className={`nav-item ${styles.navCenter}`}>
-              <a className="nav-link active" href="#">
-                Home
-              </a>
-            </li>
-            <li className={`nav-item ${styles.navCenter}`}>
-              <a className="nav-link" href="#">
-                My surveys
-              </a>
-            </li>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                isActive ? styles.selectedNavItem : styles.unselectedNavItem
+              }
+            >
+              <li className={`nav-item ${styles.navCenter}`}>
+                <a className="nav-link" href="#">
+                  Home
+                </a>
+              </li>
+            </NavLink>
+            <NavLink
+              to="/mysurveys"
+              className={({ isActive }) =>
+                isActive ? styles.selectedNavItem : styles.unselectedNavItem
+              }
+            >
+              <li className={`nav-item ${styles.navCenter}`}>
+                <a className="nav-link" href="#">
+                  My surveys
+                </a>
+              </li>
+            </NavLink>
             <li className={`nav-item ${styles.navCenter}`}>
               <a className="nav-link" href="#">
                 Wishlist

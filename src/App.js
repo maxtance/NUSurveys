@@ -1,11 +1,18 @@
 import "./App.css";
-import MainPage from "./components/MainPage/MainPage";
+import HomePage from "./components/HomePage/HomePage";
+import MySurveysPage from "./components/MySurveys/MySurveysPage";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <MainPage />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/mysurveys" element={<MySurveysPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
