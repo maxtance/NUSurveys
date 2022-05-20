@@ -55,7 +55,7 @@ function MakeNewSurvey() {
     <button
       type="button"
       className={styles.surveyCard}
-      onClick={() => navigate("/create-survey")}
+      onClick={() => navigate("/mysurveys/create-survey")}
     >
       <img
         className={styles.surveyCardImage}

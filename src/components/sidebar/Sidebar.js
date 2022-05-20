@@ -64,4 +64,4 @@ function Sidebar() {
   );
 }
 
-export default NavBarWrapper(Sidebar);
+export default Sidebar;
