@@ -1,9 +1,9 @@
-import styles from "./MainPage.module.css";
+import styles from "./HomePage.module.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
-import Body from "../Body/Body";
+import HomeBody from "../Body/HomeBody";
 
-function MainPage() {
+function HomePage() {
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
@@ -13,11 +13,11 @@ function MainPage() {
         <Sidebar />
       </div>
       <div className={styles.mainContent}>
-        <Body />
+        <HomeBody />
       </div>
       <div className={styles.footer}>footer</div>
     </div>
   );
 }
 
-export default MainPage;
+export default HomePage;

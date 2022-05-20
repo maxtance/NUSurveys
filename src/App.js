@@ -5,18 +5,21 @@ import {
   Link
 } from "react-router-dom";
 import "./App.css";
-import CreateSurvey from "./components/createSurvey/CreateSurvey";
-import MainPage from "./components/MainPage/MainPage";
-import Navbar from "./components/navbar/Navbar";
-import Sidebar from "./components/sidebar/Sidebar";
+import HomePage from "./components/HomePage/HomePage";
+import MySurveysPage from "./components/MySurveys/MySurveysPage";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path='/' element={<MainPage />}></Route>
-        <Route path='/create-survey' element={<CreateSurvey />}></Route>
-      </Routes>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/mysurveys" element={<MySurveysPage />} />
+          <Route path='/create-survey' element={<CreateSurvey />}></Route>
+        </Routes>
+      </div>
     </Router>
   );
 }

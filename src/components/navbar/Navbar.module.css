@@ -2,3 +2,13 @@
     padding-left: 25px;
     padding-right: 25px;
 }
+
+.selectedNavItem {
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-offset: 0.5rem;
+}
+
+.unselectedNavItem {
+    text-decoration: none;
+}
