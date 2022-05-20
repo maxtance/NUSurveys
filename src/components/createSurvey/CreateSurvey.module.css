@@ -6,4 +6,24 @@
 #createSurveyHeader {
     font-size: 150%;
     margin-bottom: 30px;
+    font-weight: 600;
+}
+
+#submitBtn {
+    font-weight: 600;
+    background-color: #06114f;
+    color: #fafafb;
+    float: right;
+}
+
+#resetBtn {
+    font-weight: 600;
+    background-color: #cccccc;
+    color: #06114f;
+    float: right;
+}
+
+#btnContainer {
+    margin-top: 50px;
+    padding-bottom: 50px;
 }

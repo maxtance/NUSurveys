@@ -4,12 +4,14 @@
 }
 
 .sectionHeader {
-    font-size: 160%;
+    font-size: 130%;
     margin-bottom: 30px;
+    font-weight: 600;
 }
 
 .formGroup {
     margin-bottom: 20px;
+    font-weight: 400;
 }
 
 #section2 {
@@ -18,4 +20,18 @@
 
 #min-age {
     width: 10px;
+}
+
+.requiredField:after {
+    content: "*";
+    color: #e34646;
+}
+
+#description, #title, #link, #surveyType, #remuneration, #gender, #otherRequirements, #closingDate, .race {
+    font-family: Roboto;
+    font-size: 14px;
+}
+
+#closingDate {
+    font-family: Roboto;
 }
