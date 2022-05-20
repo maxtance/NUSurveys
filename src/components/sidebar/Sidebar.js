@@ -1,3 +1,4 @@
+import NavBarWrapper from "../../helpers/NavBarWrapper";
 import styles from "./Sidebar.module.css";
 import { useState } from "react";
 
@@ -63,4 +64,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default NavBarWrapper(Sidebar);
