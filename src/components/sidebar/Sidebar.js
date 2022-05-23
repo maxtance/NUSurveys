@@ -1,17 +1,13 @@
 import NavBarWrapper from "../../helpers/NavBarWrapper";
 import styles from "./Sidebar.module.css";
 import { useState } from "react";
+import filterIcon from "../../assets/filter_img.png";
 
 function Sidebar() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <img
-          width="13"
-          height="13"
-          src="https://loremflickr.com/15/15"
-          alt=""
-        />
+        <img className={styles.filterIcon} src={filterIcon} alt="" />
         Filter
       </div>
       <form className={styles.filter}>

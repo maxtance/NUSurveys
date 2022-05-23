@@ -1,12 +1,18 @@
 import styles from "./Navbar.module.css";
 import { Link, NavLink } from "react-router-dom";
+import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
+import notifIcon from "../../assets/notification.png";
 
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">
       <div className="container-fluid">
         <Link to="/">
-          <img src="https://placekitten.com/120/40" alt="NUSurveys" />
+          <img
+            className={styles.NUSurveysLogo}
+            src={NUSurveysLogo}
+            alt="NUSurveys"
+          />
         </Link>
         <button
           className="navbar-toggler"
@@ -63,7 +69,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item">
               <a className="nav-link" href="#">
-                <img src="https://placekitten.com/30/30"></img>
+                <img className={styles.notifIcon} src={notifIcon} alt="notif" />
               </a>
             </li>
             <li className="nav-item dropdown">

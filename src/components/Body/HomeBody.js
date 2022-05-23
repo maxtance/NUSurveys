@@ -1,10 +1,42 @@
 import styles from "./HomeBody.module.css";
 import SearchBar from "../SearchBar/SearchBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
 
 function HomeBody() {
-  const [numSurveys, setNumSurveys] = useState(20);
+  const [numSurveys, setNumSurveys] = useState(0);
+  const [surveys, setSurveys] = useState([]);
+
+  const fetchSurveyListings = async () => {
+    const { data: surveys, error } = await supabaseClient
+      .from("surveys")
+      .select("*");
+
+    if (error) {
+      console.log(error);
+    }
+
+    // console.log(surveys);
+    setNumSurveys(surveys.length);
+    setSurveys(surveys);
+  };
+
+  useEffect(() => {
+    fetchSurveyListings();
+  }, []);
+
+  const renderSurveys = () => {
+    return surveys.map((survey) => {
+      return (
+        <SurveyCard
+          img={survey.photo}
+          title={survey.title}
+          description={survey.description}
+        />
+      );
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -19,24 +51,10 @@ function HomeBody() {
       <div className={styles.surveyListings}>
         <SurveyCard
           img="https://loremflickr.com/640/360"
-          title="Cat survey"
-          description="This is just an example description"
+          title="Test survey"
+          description="This is a test example"
         />
-        <SurveyCard
-          img="https://loremflickr.com/400/360"
-          title="More Cat survey"
-          description="This is just an example description"
-        />
-        <SurveyCard
-          img="https://loremflickr.com/640/300"
-          title="Even MORE Cat survey"
-          description="This is just an example description"
-        />
-        <SurveyCard
-          img="https://loremflickr.com/640/300"
-          title="Even MORE Cat survey"
-          description="This is just an example description"
-        />
+        {renderSurveys()}
       </div>
     </div>
   );

@@ -2,11 +2,43 @@ import styles from "./MySurveysPage.module.css";
 import Navbar from "../navbar/Navbar";
 import SearchBar from "../SearchBar/SearchBar";
 import SurveyCard from "../SurveyCard/SurveyCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabaseClient } from "../../lib/client";
 
 function MySurveys() {
   const [numSurveys, setNumSurveys] = useState(2);
+  const [surveys, setSurveys] = useState([]);
+
+  const fetchMySurveys = async () => {
+    const { data: surveys, error } = await supabaseClient
+      .from("surveys")
+      .select("*")
+      .match({ published_by: "E0942584" });
+
+    if (error) {
+      console.log(error);
+    }
+
+    setNumSurveys(surveys.length);
+    setSurveys(surveys);
+  };
+
+  useEffect(() => {
+    fetchMySurveys();
+  }, []);
+
+  const renderMySurveys = () => {
+    return surveys.map((survey) => {
+      return (
+        <SurveyCard
+          img={survey.photo}
+          title={survey.title}
+          description={survey.description}
+        />
+      );
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -22,26 +54,7 @@ function MySurveys() {
         </p>
         <div className={styles.mySurveys}>
           <MakeNewSurvey />
-          <SurveyCard
-            img="https://loremflickr.com/640/360"
-            title="Cat survey"
-            description="This is just an example description"
-          />
-          <SurveyCard
-            img="https://loremflickr.com/400/360"
-            title="More Cat survey"
-            description="This is just an example description"
-          />
-          <SurveyCard
-            img="https://loremflickr.com/640/300"
-            title="Even MORE Cat survey"
-            description="This is just an example description"
-          />
-          <SurveyCard
-            img="https://loremflickr.com/640/300"
-            title="Even MORE Cat survey"
-            description="This is just an example description"
-          />
+          {renderMySurveys()}
         </div>
       </div>
     </div>
