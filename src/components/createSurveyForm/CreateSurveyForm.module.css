@@ -27,7 +27,7 @@
     color: #e34646;
 }
 
-#description, #title, #link, #surveyType, #remuneration, #gender, #otherRequirements, #closingDate, .race {
+#description, #title, #link, #surveyType, #remunerationType, #gender, #otherRequirements, #closingDate, #remunerationAmount, .race {
     font-family: Roboto;
     font-size: 14px;
 }

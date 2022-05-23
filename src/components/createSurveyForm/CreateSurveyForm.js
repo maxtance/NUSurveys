@@ -1,7 +1,8 @@
 import DragAndDropImage from "../imageuploader/DragAndDropImage";
 import styles from "./CreateSurveyForm.module.css";
 
-function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, handleCheckboxChange, handleSubmit }) {
+function CreateSurveyForm({ survey, genderEligibility, ethnicityEligibility, minAge, maxAge, remunerationAmount, handleInputChange, handleCheckboxChange, handleGenderInputChange, handleMinAgeInputChange, handleMaxAgeInputChange, 
+handleAmountInputChange, handleSubmit }) {
   return (
       <form onSubmit = {handleSubmit}
             class="form-horizontal" id={styles.surveyForm}>
@@ -68,13 +69,13 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
           <div class="row">
             <div class="col-md-5">
               <div class={`form-group ${styles.formGroup}`}>
-                <label for="survey-type" class={styles.requiredField}>
+                <label for="category_id" class={styles.requiredField}>
                   Type of Survey
                 </label>
                 <select required 
                   class="form-select" 
-                  name="surveyType"
-                  value={survey.surveyType}
+                  name="category_id"
+                  value={survey.category_id}
                   onChange={handleInputChange}
                   id={styles.surveyType}>
                   <option disabled selected hidden>
@@ -87,22 +88,41 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
               </div>
 
               <div class={`form-group ${styles.formGroup}`}>
-                <label for="remuneration" class={styles.requiredField}>
-                  Remuneration
+                <label for="remuneration_id" class={styles.requiredField}>
+                  Remuneration Type
                 </label>
                 <select required 
                   class="form-select" 
-                  name="remuneration"
-                  value={survey.remuneration}
+                  name="remuneration_id"
+                  value={survey.remuneration_id}
                   onChange={handleInputChange}
-                  id={styles.remuneration}>
+                  id={styles.remunerationType}>
                   <option disabled selected hidden>
                     How are you compensating your surveyees?
                   </option>
                   <option value="1">Cash</option>
                   <option value="2">Voucher</option>
-                  <option value="null">No remuneration given</option>
+                  <option value="">No remuneration given</option>
                 </select>
+              </div>
+
+              <div class={`form-group ${styles.formGroup}`}>
+                <label for="remunerationAmount">
+                    Remuneration Amount
+                </label>
+                <br></br>
+                <small class="form-text text-muted">
+                  Leave blank if there is no remuneration for your survey
+                </small>
+                <br></br>
+                <input
+                  type="number"
+                  name="remunerationAmount"
+                  value={remunerationAmount}
+                  onChange={handleAmountInputChange}
+                  class="form-control"
+                  id={styles.remunerationAmount}
+                ></input>
               </div>
             </div>
           </div>
@@ -115,7 +135,7 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
             <input 
               type="date" 
               name="closingDate"
-              value={survey.closingDate}
+              value={survey.closing_date}
               onChange={handleInputChange}
               id={styles.closingDate}>
             </input>
@@ -127,12 +147,12 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
           <div class="row">
             <div class="col-md-4">
               <div class={`form-group ${styles.formGroup}`}>
-                <label for="gender">Gender</label>
+                <label for="gender" class={styles.requiredField}>Gender</label>
                 <select 
                   class="form-select" 
                   name="genderEligibility"
-                  value={survey.genderEligibility}
-                  onChange={handleInputChange}
+                  value={genderEligibility}
+                  onChange={handleGenderInputChange}
                   id={styles.gender}>
                   <option disabled selected hidden>
                     Seeking responses from...
@@ -153,8 +173,8 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                 <input
                   type="number"
                   name="minAge"
-                  value={survey.minAge}
-                  onChange={handleInputChange}
+                  value={minAge}
+                  onChange={handleMinAgeInputChange}
                   class="form-control"
                   id={styles.minAge}
                 ></input>
@@ -170,8 +190,8 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                 <input 
                   type="number" 
                   name="maxAge"
-                  value={survey.maxAge}
-                  onChange={handleInputChange}
+                  value={maxAge}
+                  onChange={handleMaxAgeInputChange}
                   class="form-control" 
                   id="max-age"></input>
               </div>
@@ -189,7 +209,7 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                   class="form-check-input" 
                   type="checkbox" 
                   name="chinese"
-                  value={ethnicityEligibility.chinese}
+                  value={ethnicityEligibility.Chinese}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault">
                 </input>
@@ -203,7 +223,7 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                   class="form-check-input" 
                   type="checkbox" 
                   name="malay"
-                  value={ethnicityEligibility.malay}
+                  value={ethnicityEligibility.Malay}
                   onChange={handleCheckboxChange} 
                   id="flexCheckDefault">
                 </input>
@@ -217,7 +237,7 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                   class="form-check-input" 
                   type="checkbox" 
                   name="indian"
-                  value={ethnicityEligibility.indian}
+                  value={ethnicityEligibility.Indian}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault">
                 </input>
@@ -231,7 +251,7 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
                   class="form-check-input" 
                   type="checkbox" 
                   name="others"
-                  value={ethnicityEligibility.others}
+                  value={ethnicityEligibility.Others}
                   onChange={handleCheckboxChange} 
                   id="flexCheckDefault">
                 </input>
@@ -246,13 +266,14 @@ function CreateSurveyForm({ survey, ethnicityEligibility, handleInputChange, han
           <div class="row">
             <div class="col-md-6">
               <div class={`form-group ${styles.formGroup}`}>
-                <label for="other-requirements">
+                <label for="other_eligibility_requirements">
                   Other Requirements Not Stated Above
                 </label>
                 <br></br>
                 <textarea
                   type="text"
-                  name="otherRequirements"
+                  name="other_eligibility_requirements"
+                  value={survey.other_eligibility_requirements}
                   onChange={handleInputChange}
                   class="form-control"
                   id={styles.otherRequirements}
