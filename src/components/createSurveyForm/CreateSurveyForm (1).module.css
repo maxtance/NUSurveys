@@ -27,27 +27,11 @@
     color: #e34646;
 }
 
-#description, #title, #link, #surveyType, #remunerationType, #gender, #otherRequirements, #closingDate, #remunerationAmount, .race {
+#description, #title, #link, #surveyType, #remuneration, #gender, #otherRequirements, #closingDate, .race {
     font-family: Roboto;
     font-size: 14px;
 }
 
 #closingDate {
     font-family: Roboto;
-}
-
-.validation {
-    font-family: Roboto;
-    font-size: 14px;
-    color: #e34646;
-    display: flex;
-}
-
-#warningIcon {
-    margin-right: 8px;
-    align-self: center;
-}
-
-.errorMsg {
-    margin-bottom: 0px;
 }

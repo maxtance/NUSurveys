@@ -2,10 +2,38 @@ import DragAndDropImage from "../imageuploader/DragAndDropImage";
 import styles from "./CreateSurveyForm.module.css";
 
 function CreateSurveyForm({ survey, genderEligibility, ethnicityEligibility, minAge, maxAge, remunerationAmount, handleInputChange, handleCheckboxChange, handleGenderInputChange, handleMinAgeInputChange, handleMaxAgeInputChange, 
-handleAmountInputChange, handleSubmit }) {
+handleAmountInputChange, register, errors, watch }) {
+  const URL_REGEX = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+
+  const warningIcon = 
+    <svg xmlns="http://www.w3.org/2000/svg" 
+        width="14" height="14" 
+        fill="currentColor" 
+        class="bi bi-exclamation-triangle-fill" 
+        id={styles.warningIcon}
+        viewBox="0 0 16 16">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+  /*
+  const onFormSubmit = () => {
+    console.log(errors);
+  }
+  */
+
+  const renderErrorMsg = (component) => {
+    console.log(errors);
+    return <div class={styles.validation}>
+            {warningIcon} 
+            <p class={styles.errorMsg}>{errors[component].message}</p>
+            </div> 
+  }
+
+  const requiredField = () => (
+    watch("remuneration_id") === '3' | watch("remuneration_id") === "" ? false : "Please enter a remuneration amount"
+  )
+
   return (
-      <form onSubmit = {handleSubmit}
-            class="form-horizontal" id={styles.surveyForm}>
+      <form class="form-horizontal" id={styles.surveyForm}>
         <section>
           <h2 class={styles.sectionHeader}>Basic Information</h2>
           <div class="row">
@@ -17,13 +45,24 @@ handleAmountInputChange, handleSubmit }) {
                 <input
                   type="text"
                   name="title"
+                  {...register('title', { 
+                    required: "Please enter a title for your survey", 
+                    maxLength: {
+                      value: 250,
+                      message: "Exceeded character limit of 250"
+                    }})}
                   value={survey.title}
-                  onChange={handleInputChange}
+                  onChange={ (e) => {
+                    register('title').onChange(e);
+                    handleInputChange(e);
+                  }}
                   class="form-control"
                   id={styles.title}
-                  maxlength="250"
                   placeholder="No longer than 250 characters."
                 />
+                { errors?.title 
+                ? renderErrorMsg('title') 
+                : null }
               </div>
 
               <div class={`form-group ${styles.formGroup}`}>
@@ -31,8 +70,16 @@ handleAmountInputChange, handleSubmit }) {
                 <textarea
                   type="text"
                   name="description"
+                  {...register('description', { 
+                    maxLength: {
+                      value: 1000,
+                      message: "Exceeded character limit of 1000"
+                    }})}
                   value={survey.description}
-                  onChange={handleInputChange}
+                  onChange={ (e) => {
+                    register('description').onChange(e);
+                    handleInputChange(e);
+                  }}
                   class="form-control"
                   id={styles.description}
                   placeholder="Enter a short description to let people know what your survey is about."
@@ -46,12 +93,23 @@ handleAmountInputChange, handleSubmit }) {
                 <input
                   type="url"
                   name="link"
+                  {...register('link', { 
+                    required: "Please enter a link for your survey", 
+                    pattern: {
+                      value: URL_REGEX,
+                      message: "Invalid URL" }})}
                   value={survey.link}
-                  onChange={handleInputChange}
+                  onChange={ (e) => {
+                    register('link').onChange(e);
+                    handleInputChange(e);
+                  }}
                   class="form-control"
                   id={styles.link}
                   placeholder="Paste your URL here!"
                 />
+                { errors?.link 
+                ? renderErrorMsg('link') 
+                : null }
               </div>
             </div>
 
@@ -75,16 +133,23 @@ handleAmountInputChange, handleSubmit }) {
                 <select required 
                   class="form-select" 
                   name="category_id"
+                  {...register('category_id', { required: "Please select a survey type" })}
                   value={survey.category_id}
-                  onChange={handleInputChange}
+                  onChange={ (e) => {
+                    register('category_id').onChange(e);
+                    handleInputChange(e);
+                  }}
                   id={styles.surveyType}>
-                  <option disabled selected hidden>
+                  <option selected value="">
                     Select the option that best fits your survey
                   </option>
                   <option value="1">Online survey</option>
                   <option value="2">Research study (remote)</option>
                   <option value="3">Research study (on-site)</option>
                 </select>
+                { errors?.category_id 
+                ? renderErrorMsg('category_id')
+                : null }
               </div>
 
               <div class={`form-group ${styles.formGroup}`}>
@@ -94,16 +159,23 @@ handleAmountInputChange, handleSubmit }) {
                 <select required 
                   class="form-select" 
                   name="remuneration_id"
+                  {...register('remuneration_id', { required: "Please select a remuneration type"})}
                   value={survey.remuneration_id}
-                  onChange={handleInputChange}
+                  onChange={ (e) => {
+                    register('remuneration_id').onChange(e);
+                    handleInputChange(e);
+                  }}
                   id={styles.remunerationType}>
-                  <option disabled selected hidden>
+                  <option selected value="">
                     How are you compensating your surveyees?
                   </option>
                   <option value="1">Cash</option>
                   <option value="2">Voucher</option>
-                  <option value="">No remuneration given</option>
+                  <option value="3">No remuneration given</option>
                 </select>
+                { errors?.remuneration_id 
+                ? renderErrorMsg('remuneration_id') 
+                : null }
               </div>
 
               <div class={`form-group ${styles.formGroup}`}>
@@ -118,23 +190,37 @@ handleAmountInputChange, handleSubmit }) {
                 <input
                   type="number"
                   name="remunerationAmount"
+                  {...register('remunerationAmount', { 
+                    required: requiredField(),
+                    min: { 
+                      value: 1, 
+                      message: "Invalid amount. Please try again"
+                    }})
+                  }
                   value={remunerationAmount}
-                  onChange={handleAmountInputChange}
+                  onChange={ (e) => {
+                    register('remunerationAmount').onChange(e);
+                    handleAmountInputChange(e);
+                  }}
                   class="form-control"
                   id={styles.remunerationAmount}
                 ></input>
+                { errors?.remunerationAmount 
+                ? renderErrorMsg('remunerationAmount') 
+                : null }
               </div>
             </div>
           </div>
 
           <div class={`form-group ${styles.formGroup}`}>
-            <label for="closing-date" class={styles.requiredField}>
+            <label for="closing_date" class={styles.requiredField}>
               Closing Date
             </label>
             <br></br>
             <input 
               type="date" 
-              name="closingDate"
+              name="closing_date"
+              min={new Date().toISOString().split('T')[0]}
               value={survey.closing_date}
               onChange={handleInputChange}
               id={styles.closingDate}>
@@ -147,20 +233,27 @@ handleAmountInputChange, handleSubmit }) {
           <div class="row">
             <div class="col-md-4">
               <div class={`form-group ${styles.formGroup}`}>
-                <label for="gender" class={styles.requiredField}>Gender</label>
+                <label for="genderEligibility" class={styles.requiredField}>Gender</label>
                 <select 
                   class="form-select" 
                   name="genderEligibility"
+                  {...register('genderEligibility', { required: "Please select a gender eligibility requirement"})}
                   value={genderEligibility}
-                  onChange={handleGenderInputChange}
+                  onChange={ (e) => {
+                    register('genderEligibility').onChange(e);
+                    handleGenderInputChange(e);
+                  }}
                   id={styles.gender}>
-                  <option disabled selected hidden>
+                  <option selected value="">
                     Seeking responses from...
                   </option>
                   <option value="1">Males only</option>
                   <option value="2">Females only</option>
                   <option value="3">No gender eligibility requirements</option>
                 </select>
+                { errors?.genderEligibility 
+                ? renderErrorMsg('genderEligibility') 
+                : null }
               </div>
 
               <div class={`form-group ${styles.formGroup}`}>
@@ -209,7 +302,7 @@ handleAmountInputChange, handleSubmit }) {
                   class="form-check-input" 
                   type="checkbox" 
                   name="chinese"
-                  value={ethnicityEligibility.Chinese}
+                  value={ethnicityEligibility.chinese}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault">
                 </input>
@@ -223,7 +316,7 @@ handleAmountInputChange, handleSubmit }) {
                   class="form-check-input" 
                   type="checkbox" 
                   name="malay"
-                  value={ethnicityEligibility.Malay}
+                  value={ethnicityEligibility.malay}
                   onChange={handleCheckboxChange} 
                   id="flexCheckDefault">
                 </input>
@@ -237,7 +330,7 @@ handleAmountInputChange, handleSubmit }) {
                   class="form-check-input" 
                   type="checkbox" 
                   name="indian"
-                  value={ethnicityEligibility.Indian}
+                  value={ethnicityEligibility.indian}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault">
                 </input>
@@ -251,7 +344,7 @@ handleAmountInputChange, handleSubmit }) {
                   class="form-check-input" 
                   type="checkbox" 
                   name="others"
-                  value={ethnicityEligibility.Others}
+                  value={ethnicityEligibility.others}
                   onChange={handleCheckboxChange} 
                   id="flexCheckDefault">
                 </input>
