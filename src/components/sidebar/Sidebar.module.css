@@ -8,12 +8,23 @@
     padding: 1rem;
 }
 
+.filterIcon {
+    height: 15px;
+    width: 15px;
+    margin-bottom: 2px;
+    margin-right: 0.25rem;
+}
+
 .filter {
     padding: 1rem;
 }
 
 .filterEligibility, .filterType, .filterRenumeration, .filterStatus {
     padding-bottom: 2rem;
+}
+
+.eligibilityCheckbox {
+    margin-left: 0.5rem;
 }
 
 .checkbox {

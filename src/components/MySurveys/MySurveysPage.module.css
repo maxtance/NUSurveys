@@ -2,7 +2,7 @@
     height: 100vh;
 
     display: grid;
-    grid-template-rows: 66px 1fr 100px;
+    grid-template-rows: 62px 1fr 100px;
     /* might need to readjust navbar height */
 }
 
@@ -13,6 +13,7 @@
 .mainContent {
     grid-row: 2/3;
     padding: 2rem;
+    background: rgb(242, 242, 242);
 }
 
 .searchBarForm {
@@ -36,17 +37,16 @@
     border-color: rgb(237,148,139);
     width: 270px;
     height: 330px;
+    align-items: center;
 }
 
 .surveyCardImage {
     height: 120px;
-    width: 100px;
-    align-self: center;
     margin-top: 3rem;
     margin-bottom: 2rem;
 }
 
 .surveyCardText {
     color: rgb(237,148,139);
-    align-self: center;
+    font-weight: bold;
 }
