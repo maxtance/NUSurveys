@@ -1,3 +1,15 @@
 .searchBar {
-    width: 15rem;
+    width: 18rem;
+    height: 30px;
+    font-size: 0.8rem;
+}
+
+.searchBtn {
+    background-color: #06114F;
+    color: white;
+    border-color: #06114F;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    height: 30px;
+    font-size: 0.8rem;
 }

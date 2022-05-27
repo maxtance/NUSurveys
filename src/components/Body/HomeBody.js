@@ -19,7 +19,7 @@ function HomeBody() {
 
     // console.log(surveys);
     setNumSurveys(surveys.length);
-    setSurveys(surveys);
+    setSurveys(surveys.reverse());
   };
 
   useEffect(() => {
@@ -44,18 +44,39 @@ function HomeBody() {
         <div className={styles.searchBarForm}>
           <SearchBar />
         </div>
-        <p>
-          Showing {numSurveys} Survey Listing{numSurveys > 1 ? "s" : ""}
-        </p>
+        <div className="d-flex justify-content-between pb-3">
+          <div className={styles.pageHeader}>
+            Showing <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
+            Survey Listing
+            {numSurveys > 1 ? "s" : ""}
+          </div>
+          <div className="dropdown">
+            <span className={styles.sortBy}>Sort by:</span>
+            <button
+              className={`btn dropdown-toggle btn-sm ${styles.btnWhite}`}
+              type="button"
+              id="dropdownMenuButton1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Newest survey
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <a class="dropdown-item" href="#">
+                  Newest survey
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  Oldest survey
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div className={styles.surveyListings}>
-        <SurveyCard
-          img="https://loremflickr.com/640/360"
-          title="Test survey"
-          description="This is a test example"
-        />
-        {renderSurveys()}
-      </div>
+      <div className={styles.surveyListings}>{renderSurveys()}</div>
     </div>
   );
 }

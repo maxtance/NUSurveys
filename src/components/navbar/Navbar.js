@@ -1,7 +1,7 @@
 import styles from "./Navbar.module.css";
 import { Link, NavLink } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
-import notifIcon from "../../assets/notification.png";
+import avatar from "../../assets/avatar.png";
 
 function Navbar() {
   return (
@@ -50,7 +50,7 @@ function Navbar() {
             >
               <li className={`nav-item ${styles.navCenter}`}>
                 <a className="nav-link" href="#">
-                  My surveys
+                  My Surveys
                 </a>
               </li>
             </NavLink>
@@ -68,9 +68,9 @@ function Navbar() {
         >
           <ul className="navbar-nav">
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                <img className={styles.notifIcon} src={notifIcon} alt="notif" />
-              </a>
+              <span className="nav-link">
+                <img className={styles.avatar} src={avatar} alt="" />
+              </span>
             </li>
             <li className="nav-item dropdown">
               <a

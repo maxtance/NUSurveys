@@ -36,8 +36,8 @@ function Sidebar() {
           />
           <label for="researchRemote">Research Study Remote</label> <br />
         </div>
-        <div className={styles.filterRenumeration}>
-          <h6>Renumeration</h6>
+        <div className={styles.filterRemuneration}>
+          <h6>Remuneration</h6>
           <input type="checkbox" id="cash" className={styles.checkbox} />
           <label for="cash">Cash</label> <br />
           <input type="checkbox" id="vouchers" className={styles.checkbox} />
@@ -52,7 +52,7 @@ function Sidebar() {
           <input type="checkbox" id="closed" className={styles.checkbox} />
           <label for="closed">Closed</label> <br />
         </div>
-        <button type="btn" className={styles.filterBtn}>
+        <button type="button" className={styles.filterBtn}>
           Filter
         </button>
       </form>

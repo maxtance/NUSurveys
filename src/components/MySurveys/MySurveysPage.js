@@ -22,7 +22,7 @@ function MySurveys() {
     }
 
     setNumSurveys(surveys.length);
-    setSurveys(surveys);
+    setSurveys(surveys.reverse());
   };
 
   useEffect(() => {
@@ -50,9 +50,47 @@ function MySurveys() {
         <div className={styles.searchBarForm}>
           <SearchBar />
         </div>
-        <p>
-          You have {numSurveys} Ongoing Survey{numSurveys > 1 ? "s" : ""}
-        </p>
+        <div className="d-flex justify-content-between pb-3">
+          <div className={styles.pageHeader}>
+            You have{" "}
+            <span className={styles.numSurveysColor}>{numSurveys}</span> Ongoing
+            Survey{numSurveys > 1 ? "s" : ""}
+          </div>
+          <div className="dropdown">
+            <span className={styles.sortBy}>Sort by:</span>
+            <button
+              className={`btn dropdown-toggle btn-sm ${styles.btnWhite}`}
+              type="button"
+              id="dropdownMenuButton1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Ongoing survey
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <a class="dropdown-item" href="#">
+                  Ongoing survey
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  Last created
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  First created
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  Last edited
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
         <div className={styles.mySurveys}>
           <MakeNewSurvey />
           {renderMySurveys()}

@@ -15,7 +15,7 @@ function HomePage() {
       <div className={styles.mainContent}>
         <HomeBody />
       </div>
-      <div className={styles.footer}>footer</div>
+      <div className={styles.footer}></div>
     </div>
   );
 }
