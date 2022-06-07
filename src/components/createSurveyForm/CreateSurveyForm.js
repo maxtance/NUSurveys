@@ -135,14 +135,14 @@ function CreateSurveyForm({
             </div>
           </div>
 
-          {/* <div class="col-md-5 offset-md-1">
+          <div class="col-md-5 offset-md-1">
             <label for="photo">Photo</label>
             <br />
             <small class="form-text text-muted">
               You may choose to upload a picture to go with your listing. This
               is not compulsory.
             </small>
-          </div> */}
+          </div>
         </div>
 
         <div class="row">
