@@ -1,3 +1,4 @@
+import DragAndDropImage from "../imageuploader/DragAndDropImage";
 import styles from "./CreateSurveyForm.module.css";
 
 function CreateSurveyForm({
@@ -7,6 +8,10 @@ function CreateSurveyForm({
   minAge,
   maxAge,
   remunerationAmount,
+  image,
+  setImage,
+  previewUrl,
+  setPreviewUrl,
   handleInputChange,
   handleCheckboxChange,
   handleGenderInputChange,
@@ -142,6 +147,11 @@ function CreateSurveyForm({
               You may choose to upload a picture to go with your listing. This
               is not compulsory.
             </small>
+            <DragAndDropImage 
+              image={image} 
+              setImage={setImage}
+              previewUrl={previewUrl}
+              setPreviewUrl={setPreviewUrl} />
           </div>
         </div>
 

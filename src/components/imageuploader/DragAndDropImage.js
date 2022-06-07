@@ -1,9 +1,16 @@
 import { useState, useRef } from "react";
+import { supabaseClient } from "../../lib/client";
 import styles from "./DragAndDropImage.module.css";
 
-function DragAndDropImage() {
+function DragAndDropImage({image, setImage, previewUrl, setPreviewUrl}) {
   const [isDragged, setIsDragged] = useState(false);
   const inputRef = useRef(null);
+  
+  const handleFile = async (file) => {
+    const filename = URL.createObjectURL(file);
+    setImage(file);
+    setPreviewUrl(filename);
+  }
 
   const handleDrag = (event) => {
       event.preventDefault();
@@ -22,6 +29,7 @@ function DragAndDropImage() {
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
       //TODO: add backend logic 
       console.log("File drop detected.");
+      handleFile(event.dataTransfer.files[0]);
     }
   }
 
@@ -30,6 +38,7 @@ function DragAndDropImage() {
     if (event.target.files && event.target.files[0]) {
       //TODO: add backend logic 
       console.log("File upload detected.");
+      handleFile(event.target.files[0]);
     }
   }
 
@@ -39,6 +48,7 @@ function DragAndDropImage() {
   }
 
   return (
+    <div>
       <div onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} class={styles.dragArea}>
         <input ref={inputRef} type="file" id={styles.imgUpload} onChange={handleChange}/>
         <label id={styles.labelImgUpload} for="img-upload" className={isDragged ? styles.isDragged : ""}>
@@ -52,6 +62,10 @@ function DragAndDropImage() {
           </div> 
         </label>
       </div>
+      { previewUrl && <div className={styles.imagePreview}>
+        <img src={previewUrl} alt='image' className={styles.img}/><span className={styles.imgName}> {image.name}</span>
+    </div> }
+    </div>
   );
 }
 
