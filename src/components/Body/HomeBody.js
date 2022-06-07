@@ -11,15 +11,16 @@ function HomeBody() {
   const fetchSurveyListings = async () => {
     const { data: surveys, error } = await supabaseClient
       .from("surveys")
-      .select("*");
+      .select("*")
+      .order("id", { ascending: false });
 
     if (error) {
       console.log(error);
     }
 
-    // console.log(surveys);
+    console.log(surveys);
     setNumSurveys(surveys.length);
-    setSurveys(surveys.reverse());
+    setSurveys(surveys);
   };
 
   useEffect(() => {
