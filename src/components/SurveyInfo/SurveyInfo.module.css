@@ -1,0 +1,47 @@
+p {
+    margin-bottom: 1.5rem;
+}
+
+.header {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.mainContent {
+    background: rgb(242, 242, 242);
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.surveyImg {
+    margin-bottom: 2.5rem;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.cards {
+    width: 75%;
+}
+
+.noBullets {
+    list-style: none;
+    padding-left: 0;
+}
+
+.eligibilities, .cardHeader{
+    font-weight: 500;
+}
+
+.contactName {
+    font-weight: 600;
+}
