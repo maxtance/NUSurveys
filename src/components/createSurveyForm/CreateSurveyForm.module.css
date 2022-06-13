@@ -43,11 +43,11 @@
     display: flex;
 }
 
+.errorMsg {
+    margin-bottom: 0px;
+}
+
 #warningIcon {
     margin-right: 8px;
     align-self: center;
-}
-
-.errorMsg {
-    margin-bottom: 0px;
 }
