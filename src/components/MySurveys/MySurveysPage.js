@@ -8,13 +8,14 @@ import { supabaseClient } from "../../lib/client";
 import createSurveyIcon from "../../assets/create_survey_img.png";
 
 function MySurveys() {
-  const [numSurveys, setNumSurveys] = useState(2);
+  const [numSurveys, setNumSurveys] = useState(0);
   const [surveys, setSurveys] = useState([]);
 
   const fetchMySurveys = async () => {
     const { data: surveys, error } = await supabaseClient
       .from("surveys")
       .select("*")
+      .order("id", { ascending: false })
       .match({ published_by: "E0789289" }); //dummy nusid
 
     if (error) {
@@ -22,7 +23,7 @@ function MySurveys() {
     }
 
     setNumSurveys(surveys.length);
-    setSurveys(surveys.reverse());
+    setSurveys(surveys);
   };
 
   useEffect(() => {
@@ -31,13 +32,7 @@ function MySurveys() {
 
   const renderMySurveys = () => {
     return surveys.map((survey) => {
-      return (
-        <SurveyCard
-          img={survey.photo}
-          title={survey.title}
-          description={survey.description}
-        />
-      );
+      return <SurveyCard survey={survey} />;
     });
   };
 

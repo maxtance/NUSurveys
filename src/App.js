@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 import HomePage from "./components/HomePage/HomePage";
 import MySurveysPage from "./components/MySurveys/MySurveysPage";
@@ -11,6 +11,7 @@ import ThankYou from "./components/thankYou/ThankYou";
 import Welcome from "./components/Welcome/Welcome";
 import GeneralMessage from "./components/GeneralMessage/GeneralMessage";
 import { useEffect } from "react";
+import SurveyInfo from "./components/SurveyInfo/SurveyInfo";
 
 function App() {
   const errorTitle = "Oops!";
@@ -51,6 +52,7 @@ function App() {
                 <HomePage />
               </ProtectedRoute>
             }/>
+            <Route path="/surveys/:surveyId" element={<SurveyInfo />} />
           </Routes>
         </AuthProvider>
       </div>

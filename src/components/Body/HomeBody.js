@@ -29,13 +29,7 @@ function HomeBody() {
 
   const renderSurveys = () => {
     return surveys.map((survey) => {
-      return (
-        <SurveyCard
-          img={survey.photo}
-          title={survey.title}
-          description={survey.description}
-        />
-      );
+      return <SurveyCard survey={survey} />;
     });
   };
 
