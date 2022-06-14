@@ -6,9 +6,8 @@ import CreateSurveyForm from "../createSurveyForm/CreateSurveyForm";
 import NavBarWrapper from "../../helpers/NavBarWrapper";
 import styles from "./CreateSurvey.module.css";
 
-function CreateSurvey() {
-  const getDate = (months) => {
-    const date = new Date();
+export function getDate(months) {
+  const date = new Date();
     const closingDate = new Date(date.setMonth(date.getMonth() + months));
     const closingDateMonth =
       closingDate.getMonth() + 1 < 10
@@ -21,8 +20,9 @@ function CreateSurvey() {
     return (
       closingDate.getFullYear() + "-" + closingDateMonth + "-" + closingDateDay
     );
-  };
+}
 
+function CreateSurvey() {
   const {
     register,
     handleSubmit,

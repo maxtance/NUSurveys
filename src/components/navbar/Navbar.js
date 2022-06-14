@@ -1,9 +1,47 @@
 import styles from "./Navbar.module.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
+import { useAuth } from "../../contexts/Auth";
+import { supabaseClient } from "../../lib/client";
+import { useEffect, useState } from "react";
 
 function Navbar() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate()
+
+  const [userName, setUserName] = useState("");
+
+  const handleSignOut = async () => {
+    // Ends user session
+    const { data, error } = await signOut();
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      navigate("/login");
+    }
+  }
+
+  const getUserName = async () => {
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("full_name")
+      .eq("email", user.email)
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data[0]);
+      setUserName(data[0]["full_name"]);
+    }
+  }
+
+  useEffect(() => {
+    getUserName();
+  }, [])
+
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
       <div className="container-fluid">
@@ -81,7 +119,7 @@ function Navbar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Henry Wong
+                { userName }
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -93,7 +131,7 @@ function Navbar() {
                   </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <a className="dropdown-item" onClick={handleSignOut} href="#">
                     Log out
                   </a>
                 </li>

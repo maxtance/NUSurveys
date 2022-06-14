@@ -63,3 +63,20 @@ small {
     background-color: #f9f9f9;
     height: 100vh;
 }
+
+#warningIcon {
+    margin-right: 8px;
+    align-self: center;
+}
+
+.errorMsg {
+    margin-bottom: 0px;
+}
+
+.validation {
+    font-family: Roboto;
+    font-size: 14px;
+    color: #e34646;
+    display: flex;
+    margin-bottom: 10px;
+}
