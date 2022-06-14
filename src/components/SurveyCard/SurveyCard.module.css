@@ -1,4 +1,5 @@
 .surveyCard {
+    position: relative;
     overflow: hidden;
     border-radius: 0.5rem;
     display: flex;
@@ -15,6 +16,12 @@
     overflow-y: hidden;
     font-weight: bold;
     font-size: 1rem;
+}
+
+.surveyCard__bookmark {
+    position: absolute;
+    right: 25px;
+    height: 40px;
 }
 
 .surveyCard__description {

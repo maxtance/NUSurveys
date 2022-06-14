@@ -5,27 +5,61 @@ import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
 
 function HomeBody() {
+  const userId = 1; // dummyId
+
   const [numSurveys, setNumSurveys] = useState(0);
   const [surveys, setSurveys] = useState([]);
+  const [wishlists, setWishlists] = useState([]);
+  const [sortBy, setSortBy] = useState("Newest survey");
+
+  useEffect(() => {
+    fetchSurveyListings();
+  }, []);
+
+  function handleSortBy(sortValue) {
+    setSortBy(sortValue);
+    if (sortValue === "Newest survey") {
+      surveys.sort((a, b) => b.id - a.id);
+    } else if (sortValue === "Oldest survey") {
+      surveys.sort((a, b) => a.id - b.id);
+    } else {
+      surveys.sort((a, b) => a.closing_date.localeCompare(b.closing_date));
+    }
+  }
 
   const fetchSurveyListings = async () => {
     const { data: surveys, error } = await supabaseClient
       .from("surveys")
       .select("*")
+      .neq("published_by", userId)
       .order("id", { ascending: false });
 
     if (error) {
       console.log(error);
     }
 
+    const { data: wishlists, error: wishlistsError } = await supabaseClient
+      .from("wishlisted_surveys")
+      .select("*")
+      .eq("user_id", String(userId));
+
+    surveys.map((survey) => {
+      const match = wishlists.filter(
+        (wishlist) => wishlist.survey_id === survey.id
+      );
+      if (match.length === 0) {
+        survey.isWishlisted = false;
+      } else {
+        survey.isWishlisted = true;
+      }
+      return survey;
+    });
+
     console.log(surveys);
+
     setNumSurveys(surveys.length);
     setSurveys(surveys);
   };
-
-  useEffect(() => {
-    fetchSurveyListings();
-  }, []);
 
   const renderSurveys = () => {
     return surveys.map((survey) => {
@@ -54,18 +88,35 @@ function HomeBody() {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Newest survey
+              {sortBy}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
-                <a class="dropdown-item" href="#">
+                <button
+                  type="button"
+                  class="dropdown-item"
+                  onClick={() => handleSortBy("Newest survey")}
+                >
                   Newest survey
-                </a>
+                </button>
               </li>
               <li>
-                <a class="dropdown-item" href="#">
+                <button
+                  type="button"
+                  class="dropdown-item"
+                  onClick={() => handleSortBy("Oldest survey")}
+                >
                   Oldest survey
-                </a>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="dropdown-item"
+                  onClick={() => handleSortBy("Closing first")}
+                >
+                  Closing first
+                </button>
               </li>
             </ul>
           </div>

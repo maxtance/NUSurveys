@@ -3,144 +3,80 @@ import Navbar from "../navbar/Navbar";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
+import useBookmark from "../../helpers/useBookmark";
 
 // Things left to implement:
-// 1. fetch image
-// 2. For owner
-//     a. Link to edit listing
-//     b. Mark listing as closed
-//     c. Delete listing
-// 3. For surveyor
+// 1. For owner
+//     a. Mark listing as closed
+//     b. Delete listing
+// 2. For surveyor
 //     a. Add to wishlist
 //     b. Mark survey as complete
 
 function SurveyInfo() {
   let { surveyId } = useParams();
-  const [surveys, setSurveys] = useState([]);
-  const [genderEligibility, setGenderEligibility] = useState({});
-  const [ageEligibility, setAgeEligibility] = useState({});
-  const [ethnicityEligibility, setEthnicityEligibility] = useState([]);
+  const userId = 1; // dummmy userId
 
-  const userId = "E0789289"; // dummmy nusnetid
+  const surveyInfo = useFetchListingInfo(surveyId, userId);
+  console.log(surveyInfo);
+  const [isBookmarked, setAndUpdateIsBookmarked] = useBookmark(
+    surveyInfo.isWishlisted,
+    surveyId,
+    userId
+  );
+  // console.log(surveyInfo.isWishlisted, isBookmarked);
 
-  const fetchSurveyInfo = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select(
-        `
-        published_by,
-        title, 
-        description, 
-        surveyType: survey_categories(cat_name), 
-        remunerationType: remunerations(category_id(cat_name)),
-        remunerationAmount: remunerations(amount),
-        other_eligibility_requirements,
-        userName: users!surveys_published_by_fkey(full_name),
-        email: users!surveys_published_by_fkey(email),
-        link
-        `
-      )
-      .eq("id", surveyId);
+  function toggleBookmark() {
+    setAndUpdateIsBookmarked();
+  }
 
-    if (error) {
-      console.log(error);
-    }
-
-    setSurveys(surveys);
-  };
-
-  const fetchGenderEligibility = async () => {
-    const { data: genderEligibility, error } = await supabaseClient
-      .from("gender_eligibilities")
-      .select("genderEligibility: gender_eligibility_categories(name)")
-      .eq("survey_id", surveyId);
-
-    if (error) {
-      console.log(error);
-    }
-
-    setGenderEligibility(genderEligibility[0]);
-  };
-
-  const fetchAgeEligibility = async () => {
-    const { data: ageEligibility, error } = await supabaseClient
-      .from("age_eligibilities")
-      .select(`min_age, max_age`)
-      .eq("survey_id", surveyId);
-
-    if (error) {
-      console.log(error);
-    }
-
-    setAgeEligibility(ageEligibility[0]);
-  };
-
-  const fetchEthnicityEligibility = async () => {
-    const { data: ethnicityEligibility, error } = await supabaseClient
-      .from("ethnicity_eligibilities")
-      .select("ethnicityEligibility: ethnicities(name)")
-      .eq("survey_id", surveyId);
-
-    if (error) {
-      console.log(error);
-    }
-
-    setEthnicityEligibility(ethnicityEligibility);
-  };
-
-  useEffect(() => {
-    fetchSurveyInfo();
-    fetchGenderEligibility();
-    fetchAgeEligibility();
-    fetchEthnicityEligibility();
-  }, []);
-
-  if (surveys.length === 0) {
+  if (surveyInfo.isValidSurvey === null) {
+    return <p>Loading...</p>;
+  } else if (!surveyInfo.isValidSurvey) {
     return <div>Survey does not exist!</div>;
   }
-  let survey = surveys[0];
 
   return (
     <>
       <Navbar />
       <div className={`container-fluid pt-5 pb-5 ${styles.mainContent}`}>
         <div className={`offset-md-1 row pb-3 ${styles.title}`}>
-          {survey.title}
+          {surveyInfo.title}
         </div>
         <div className="row">
           <div className="offset-md-1 col-md-6">
-            <img
-              className={styles.surveyImg}
-              src="https://loremflickr.com/269/389"
-              alt=""
-              height="300"
-            />
+            {surveyInfo.photoURL !== null ? (
+              <img
+                className={styles.surveyImg}
+                src={surveyInfo.photoURL}
+                alt=""
+                height="350"
+              />
+            ) : (
+              <></>
+            )}
             <div>
               <h3 className={styles.header}>About the study</h3>
-              <p>{survey.description}</p>
+              <p>{surveyInfo.description}</p>
               <p>
                 <ul className={styles.noBullets}>
                   <li>
                     <span className={styles.eligibilities}>
                       Type of Survey:
                     </span>{" "}
-                    {survey.surveyType.cat_name}
+                    {surveyInfo.surveyType}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>
                       Remuneration Type:{" "}
                     </span>
-                    {!survey.remunerationType
-                      ? "No remuneration given"
-                      : survey.remunerationType.category_id.cat_name}
+                    {surveyInfo.remunerationType}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>
                       Remuneration Amount:{" "}
                     </span>
-                    {!survey.remunerationAmount
-                      ? "Nil"
-                      : survey.remunerationAmount.amount}
+                    {surveyInfo.remunerationAmount}
                   </li>
                 </ul>
               </p>
@@ -151,44 +87,32 @@ function SurveyInfo() {
                 <ul className={styles.noBullets}>
                   <li>
                     <span className={styles.eligibilities}>Gender: </span>
-                    {genderEligibility.genderEligibility?.name}
+                    {surveyInfo.genderEligibility}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>Ethnicity: </span>
-                    {ethnicityEligibility.length === 0
-                      ? "All"
-                      : ethnicityEligibility.map(
-                          (ethnicity, index) =>
-                            ethnicity.ethnicityEligibility.name +
-                            (index ? "" : ", ")
-                        )}
+                    {surveyInfo.ethnicityEligibility}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>Minimum Age: </span>
-                    {!ageEligibility || !ageEligibility.min_age
-                      ? "Nil"
-                      : ageEligibility.min_age}
+                    {surveyInfo.minAge === null ? "Nil" : surveyInfo.minAge}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>Maximum Age: </span>
-                    {!ageEligibility || !ageEligibility.max_age
-                      ? "Nil"
-                      : ageEligibility.max_age}
+                    {surveyInfo.maxAge === null ? "Nil" : surveyInfo.maxAge}
                   </li>
                   <li>
                     <span className={styles.eligibilities}>
                       Other Requirements:{" "}
                     </span>
-                    {!survey.other_eligibility_requirements
-                      ? "Nil"
-                      : survey.other_eligibility_requirements}
+                    {surveyInfo.otherRequirements}
                   </li>
                 </ul>
               </p>
             </div>
             <a
               className="btn btn-primary mt-3"
-              href={survey.link}
+              href={surveyInfo.link}
               target="_blank"
               rel="noreferrer noopener"
               role="button"
@@ -198,10 +122,14 @@ function SurveyInfo() {
           </div>
           <div className="offset-md-1 col-md-4">
             {/* Only have this component if nusnetid don't match */}
-            {userId !== survey.published_by ? (
+            {userId !== surveyInfo.publishedId ? (
               <div className={styles.buttons}>
-                <button type="button" className="btn btn-primary">
-                  Add to Wishlist
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={toggleBookmark}
+                >
+                  {isBookmarked ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
                 <button type="button" className="btn btn-primary">
                   Mark as Completed
@@ -212,7 +140,7 @@ function SurveyInfo() {
             )}
             <div className={styles.cards}>
               {/* Only have this component if nusnetid matches */}
-              {userId === survey.published_by ? (
+              {userId === surveyInfo.publishedId ? (
                 <div className="card mb-5">
                   <div className={`card-header ${styles.cardHeader}`}>
                     MY LISTING
@@ -237,10 +165,10 @@ function SurveyInfo() {
                 <div className="card-body">
                   <p className="card-text">
                     <span className={styles.contactName}>
-                      {survey.userName.full_name}
+                      {surveyInfo.publisherName}
                     </span>{" "}
                     <br />
-                    {survey.email.email}
+                    {surveyInfo.publisherEmail}
                   </p>
                 </div>
               </div>
@@ -250,6 +178,197 @@ function SurveyInfo() {
       </div>
     </>
   );
+}
+
+function useFetchListingInfo(surveyId, userFetchingId) {
+  const [isValidSurvey, setIsValidSurvey] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [photoURL, setPhotoURL] = useState(null);
+  const [surveyType, setSurveyType] = useState("");
+  const [remunerationType, setRemunerationType] = useState(
+    "No remuneration given"
+  );
+  const [remunerationAmount, setRemunerationAmount] = useState(0);
+  const [genderEligibility, setGenderEligibility] = useState("");
+  const [ethnicityEligibility, setEthnicityEligibility] = useState("Any");
+  const [minAge, setMinAge] = useState(null);
+  const [maxAge, setMaxAge] = useState(null);
+  const [otherRequirements, setOtherRequirements] = useState("");
+  const [surveyLink, setSurveyLink] = useState("");
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [publishedId, setPublisherId] = useState("");
+  const [publisherName, setPublisherName] = useState("");
+  const [publisherEmail, setPublisherEmail] = useState("");
+
+  const fetchSurveyInfo = async () => {
+    const { data: surveys, error } = await supabaseClient
+      .from("surveys")
+      .select(
+        `
+        title,
+        description,
+        category_id(cat_name),
+        remunType: remunerations(category_id(cat_name)),
+        remunAmount: remunerations(amount),
+        other_eligibility_requirements,
+        publisherName: users!surveys_published_by_fkey(full_name),
+        publisherEmail: users!surveys_published_by_fkey(email),
+        link,
+        published_by
+      `
+      )
+      .eq("id", surveyId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    const survey = surveys[0];
+    // console.log(survey);
+    if (survey !== undefined) {
+      setIsValidSurvey(true);
+      setTitle(survey.title);
+      setDescription(survey.description);
+      setSurveyType(survey.category_id.cat_name);
+      if (survey.remunType !== null) {
+        setRemunerationType(survey.remunType.category_id.cat_name);
+      }
+      if (survey.remunAmount !== null) {
+        setRemunerationAmount(survey.remunAmount.amount);
+      }
+      if (survey.other_eligibility_requirements) {
+        setOtherRequirements(survey.other_eligibility_requirements);
+      } else {
+        setOtherRequirements("Nil");
+      }
+      setSurveyLink(survey.link);
+      setPublisherName(survey.publisherName.full_name);
+      setPublisherEmail(survey.publisherEmail.email);
+      setPublisherId(survey.published_by);
+    } else {
+      setIsValidSurvey(false);
+    }
+  };
+
+  const fetchGenderEligibility = async () => {
+    const { data: gender_eligibilities, error } = await supabaseClient
+      .from("gender_eligibilities")
+      .select("gender_eligibility_categories(name)")
+      .eq("survey_id", surveyId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    setGenderEligibility(
+      gender_eligibilities[0]?.gender_eligibility_categories.name
+    );
+  };
+
+  const fetchEthnicityEligibility = async () => {
+    const { data: ethnicity_eligibility, error } = await supabaseClient
+      .from("ethnicity_eligibilities")
+      .select("ethnicities(name)")
+      .eq("survey_id", surveyId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    // TODO think of the implementation
+    if (ethnicity_eligibility.length !== 0) {
+      let strOfEthnicities = ethnicity_eligibility.map(
+        (ethnicity, index) => (index ? ", " : "") + ethnicity.ethnicities.name
+      );
+      setEthnicityEligibility(strOfEthnicities.join(""));
+    }
+  };
+
+  const fetchAgeEligibility = async () => {
+    const { data: age_eligibility, error } = await supabaseClient
+      .from("age_eligibilities")
+      .select(`min_age, max_age`)
+      .eq("survey_id", surveyId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    if (age_eligibility.length !== 0) {
+      setMaxAge(age_eligibility[0].max_age);
+      setMinAge(age_eligibility[0].min_age);
+    }
+  };
+
+  const fetchImgURL = async () => {
+    const { data: imgURL, error } = await supabaseClient
+      .from("surveys")
+      .select("photo")
+      .eq("id", surveyId)
+      .then((photoLocation) => {
+        if (photoLocation.data[0].photo) {
+          return supabaseClient.storage
+            .from("survey-images")
+            .getPublicUrl(photoLocation.data[0].photo);
+        } else {
+          // set imgURL.publicURL to null
+          return { publicURL: null };
+        }
+      });
+
+    if (error) {
+      console.log(error);
+    }
+    if (imgURL) {
+      setPhotoURL(imgURL.publicURL);
+    }
+  };
+
+  const fetchWishlisted = async () => {
+    const { data: wishlisted_surveys, error } = await supabaseClient
+      .from("wishlisted_surveys")
+      .select("*")
+      .eq("survey_id", surveyId)
+      .eq("user_id", userFetchingId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    if (wishlisted_surveys.length === 1) {
+      setIsWishlisted(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchSurveyInfo();
+    fetchGenderEligibility();
+    fetchEthnicityEligibility();
+    fetchAgeEligibility();
+    fetchImgURL();
+    fetchWishlisted();
+  }, []);
+
+  return {
+    isValidSurvey: isValidSurvey,
+    title: title,
+    description: description,
+    photoURL: photoURL,
+    surveyType: surveyType,
+    remunerationType: remunerationType,
+    remunerationAmount: remunerationAmount,
+    genderEligibility: genderEligibility,
+    ethnicityEligibility: ethnicityEligibility,
+    minAge: minAge,
+    maxAge: maxAge,
+    otherRequirements: otherRequirements,
+    surveyLink: surveyLink,
+    isWishlisted: isWishlisted,
+    publishedId: publishedId,
+    publisherName: publisherName,
+    publisherEmail: publisherEmail,
+  };
 }
 
 export default SurveyInfo;
