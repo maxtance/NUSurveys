@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import createSurveyIcon from "../../assets/create_survey_img.png";
-import useFetchUser from "../../helpers/useFetchUser";
+import { useAuth } from "../../contexts/Auth";
 
 function MySurveys() {
-  const { userInfo, userInfoIsLoading } = useFetchUser();
-  const userId = userInfo?.id;
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
 
   const [numSurveys, setNumSurveys] = useState(0);
   // stores the data fetched in MySurveys which is not edited
@@ -54,28 +54,26 @@ function MySurveys() {
   }
 
   const fetchMySurveys = async () => {
-    if (!userInfoIsLoading) {
-      const { data: surveys, error } = await supabaseClient
-        .from("surveys")
-        .select("*")
-        .order("id", { ascending: false })
-        .eq("published_by", userId);
+    const { data: surveys, error } = await supabaseClient
+      .from("surveys")
+      .select("*")
+      .order("id", { ascending: false })
+      .eq("published_by", userId);
 
-      if (error) {
-        console.log(error);
-      }
-
-      setNumSurveys(surveys.length);
-
-      setUneditedSurveys(surveys);
-      setSurveys(surveys);
-      setIsLoading(false);
+    if (error) {
+      console.log(error);
     }
+
+    setNumSurveys(surveys.length);
+
+    setUneditedSurveys(surveys);
+    setSurveys(surveys);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchMySurveys();
-  }, [userInfo]);
+  }, []);
 
   const renderMySurveys = () => {
     return surveys.map((survey) => {

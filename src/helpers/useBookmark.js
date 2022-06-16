@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../lib/client";
-import useFetchUser from "./useFetchUser";
+import { useAuth } from "../contexts/Auth";
 
 function useBookmark(initValue, surveyId) {
+  // testing
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
+
   const [isBookmarked, setIsBookmarked] = useState(initValue);
   // useState will only use initValue on first render.
   useEffect(() => setIsBookmarked(initValue), [initValue]);
 
-  const { userInfo, userInfoIsLoading } = useFetchUser();
-  const userId = userInfo?.id;
+  // const { userInfo, userInfoIsLoading } = useFetchUser();
+  // const userId = userInfo?.id;
 
   function setAndUpdateIsBookmarked() {
-    if (!userInfoIsLoading) {
-      setIsBookmarked((prevState) => !prevState);
-      updateWishlistDb(isBookmarked, surveyId, userId);
-    }
+    setIsBookmarked((prevState) => !prevState);
+    updateWishlistDb(isBookmarked, surveyId, userId);
   }
 
   return [isBookmarked, setAndUpdateIsBookmarked];

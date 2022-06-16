@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
 import useFetchUser from "../../helpers/useFetchUser";
+import { useAuth } from "../../contexts/Auth";
 
 function HomeBody() {
-  const { userInfo, userInfoIsLoading } = useFetchUser();
-  const userId = userInfo?.id;
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
 
   const [numSurveys, setNumSurveys] = useState(0);
   const [surveys, setSurveys] = useState([]);
@@ -16,7 +17,7 @@ function HomeBody() {
 
   useEffect(() => {
     fetchSurveyListings();
-  }, [userInfo]);
+  }, []);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -30,46 +31,42 @@ function HomeBody() {
   }
 
   const fetchSurveyListings = async () => {
-    if (!userInfoIsLoading) {
-      setSurveysIsLoading(true);
-      const { data: surveys, error: surveysError } = await supabaseClient
-        .from("surveys")
-        .select("*")
-        .neq("published_by", userId)
-        .order("id", { ascending: false });
+    setSurveysIsLoading(true);
+    const { data: surveys, error: surveysError } = await supabaseClient
+      .from("surveys")
+      .select("*")
+      .neq("published_by", userId)
+      .order("id", { ascending: false });
 
-      if (surveysError) {
-        console.log(surveysError);
-      }
-      const { data: wishlists, error: wishlistsError } = await supabaseClient
-        .from("wishlisted_surveys")
-        .select("*")
-        .eq("user_id", userId);
-
-      if (wishlistsError) {
-        console.log(wishlistsError);
-      }
-
-      surveys.map((survey) => {
-        const match = wishlists.filter(
-          (wishlist) => wishlist.survey_id === survey.id
-        );
-        if (match.length === 0) {
-          survey.isWishlisted = false;
-        } else {
-          survey.isWishlisted = true;
-        }
-        return survey;
-      });
-
-      // console.log(surveys);
-
-      setNumSurveys(surveys.length);
-      setSurveys(surveys);
-      setSurveysIsLoading(false);
-    } else {
-      setSurveysIsLoading(true);
+    if (surveysError) {
+      console.log(surveysError);
     }
+    const { data: wishlists, error: wishlistsError } = await supabaseClient
+      .from("wishlisted_surveys")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (wishlistsError) {
+      console.log(wishlistsError);
+    }
+
+    surveys.map((survey) => {
+      const match = wishlists.filter(
+        (wishlist) => wishlist.survey_id === survey.id
+      );
+      if (match.length === 0) {
+        survey.isWishlisted = false;
+      } else {
+        survey.isWishlisted = true;
+      }
+      return survey;
+    });
+
+    // console.log(surveys);
+
+    setNumSurveys(surveys.length);
+    setSurveys(surveys);
+    setSurveysIsLoading(false);
   };
 
   const renderSurveys = () => {

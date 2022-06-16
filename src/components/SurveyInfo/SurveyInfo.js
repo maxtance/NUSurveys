@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import useBookmark from "../../helpers/useBookmark";
-import useFetchUser from "../../helpers/useFetchUser";
+import { useAuth } from "../../contexts/Auth";
 
 // Things left to implement:
 // 1. For owner
@@ -16,8 +16,8 @@ import useFetchUser from "../../helpers/useFetchUser";
 
 function SurveyInfo() {
   let { surveyId } = useParams();
-  const { userInfo } = useFetchUser();
-  const userId = userInfo?.id;
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
 
   const surveyInfo = useFetchListingInfo(surveyId);
   // console.log(surveyInfo);
@@ -207,7 +207,7 @@ function useFetchListingInfo(surveyId) {
   const [publisherName, setPublisherName] = useState("");
   const [publisherEmail, setPublisherEmail] = useState("");
 
-  const { userInfo, userInfoIsLoading } = useFetchUser();
+  const { userInfo } = useAuth();
   const userFetchingId = userInfo?.id;
 
   const fetchSurveyInfo = async () => {
@@ -336,20 +336,18 @@ function useFetchListingInfo(surveyId) {
   };
 
   const fetchWishlisted = async () => {
-    if (!userInfoIsLoading) {
-      const { data: wishlisted_surveys, error } = await supabaseClient
-        .from("wishlisted_surveys")
-        .select("*")
-        .eq("survey_id", surveyId)
-        .eq("user_id", userFetchingId);
+    const { data: wishlisted_surveys, error } = await supabaseClient
+      .from("wishlisted_surveys")
+      .select("*")
+      .eq("survey_id", surveyId)
+      .eq("user_id", userFetchingId);
 
-      if (error) {
-        console.log(error);
-      }
+    if (error) {
+      console.log(error);
+    }
 
-      if (wishlisted_surveys?.length === 1) {
-        setIsWishlisted(true);
-      }
+    if (wishlisted_surveys?.length === 1) {
+      setIsWishlisted(true);
     }
   };
 

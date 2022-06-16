@@ -40,7 +40,7 @@ function useFetchUser() {
   const userEmail = user?.email;
 
   const fetchUserInfo = async (userEmail) => {
-    // console.log("fetching data from users");
+    console.log("fetching data from users");
     const { data: users, error } = await supabaseClient
       .from("users")
       .select("*")
@@ -55,7 +55,7 @@ function useFetchUser() {
 
   useEffect(() => {
     fetchUserInfo(userEmail);
-  }, []);
+  }, [userEmail]);
 
   return { userInfo: data, userInfoIsLoading: isLoading };
 }
