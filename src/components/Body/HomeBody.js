@@ -3,8 +3,11 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
+import { getDate } from "../createSurvey/CreateSurvey";
 
-function HomeBody() {
+function HomeBody({
+  filterCriteria,
+}) {
   const userId = 1; // dummyId
 
   const [numSurveys, setNumSurveys] = useState(0);
@@ -14,7 +17,7 @@ function HomeBody() {
 
   useEffect(() => {
     fetchSurveyListings();
-  }, []);
+  }, [filterCriteria]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -28,14 +31,51 @@ function HomeBody() {
   }
 
   const fetchSurveyListings = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select("*")
-      .neq("published_by", userId)
-      .order("id", { ascending: false });
+    let filterByType = false;
+    let filterByStatus = false;
+    let filterByRemuneration = false;
 
+    let query = supabaseClient
+      .from('surveys')
+      .select('*, remunerations!inner(*, remuneration_categories!inner(*))');
+
+    if (filterCriteria["survey_categories"].length !== 0) {
+      filterByType = true;
+    }
+    if (filterCriteria["remuneration_categories"].length !== 0) {
+      filterByRemuneration = true;
+    }
+    if (filterCriteria["status"].length === 1) {
+      filterByStatus = true;
+    }
+
+    //TODO: add filter logic here
+    if (filterByType) {
+      query = query.in("category_id", filterCriteria["survey_categories"]);
+    }
+
+    if (filterByRemuneration) {
+      query = query.in(
+        "remunerations.remuneration_categories.id",
+        filterCriteria["remuneration_categories"]
+      );
+    }
+
+    if (filterByStatus) {
+      if (filterCriteria["status"][0] == "ongoing") {
+        query = query.gte("closing_date", getDate(0));
+      } else {
+        query = query.lt("closing_date", getDate(0));
+      }
+    }
+
+    const { data: surveys, error } = await query
+      .order("id", { ascending: false });
+    
     if (error) {
       console.log(error);
+    } else {
+      console.log(surveys);
     }
 
     const { data: wishlists, error: wishlistsError } = await supabaseClient
@@ -70,6 +110,7 @@ function HomeBody() {
   return (
     <div className={styles.container}>
       <div>
+        {console.log("rerender")}
         <div className={styles.searchBarForm}>
           <SearchBar />
         </div>

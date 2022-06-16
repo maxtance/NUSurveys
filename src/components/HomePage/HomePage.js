@@ -2,18 +2,68 @@ import styles from "./HomePage.module.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import HomeBody from "../Body/HomeBody";
+import { useEffect, useState } from "react";
 
 function HomePage() {
+  const [filterCriteria, setFilterCriteria] = useState({
+    'survey_categories': [],
+    'remuneration_categories': [],
+    'status': []
+  });
+
+  const [type, setType] = useState({
+    1: false,
+    2: false,
+    3: false,
+  });
+
+  const [remuneration, setRemuneration] = useState({
+    1: false,
+    2: false,
+    3: false
+  });
+
+  const [status, setStatus] = useState({
+    ongoing: false,
+    closed: false
+  });
+
+  const handleTypeChange = (e) => {
+    const { name, checked } = e.target;
+    setType({ ...type, [name]: checked });
+  };
+
+  const handleRemunerationChange = (e) => {
+    const { name, checked } = e.target;
+    setRemuneration({ ...remuneration, [name]: checked });
+  };
+
+  const handleStatusChange = (e) => {
+    const { name, checked } = e.target;
+    setStatus({ ...status, [name]: checked });
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
         <Navbar />
       </div>
       <div className={styles.sidebar}>
-        <Sidebar />
+        <Sidebar 
+          type={type}
+          handleTypeChange={handleTypeChange}
+          remuneration={remuneration}
+          handleRemunerationChange={handleRemunerationChange}
+          status={status}
+          handleStatusChange={handleStatusChange}
+          filterCriteria={filterCriteria}
+          setFilterCriteria={setFilterCriteria}
+        />
       </div>
       <div className={styles.mainContent}>
-        <HomeBody />
+        <HomeBody 
+          filterCriteria={filterCriteria}
+        />
       </div>
       <div className={styles.footer}></div>
     </div>

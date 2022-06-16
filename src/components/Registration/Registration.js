@@ -78,14 +78,12 @@ function Registration() {
         const password = passwordRef.current;
 
         const { data: userObj, error } = await signUp(
-            { email, password }, 
-            { redirectTo: "localhost:3000/welcome"}
+            { email, password }
         );
 
         if (error) {
             console.log(error);
         } else {
-            console.log(userObj)
             const { data, error } = await supabaseClient
                 .from("users")
                 .insert({

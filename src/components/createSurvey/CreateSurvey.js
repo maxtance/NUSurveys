@@ -59,7 +59,7 @@ function CreateSurvey() {
     other_eligibility_requirements: "",
     date_published: getDate(0),
     last_updated: getDate(0),
-    published_by: "E0789289", //dummy user nusnet id
+    published_by: 1, //dummy user nusnet id
   });
 
   const handleFile = async (file) => {
@@ -217,9 +217,9 @@ function CreateSurvey() {
     }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = async (e) => {
     //e.preventDefault();
-    addSurveyListing();
+    await addSurveyListing();
     navigate("/mysurveys");
   };
 
