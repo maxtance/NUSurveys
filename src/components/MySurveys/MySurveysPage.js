@@ -6,12 +6,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import createSurveyIcon from "../../assets/create_survey_img.png";
+import useFetchUser from "../../helpers/useFetchUser";
 
 function MySurveys() {
+  const { userInfo, userInfoIsLoading } = useFetchUser();
+  const userId = userInfo?.id;
+
   const [numSurveys, setNumSurveys] = useState(0);
   // stores the data fetched in MySurveys which is not edited
   const [uneditedSurveys, setUneditedSurveys] = useState([]);
   const [surveys, setSurveys] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("Last created");
   const [view, setView] = useState("View all");
 
@@ -49,25 +54,28 @@ function MySurveys() {
   }
 
   const fetchMySurveys = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select("*")
-      .order("id", { ascending: false })
-      .match({ published_by: 1 }); //dummy nusid
+    if (!userInfoIsLoading) {
+      const { data: surveys, error } = await supabaseClient
+        .from("surveys")
+        .select("*")
+        .order("id", { ascending: false })
+        .eq("published_by", userId);
 
-    if (error) {
-      console.log(error);
+      if (error) {
+        console.log(error);
+      }
+
+      setNumSurveys(surveys.length);
+
+      setUneditedSurveys(surveys);
+      setSurveys(surveys);
+      setIsLoading(false);
     }
-
-    setNumSurveys(surveys.length);
-
-    setUneditedSurveys(surveys);
-    setSurveys(surveys);
   };
 
   useEffect(() => {
     fetchMySurveys();
-  }, []);
+  }, [userInfo]);
 
   const renderMySurveys = () => {
     return surveys.map((survey) => {
@@ -173,10 +181,14 @@ function MySurveys() {
             </ul>
           </div>
         </div>
-        <div className={styles.mySurveys}>
-          <MakeNewSurvey />
-          {renderMySurveys()}
-        </div>
+        {isLoading ? (
+          <p>Loading your surveys...</p>
+        ) : (
+          <div className={styles.mySurveys}>
+            <MakeNewSurvey />
+            {renderMySurveys()}
+          </div>
+        )}
       </div>
     </div>
   );

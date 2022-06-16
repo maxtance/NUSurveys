@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../lib/client";
+import useFetchUser from "./useFetchUser";
 
-function useBookmark(initValue, surveyId, userId) {
+function useBookmark(initValue, surveyId) {
   const [isBookmarked, setIsBookmarked] = useState(initValue);
   // useState will only use initValue on first render.
   useEffect(() => setIsBookmarked(initValue), [initValue]);
 
+  const { userInfo, userInfoIsLoading } = useFetchUser();
+  const userId = userInfo?.id;
+
   function setAndUpdateIsBookmarked() {
-    setIsBookmarked((prevState) => !prevState);
-    updateWishlistDb(isBookmarked, surveyId, userId);
+    if (!userInfoIsLoading) {
+      setIsBookmarked((prevState) => !prevState);
+      updateWishlistDb(isBookmarked, surveyId, userId);
+    }
   }
 
   return [isBookmarked, setAndUpdateIsBookmarked];
@@ -21,6 +27,10 @@ async function updateWishlistDb(isBookmarked, surveyId, userId) {
       .from("wishlisted_surveys")
       .delete()
       .eq("survey_id", surveyId);
+
+    if (error) {
+      console.log(error);
+    }
   } else {
     // add wishlist data to database
     let currDate = new Date();

@@ -3,18 +3,20 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
+import useFetchUser from "../../helpers/useFetchUser";
 
 function HomeBody() {
-  const userId = 1; // dummyId
+  const { userInfo, userInfoIsLoading } = useFetchUser();
+  const userId = userInfo?.id;
 
   const [numSurveys, setNumSurveys] = useState(0);
   const [surveys, setSurveys] = useState([]);
-  const [wishlists, setWishlists] = useState([]);
+  const [surveysIsLoading, setSurveysIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("Newest survey");
 
   useEffect(() => {
     fetchSurveyListings();
-  }, []);
+  }, [userInfo]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -28,42 +30,51 @@ function HomeBody() {
   }
 
   const fetchSurveyListings = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select("*")
-      .neq("published_by", userId)
-      .order("id", { ascending: false });
+    if (!userInfoIsLoading) {
+      setSurveysIsLoading(true);
+      const { data: surveys, error: surveysError } = await supabaseClient
+        .from("surveys")
+        .select("*")
+        .neq("published_by", userId)
+        .order("id", { ascending: false });
 
-    if (error) {
-      console.log(error);
-    }
-
-    const { data: wishlists, error: wishlistsError } = await supabaseClient
-      .from("wishlisted_surveys")
-      .select("*")
-      .eq("user_id", String(userId));
-
-    surveys.map((survey) => {
-      const match = wishlists.filter(
-        (wishlist) => wishlist.survey_id === survey.id
-      );
-      if (match.length === 0) {
-        survey.isWishlisted = false;
-      } else {
-        survey.isWishlisted = true;
+      if (surveysError) {
+        console.log(surveysError);
       }
-      return survey;
-    });
+      const { data: wishlists, error: wishlistsError } = await supabaseClient
+        .from("wishlisted_surveys")
+        .select("*")
+        .eq("user_id", userId);
 
-    console.log(surveys);
+      if (wishlistsError) {
+        console.log(wishlistsError);
+      }
 
-    setNumSurveys(surveys.length);
-    setSurveys(surveys);
+      surveys.map((survey) => {
+        const match = wishlists.filter(
+          (wishlist) => wishlist.survey_id === survey.id
+        );
+        if (match.length === 0) {
+          survey.isWishlisted = false;
+        } else {
+          survey.isWishlisted = true;
+        }
+        return survey;
+      });
+
+      // console.log(surveys);
+
+      setNumSurveys(surveys.length);
+      setSurveys(surveys);
+      setSurveysIsLoading(false);
+    } else {
+      setSurveysIsLoading(true);
+    }
   };
 
   const renderSurveys = () => {
     return surveys.map((survey) => {
-      return <SurveyCard survey={survey} />;
+      return <SurveyCard survey={survey} userInfo={userInfo} />;
     });
   };
 
@@ -122,7 +133,11 @@ function HomeBody() {
           </div>
         </div>
       </div>
-      <div className={styles.surveyListings}>{renderSurveys()}</div>
+      {surveysIsLoading ? (
+        <div>Loading surveys...</div>
+      ) : (
+        <div className={styles.surveyListings}>{renderSurveys()}</div>
+      )}
     </div>
   );
 }

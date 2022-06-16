@@ -1,25 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import CreateSurveyForm from "../createSurveyForm/CreateSurveyForm";
 import NavBarWrapper from "../../helpers/NavBarWrapper";
 import styles from "./CreateSurvey.module.css";
+import useFetchUser from "../../helpers/useFetchUser";
 
 export function getDate(months) {
   const date = new Date();
-    const closingDate = new Date(date.setMonth(date.getMonth() + months));
-    const closingDateMonth =
-      closingDate.getMonth() + 1 < 10
-        ? "0" + (closingDate.getMonth() + 1)
-        : closingDate.getMonth() + 1;
-    const closingDateDay =
-      closingDate.getDate() < 10
-        ? "0" + closingDate.getDate()
-        : closingDate.getDate();
-    return (
-      closingDate.getFullYear() + "-" + closingDateMonth + "-" + closingDateDay
-    );
+  const closingDate = new Date(date.setMonth(date.getMonth() + months));
+  const closingDateMonth =
+    closingDate.getMonth() + 1 < 10
+      ? "0" + (closingDate.getMonth() + 1)
+      : closingDate.getMonth() + 1;
+  const closingDateDay =
+    closingDate.getDate() < 10
+      ? "0" + closingDate.getDate()
+      : closingDate.getDate();
+  return (
+    closingDate.getFullYear() + "-" + closingDateMonth + "-" + closingDateDay
+  );
 }
 
 function CreateSurvey() {
@@ -48,6 +49,8 @@ function CreateSurvey() {
   const [image, setImage] = useState();
   const [previewUrl, setPreviewUrl] = useState("");
 
+  const { userInfo } = useFetchUser();
+  const userId = userInfo?.id;
   const [survey, setSurvey] = useState({
     title: "",
     description: "",
@@ -59,14 +62,19 @@ function CreateSurvey() {
     other_eligibility_requirements: "",
     date_published: getDate(0),
     last_updated: getDate(0),
-    published_by: "E0789289", //dummy user nusnet id
+    published_by: userId,
   });
+  useEffect(() => {
+    setSurvey((prevSurvey) => {
+      return { ...prevSurvey, published_by: userId };
+    });
+  }, [userId]);
 
   const handleFile = async (file) => {
     console.log(file);
 
     const { data, error } = await supabaseClient.storage
-      .from('survey-images')
+      .from("survey-images")
       .upload(`public/E0789289/${previewUrl}`, file);
 
     if (error) {
@@ -74,13 +82,13 @@ function CreateSurvey() {
     } else {
       console.log(data);
     }
-  }
+  };
 
-  const addSurveyListing = async () => {   
+  const addSurveyListing = async () => {
     if (image !== null) {
       await handleFile(image);
       survey.photo = `public/E0789289/${previewUrl}`;
-    } 
+    }
 
     //get id for new remuneration record
     const { error, count } = await supabaseClient
@@ -100,7 +108,7 @@ function CreateSurvey() {
         if (error) {
           console.log(error);
         } else {
-          console.log(remunerationRecord)
+          console.log(remunerationRecord);
           if (remunerationRecord.length === 0) {
             const { error } = await supabaseClient
               .from("remunerations")
