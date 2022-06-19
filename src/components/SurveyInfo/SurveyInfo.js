@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import useBookmark from "../../helpers/useBookmark";
+import { useAuth } from "../../contexts/Auth";
 
 // Things left to implement:
 // 1. For owner
@@ -15,14 +16,14 @@ import useBookmark from "../../helpers/useBookmark";
 
 function SurveyInfo() {
   let { surveyId } = useParams();
-  const userId = 1; // dummmy userId
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
 
-  const surveyInfo = useFetchListingInfo(surveyId, userId);
-  console.log(surveyInfo);
+  const surveyInfo = useFetchListingInfo(surveyId);
+  // console.log(surveyInfo);
   const [isBookmarked, setAndUpdateIsBookmarked] = useBookmark(
     surveyInfo.isWishlisted,
-    surveyId,
-    userId
+    surveyId
   );
   // console.log(surveyInfo.isWishlisted, isBookmarked);
 
@@ -31,7 +32,7 @@ function SurveyInfo() {
   }
 
   if (surveyInfo.isValidSurvey === null) {
-    return <p>Loading...</p>;
+    return <p>Loading survey info...</p>;
   } else if (!surveyInfo.isValidSurvey) {
     return <div>Survey does not exist!</div>;
   }
@@ -77,6 +78,10 @@ function SurveyInfo() {
                       Remuneration Amount:{" "}
                     </span>
                     {surveyInfo.remunerationAmount}
+                  </li>
+                  <li>
+                    <span className={styles.eligibilities}>Closing date: </span>
+                    {surveyInfo.closingDate.split("-").reverse().join("/")}
                   </li>
                 </ul>
               </p>
@@ -180,12 +185,13 @@ function SurveyInfo() {
   );
 }
 
-function useFetchListingInfo(surveyId, userFetchingId) {
+function useFetchListingInfo(surveyId) {
   const [isValidSurvey, setIsValidSurvey] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photoURL, setPhotoURL] = useState(null);
   const [surveyType, setSurveyType] = useState("");
+  const [closingDate, setClosingDate] = useState("");
   const [remunerationType, setRemunerationType] = useState(
     "No remuneration given"
   );
@@ -201,6 +207,9 @@ function useFetchListingInfo(surveyId, userFetchingId) {
   const [publisherName, setPublisherName] = useState("");
   const [publisherEmail, setPublisherEmail] = useState("");
 
+  const { userInfo } = useAuth();
+  const userFetchingId = userInfo?.id;
+
   const fetchSurveyInfo = async () => {
     const { data: surveys, error } = await supabaseClient
       .from("surveys")
@@ -209,6 +218,7 @@ function useFetchListingInfo(surveyId, userFetchingId) {
         title,
         description,
         category_id(cat_name),
+        closing_date,
         remunType: remunerations(category_id(cat_name)),
         remunAmount: remunerations(amount),
         other_eligibility_requirements,
@@ -231,6 +241,7 @@ function useFetchListingInfo(surveyId, userFetchingId) {
       setTitle(survey.title);
       setDescription(survey.description);
       setSurveyType(survey.category_id.cat_name);
+      setClosingDate(survey.closing_date);
       if (survey.remunType !== null) {
         setRemunerationType(survey.remunType.category_id.cat_name);
       }
@@ -276,7 +287,6 @@ function useFetchListingInfo(surveyId, userFetchingId) {
       console.log(error);
     }
 
-    // TODO think of the implementation
     if (ethnicity_eligibility.length !== 0) {
       let strOfEthnicities = ethnicity_eligibility.map(
         (ethnicity, index) => (index ? ", " : "") + ethnicity.ethnicities.name
@@ -326,17 +336,17 @@ function useFetchListingInfo(surveyId, userFetchingId) {
   };
 
   const fetchWishlisted = async () => {
-    const { data: wishlisted_surveys, error } = await supabaseClient
-      .from("wishlisted_surveys")
-      .select("*")
-      .eq("survey_id", surveyId)
-      .eq("user_id", userFetchingId);
+      const { data: wishlisted_surveys, error } = await supabaseClient
+        .from("wishlisted_surveys")
+        .select("*")
+        .eq("survey_id", surveyId)
+        .eq("user_id", userFetchingId);
 
-    if (error) {
-      console.log(error);
-    }
+      if (error) {
+        console.log(error);
+      }
 
-    if (wishlisted_surveys.length === 1) {
+    if (wishlisted_surveys?.length === 1) {
       setIsWishlisted(true);
     }
   };
@@ -347,8 +357,11 @@ function useFetchListingInfo(surveyId, userFetchingId) {
     fetchEthnicityEligibility();
     fetchAgeEligibility();
     fetchImgURL();
-    fetchWishlisted();
   }, []);
+
+  useEffect(() => {
+    fetchWishlisted();
+  }, [userInfo]);
 
   return {
     isValidSurvey: isValidSurvey,
@@ -356,6 +369,7 @@ function useFetchListingInfo(surveyId, userFetchingId) {
     description: description,
     photoURL: photoURL,
     surveyType: surveyType,
+    closingDate: closingDate,
     remunerationType: remunerationType,
     remunerationAmount: remunerationAmount,
     genderEligibility: genderEligibility,

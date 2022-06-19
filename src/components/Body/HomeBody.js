@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
 import { getDate } from "../createSurvey/CreateSurvey";
+import { useAuth } from "../../contexts/Auth";
+import moment from "moment";
 
-function HomeBody({
-  filterCriteria,
-}) {
-  const userId = 1; // dummyId
+function HomeBody({ filterCriteria, eligibility }) {
+  const { userInfo } = useAuth();
+  const userId = userInfo.id;
 
   const [numSurveys, setNumSurveys] = useState(0);
   const [surveys, setSurveys] = useState([]);
-  const [wishlists, setWishlists] = useState([]);
+  const [surveysIsLoading, setSurveysIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("Newest survey");
 
   useEffect(() => {
     fetchSurveyListings();
-  }, [filterCriteria]);
+  }, [filterCriteria, userInfo]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -31,79 +32,123 @@ function HomeBody({
   }
 
   const fetchSurveyListings = async () => {
+    setSurveysIsLoading(true);
+
     let filterByType = false;
     let filterByStatus = false;
     let filterByRemuneration = false;
 
     let query = supabaseClient
       .from('surveys')
-      .select('*, remunerations!inner(*, remuneration_categories!inner(*))');
+      .select(`*, 
+                gender_eligibilities!inner(*),
+                age_eligibilities!inner(*),
+                ethnicity_eligibilities!inner(*, ethnicities!inner(*)),
+                remunerations!inner(*, 
+                                    remuneration_categories!inner(*))`);
 
-    if (filterCriteria["survey_categories"].length !== 0) {
-      filterByType = true;
-    }
-    if (filterCriteria["remuneration_categories"].length !== 0) {
-      filterByRemuneration = true;
-    }
-    if (filterCriteria["status"].length === 1) {
-      filterByStatus = true;
-    }
-
-    //TODO: add filter logic here
-    if (filterByType) {
-      query = query.in("category_id", filterCriteria["survey_categories"]);
-    }
-
-    if (filterByRemuneration) {
-      query = query.in(
-        "remunerations.remuneration_categories.id",
-        filterCriteria["remuneration_categories"]
-      );
-    }
-
-    if (filterByStatus) {
-      if (filterCriteria["status"][0] == "ongoing") {
-        query = query.gte("closing_date", getDate(0));
-      } else {
-        query = query.lt("closing_date", getDate(0));
+      if (filterCriteria["survey_categories"].length !== 0) {
+        filterByType = true;
       }
-    }
+      if (filterCriteria["remuneration_categories"].length !== 0) {
+        filterByRemuneration = true;
+      }
+      if (filterCriteria["status"].length === 1) {
+        filterByStatus = true;
+      }
 
-    const { data: surveys, error } = await query
-      .order("id", { ascending: false });
+      //TODO: add filter logic here
+      if (filterByType) {
+        query = query.in("category_id", filterCriteria["survey_categories"]);
+      }
+
+      if (filterByRemuneration) {
+        query = query.in(
+          "remunerations.remuneration_categories.id",
+          filterCriteria["remuneration_categories"]
+        );
+      }
+
+      if (filterByStatus) {
+        if (filterCriteria["status"][0] == "ongoing") {
+          query = query.gte("closing_date", getDate(0));
+        } else {
+          query = query.lt("closing_date", getDate(0));
+        }
+      }
+
+      console.log(userInfo);
+
+      if (eligibility) {
+        //get user info
+        const userGender = userInfo.gender;
+        const userAge = moment().diff(userInfo.date_of_birth, 'years');
+        const { data: userEthnicity, error } = 
+          await supabaseClient
+            .from("ethnicities")
+            .select("name")
+            .eq('id', userInfo.ethnicity_id);
+        console.log(userGender, userAge, userEthnicity[0].name);
+
+        //gender requirements
+        if (userGender == "Male") {
+          query = query.in("gender_eligibilities.gender_eligibility_id", [1, 3]);
+        } else {
+          query = query.in("gender_eligibilities.gender_eligibility_id", [2, 3]);
+        }
+        
+        //age requirements 
+        query = query.or(`and(min_age.lte.${userAge}, max_age.gte.${userAge}), \
+                          and(min_age.lte.${userAge}, max_age.eq.0), \
+                          and(min_age.eq.0, max_age.gte.${userAge}), \
+                          and(min_age.eq.0, max_age.eq.0)`, 
+                          { foreignTable: "age_eligibilities" });
+
+        //ethnicity requirements
+        query = query.eq("ethnicity_eligibilities.ethnicities.name", userEthnicity[0].name);
+      }
+
+      const { data: surveys, error } = await query
+        .neq("published_by", userId)
+        .order("id", { ascending: false });
     
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(surveys);
-    }
-
-    const { data: wishlists, error: wishlistsError } = await supabaseClient
-      .from("wishlisted_surveys")
-      .select("*")
-      .eq("user_id", String(userId));
-
-    surveys.map((survey) => {
-      const match = wishlists.filter(
-        (wishlist) => wishlist.survey_id === survey.id
-      );
-      if (match.length === 0) {
-        survey.isWishlisted = false;
+      if (error) {
+        console.log(error);
       } else {
-        survey.isWishlisted = true;
+        console.log(surveys);
       }
-      return survey;
-    });
+  
+      const { data: wishlists, error: wishlistsError } = await supabaseClient
+        .from("wishlisted_surveys")
+        .select("*")
+        .eq("user_id", userId);
 
-    console.log(surveys);
+      if (wishlistsError) {
+        console.log(wishlistsError);
+      }
+
+      surveys.map((survey) => {
+        const match = wishlists.filter(
+          (wishlist) => wishlist.survey_id === survey.id
+        );
+        if (match.length === 0) {
+          survey.isWishlisted = false;
+        } else {
+          survey.isWishlisted = true;
+        }
+        return survey;
+      });
+
+    // console.log(surveys);
 
     setNumSurveys(surveys.length);
     setSurveys(surveys);
+    setSurveysIsLoading(false);
   };
 
   const renderSurveys = () => {
     return surveys.map((survey) => {
-      return <SurveyCard survey={survey} />;
+      return <SurveyCard survey={survey} userInfo={userInfo} />;
     });
   };
 
@@ -163,7 +208,11 @@ function HomeBody({
           </div>
         </div>
       </div>
-      <div className={styles.surveyListings}>{renderSurveys()}</div>
+      {surveysIsLoading ? (
+        <div>Loading surveys...</div>
+      ) : (
+        <div className={styles.surveyListings}>{renderSurveys()}</div>
+      )}
     </div>
   );
 }

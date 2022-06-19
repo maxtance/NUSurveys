@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 function Navbar() {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [userName, setUserName] = useState("");
 
@@ -22,25 +22,25 @@ function Navbar() {
       console.log(data);
       navigate("/login");
     }
-  }
+  };
 
   const getUserName = async () => {
     const { data, error } = await supabaseClient
       .from("users")
       .select("full_name")
-      .eq("email", user.email)
+      .eq("email", user.email);
 
     if (error) {
       console.log(error);
     } else {
-      console.log(data[0]);
+      // console.log(data[0]);
       setUserName(data[0]["full_name"]);
     }
-  }
+  };
 
   useEffect(() => {
     getUserName();
-  }, [])
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
@@ -69,7 +69,7 @@ function Navbar() {
         >
           <ul className="navbar-nav">
             <NavLink
-              to="/"
+              to="/home"
               className={({ isActive }) =>
                 isActive ? styles.selectedNavItem : styles.unselectedNavItem
               }
@@ -119,7 +119,7 @@ function Navbar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                { userName }
+                {userName}
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end"

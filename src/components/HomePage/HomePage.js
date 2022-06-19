@@ -8,7 +8,8 @@ function HomePage() {
   const [filterCriteria, setFilterCriteria] = useState({
     'survey_categories': [],
     'remuneration_categories': [],
-    'status': []
+    'status': [],
+    'eligibility': false,
   });
 
   const [type, setType] = useState({
@@ -22,6 +23,8 @@ function HomePage() {
     2: false,
     3: false
   });
+
+  const [eligibility, setEligibility] = useState(false);
 
   const [status, setStatus] = useState({
     ongoing: false,
@@ -43,6 +46,11 @@ function HomePage() {
     setStatus({ ...status, [name]: checked });
   };
 
+  const handleEligibilityChange = (e) => {
+    const { checked } = e.target;
+    setEligibility(checked);
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
@@ -58,11 +66,14 @@ function HomePage() {
           handleStatusChange={handleStatusChange}
           filterCriteria={filterCriteria}
           setFilterCriteria={setFilterCriteria}
+          eligibility={eligibility}
+          handleEligibilityChange={handleEligibilityChange}
         />
       </div>
       <div className={styles.mainContent}>
         <HomeBody 
           filterCriteria={filterCriteria}
+          eligibility={eligibility}
         />
       </div>
       <div className={styles.footer}></div>

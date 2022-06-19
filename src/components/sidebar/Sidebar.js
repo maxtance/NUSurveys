@@ -11,7 +11,9 @@ function Sidebar({
   status,
   handleStatusChange,
   filterCriteria,
-  setFilterCriteria
+  setFilterCriteria,
+  eligibility,
+  handleEligibilityChange
 }) {
   // get setSurveys from HomeBody.js to set the changes when filter button is clicked
   // need to lift things up to HomePage since HomePage is the parent of Sidebar and HomeBody
@@ -19,6 +21,7 @@ function Sidebar({
     survey_categories: [],
     remuneration_categories: [],
     status: [],
+    eligibility: false,
   };
 
   const addCriterion = (criteria, criterion) => {
@@ -32,12 +35,13 @@ function Sidebar({
       }
     }
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     addCriteria(type, "survey_categories");
     addCriteria(remuneration, "remuneration_categories");
     addCriteria(status, "status");
+    temp["eligibility"] = eligibility;
     setFilterCriteria({ ...filterCriteria, ...temp });
   };
 
@@ -50,7 +54,12 @@ function Sidebar({
       <form className={styles.filter} onSubmit={handleSubmit}>
         <div className={styles.filterEligibility}>
           <label for="eligibleSurveys">Only show eligible surveys: </label>
-          <input type="checkbox" className={styles.eligibilityCheckbox}></input>
+          <input 
+            type="checkbox" 
+            className={styles.eligibilityCheckbox} 
+            value={eligibility}
+            onChange={handleEligibilityChange}
+          />
         </div>
         <div className={styles.filterType}>
           <h6>Type</h6>
@@ -69,7 +78,7 @@ function Sidebar({
             value={type[2]}
             onChange={handleTypeChange}
           />
-          <label for="researchPhysical">Research Study Physical</label> <br />
+          <label for="researchPhysical">Research Study (Remote)</label> <br />
           <input
             type="checkbox"
             name="3"
@@ -77,7 +86,7 @@ function Sidebar({
             value={type[3]}
             onChange={handleTypeChange}
           />
-          <label for="researchRemote">Research Study Remote</label> <br />
+          <label for="researchRemote">Research Study (On-site)</label> <br />
         </div>
         <div className={styles.filterRemuneration}>
           <h6>Remuneration</h6>
