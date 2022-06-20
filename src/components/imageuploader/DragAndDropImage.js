@@ -44,7 +44,6 @@ function DragAndDropImage({ image, setImage, previewUrl, setPreviewUrl }) {
 
   const handleClick = () => {
     inputRef.current.click();
-    console.log("UHHHHH");
   };
 
   return (

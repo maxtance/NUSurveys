@@ -64,6 +64,7 @@ function CreateSurvey() {
     last_updated: getDate(0),
     published_by: userId,
   });
+
   useEffect(() => {
     setSurvey((prevSurvey) => {
       return { ...prevSurvey, published_by: userId };

@@ -60,11 +60,11 @@ function MySurveys() {
       .order("id", { ascending: false })
       .eq("published_by", userId);
 
-      if (error) {
-        console.log(error);
-      }
+    if (error) {
+      console.log(error);
+    }
 
-      setNumSurveys(surveys.length);
+    setNumSurveys(surveys.length);
 
     setUneditedSurveys(surveys);
     setSurveys(surveys);

@@ -185,6 +185,35 @@ function SurveyInfo() {
   );
 }
 
+export const fetchSurveyInfo = async (surveyId) => {
+  const { data: surveys, error } = await supabaseClient
+    .from("surveys")
+    .select(
+      `
+      title,
+      description,
+      category_id(cat_name),
+      closing_date,
+      remunType: remunerations(category_id(cat_name)),
+      remunAmount: remunerations(amount),
+      other_eligibility_requirements,
+      publisherName: users!surveys_published_by_fkey(full_name),
+      publisherEmail: users!surveys_published_by_fkey(email),
+      link,
+      published_by
+    `
+    )
+    .eq("id", surveyId);
+
+  if (error) {
+    console.log(error);
+  }
+
+  const survey = surveys[0];
+  // console.log(survey);
+  return survey;
+};
+
 function useFetchListingInfo(surveyId) {
   const [isValidSurvey, setIsValidSurvey] = useState(null);
   const [title, setTitle] = useState("");
@@ -210,32 +239,8 @@ function useFetchListingInfo(surveyId) {
   const { userInfo } = useAuth();
   const userFetchingId = userInfo?.id;
 
-  const fetchSurveyInfo = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select(
-        `
-        title,
-        description,
-        category_id(cat_name),
-        closing_date,
-        remunType: remunerations(category_id(cat_name)),
-        remunAmount: remunerations(amount),
-        other_eligibility_requirements,
-        publisherName: users!surveys_published_by_fkey(full_name),
-        publisherEmail: users!surveys_published_by_fkey(email),
-        link,
-        published_by
-      `
-      )
-      .eq("id", surveyId);
-
-    if (error) {
-      console.log(error);
-    }
-
-    const survey = surveys[0];
-    // console.log(survey);
+  const initialiseVariables = async () => {
+    const survey = await fetchSurveyInfo(surveyId);
     if (survey !== undefined) {
       setIsValidSurvey(true);
       setTitle(survey.title);
@@ -260,7 +265,7 @@ function useFetchListingInfo(surveyId) {
     } else {
       setIsValidSurvey(false);
     }
-  };
+  }
 
   const fetchGenderEligibility = async () => {
     const { data: gender_eligibilities, error } = await supabaseClient
@@ -352,7 +357,7 @@ function useFetchListingInfo(surveyId) {
   };
 
   useEffect(() => {
-    fetchSurveyInfo();
+    initialiseVariables();
     fetchGenderEligibility();
     fetchEthnicityEligibility();
     fetchAgeEligibility();

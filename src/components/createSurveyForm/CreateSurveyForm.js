@@ -21,6 +21,7 @@ function CreateSurveyForm({
   register,
   errors,
   watch,
+  other_eligibility_requirements
 }) {
   const URL_REGEX =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
@@ -167,7 +168,7 @@ function CreateSurveyForm({
                 {...register("category_id", {
                   required: "Please select a survey type",
                 })}
-                value={survey.category_id}
+                defaultValue={survey.category_id}
                 onChange={(e) => {
                   register("category_id").onChange(e);
                   handleInputChange(e);
@@ -195,7 +196,7 @@ function CreateSurveyForm({
                 {...register("remuneration_id", {
                   required: "Please select a remuneration type",
                 })}
-                value={survey.remuneration_id}
+                defaultValue={survey.remuneration_id}
                 onChange={(e) => {
                   register("remuneration_id").onChange(e);
                   handleInputChange(e);
@@ -254,6 +255,7 @@ function CreateSurveyForm({
           <input
             type="date"
             name="closing_date"
+            {...register("closing_date")}
             min={new Date().toISOString().split("T")[0]}
             value={survey.closing_date}
             onChange={handleInputChange}
@@ -363,7 +365,8 @@ function CreateSurveyForm({
                   class="form-check-input"
                   type="checkbox"
                   name="chinese"
-                  value={ethnicityEligibility.chinese}
+                  {...register("chinese")}
+                  defaultValue={ethnicityEligibility.chinese}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault"
                 ></input>
@@ -380,7 +383,8 @@ function CreateSurveyForm({
                   class="form-check-input"
                   type="checkbox"
                   name="malay"
-                  value={ethnicityEligibility.malay}
+                  {...register("malay")}
+                  defaultValue={ethnicityEligibility.malay}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault"
                 ></input>
@@ -397,7 +401,8 @@ function CreateSurveyForm({
                   class="form-check-input"
                   type="checkbox"
                   name="indian"
-                  value={ethnicityEligibility.indian}
+                  {...register("indian")}
+                  defaultValue={ethnicityEligibility.indian}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault"
                 ></input>
@@ -414,7 +419,8 @@ function CreateSurveyForm({
                   class="form-check-input"
                   type="checkbox"
                   name="others"
-                  value={ethnicityEligibility.others}
+                  {...register("others")}
+                  defaultValue={ethnicityEligibility.others}
                   onChange={handleCheckboxChange}
                   id="flexCheckDefault"
                 ></input>
@@ -439,7 +445,8 @@ function CreateSurveyForm({
               <textarea
                 type="text"
                 name="other_eligibility_requirements"
-                value={survey.other_eligibility_requirements}
+                {...register("other_eligibility_requirements")}
+                defaultValue={survey.other_eligibility_requirements}
                 onChange={handleInputChange}
                 class="form-control"
                 id={styles.otherRequirements}
