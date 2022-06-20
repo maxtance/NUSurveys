@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import bookmarkEmpty from "../../assets/bookmark/bookmark_empty.png";
 import bookmarkFilled from "../../assets/bookmark/bookmark_filled.png";
 import useBookmark from "../../helpers/useBookmark";
+import { isSurveyClosed } from "../../helpers/helperFunctions";
 
 function SurveyCard(props) {
   const userInfo = props.userInfo;
@@ -32,7 +33,14 @@ function SurveyCard(props) {
           <></>
         )}
 
-        <h2 className={styles.surveyCard__title}>{props.survey.title}</h2>
+        <h2 className={styles.surveyCard__title}>
+          {props.survey.title}
+          {isSurveyClosed(props.survey.closing_date) ? (
+            <span className={styles.closedTitle}> (CLOSED)</span>
+          ) : (
+            <></>
+          )}
+        </h2>
         <p className={styles.surveyCard__description}>
           {props.survey.description}
         </p>

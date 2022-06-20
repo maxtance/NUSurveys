@@ -1,12 +1,12 @@
-import styles from "./HomeBody.module.css";
+import styles from "./Body.module.css";
 import SearchBar from "../SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
-import useFetchUser from "../../helpers/useFetchUser";
 import { useAuth } from "../../contexts/Auth";
+import { isSurveyClosed } from "../../helpers/helperFunctions";
 
-function HomeBody() {
+function Body(props) {
   const { userInfo } = useAuth();
   const userId = userInfo.id;
 
@@ -62,10 +62,22 @@ function HomeBody() {
       return survey;
     });
 
-    // console.log(surveys);
+    // Filter survey listings based on Page
+    if (props.page === "Home") {
+      // Filter surveys based on Home page criteria
+      const newSurveys = surveys.filter(
+        (survey) => !isSurveyClosed(survey.closing_date)
+      );
+      setNumSurveys(newSurveys.length);
+      setSurveys(newSurveys);
+    } else if (props.page === "Wishlist") {
+      // Filter surveys based on Wishlist page criteria
+      const newSurveys = surveys.filter((survey) => survey.isWishlisted);
+      // console.log(newSurveys);
+      setNumSurveys(newSurveys.length);
+      setSurveys(newSurveys);
+    }
 
-    setNumSurveys(surveys.length);
-    setSurveys(surveys);
     setSurveysIsLoading(false);
   };
 
@@ -82,11 +94,22 @@ function HomeBody() {
           <SearchBar />
         </div>
         <div className="d-flex justify-content-between pb-3">
-          <div className={styles.pageHeader}>
-            Showing <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
-            Survey Listing
-            {numSurveys > 1 ? "s" : ""}
-          </div>
+          {props.page === "Home" ? (
+            <div className={styles.pageHeader}>
+              Showing{" "}
+              <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
+              Survey Listing
+              {numSurveys > 1 ? "s" : ""}
+            </div>
+          ) : (
+            <div className={styles.pageHeader}>
+              You have{" "}
+              <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
+              Survey
+              {numSurveys === 1 ? " " : "s "}
+              in your Wishlist
+            </div>
+          )}
           <div className="dropdown">
             <span className={styles.sortBy}>Sort by:</span>
             <button
@@ -139,4 +162,4 @@ function HomeBody() {
   );
 }
 
-export default HomeBody;
+export default Body;

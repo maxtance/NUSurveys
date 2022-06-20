@@ -45,3 +45,7 @@ p {
 .contactName {
     font-weight: 600;
 }
+
+.cursorPointer {
+    cursor: pointer;
+}

@@ -1,34 +1,88 @@
 import styles from "./SurveyInfo.module.css";
 import Navbar from "../navbar/Navbar";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import useBookmark from "../../helpers/useBookmark";
 import { useAuth } from "../../contexts/Auth";
+import { isSurveyClosed } from "../../helpers/helperFunctions";
 
 // Things left to implement:
 // 1. For owner
-//     a. Mark listing as closed
-//     b. Delete listing
+//     a. Edit listing
+//     b. Mark listing as closed
+//     c. Delete listing
 // 2. For surveyor
-//     a. Add to wishlist
-//     b. Mark survey as complete
+//     a. Mark survey as complete
 
 function SurveyInfo() {
   let { surveyId } = useParams();
+  let navigate = useNavigate();
   const { userInfo } = useAuth();
   const userId = userInfo.id;
 
   const surveyInfo = useFetchListingInfo(surveyId);
-  // console.log(surveyInfo);
   const [isBookmarked, setAndUpdateIsBookmarked] = useBookmark(
     surveyInfo.isWishlisted,
     surveyId
   );
-  // console.log(surveyInfo.isWishlisted, isBookmarked);
 
   function toggleBookmark() {
     setAndUpdateIsBookmarked();
+  }
+
+  const [isClosed, setIsClosed] = useState(
+    isSurveyClosed(surveyInfo.closingDate)
+  );
+  useEffect(
+    () => setIsClosed(isSurveyClosed(surveyInfo.closingDate)),
+    [surveyInfo.closingDate]
+  );
+
+  function handleCloseListing() {
+    // Update closing_date of survey to 2000-1-1
+    const newClosingDate = "2000-1-1";
+    const updateClosingDate = async () => {
+      console.log("Update closing data");
+      const { data, error } = await supabaseClient
+        .from("surveys")
+        .update({ closing_date: newClosingDate })
+        .eq("id", surveyId);
+    };
+    updateClosingDate();
+    // Rerender my listing component
+    setIsClosed(true);
+  }
+
+  function handleDeleteListing() {
+    // update database is_closed = true
+    const updateIsDeleted = async () => {
+      console.log("Deleting survey");
+      const { data, error } = await supabaseClient
+        .from("surveys")
+        .update({ is_deleted: true })
+        .eq("id", surveyId);
+    };
+    updateIsDeleted();
+    // redirect to mysurveys
+    navigate("/mysurveys");
+  }
+
+  function handleOpenListing() {
+    // get user to input newClosingDate
+    const newClosingDate = document.getElementById("newClosingDate").value;
+    // update database closing_date to newClosingDate
+    const updateClosingDate = async () => {
+      console.log("Update closing data");
+      const { data, error } = await supabaseClient
+        .from("surveys")
+        .update({ closing_date: newClosingDate })
+        .eq("id", surveyId);
+    };
+    updateClosingDate();
+
+    // Rerender my listing component
+    setIsClosed(false);
   }
 
   if (surveyInfo.isValidSurvey === null) {
@@ -115,15 +169,28 @@ function SurveyInfo() {
                 </ul>
               </p>
             </div>
-            <a
-              className="btn btn-primary mt-3"
-              href={surveyInfo.link}
-              target="_blank"
-              rel="noreferrer noopener"
-              role="button"
-            >
-              Link to survey
-            </a>
+            {isClosed ? (
+              <a
+                className="btn btn-primary disabled mt-3"
+                href={surveyInfo.surveyLink}
+                target="_blank"
+                rel="noreferrer noopener"
+                role="button"
+                aria-disabled="true"
+              >
+                Survey is closed
+              </a>
+            ) : (
+              <a
+                className="btn btn-primary mt-3"
+                href={surveyInfo.surveyLink}
+                target="_blank"
+                rel="noreferrer noopener"
+                role="button"
+              >
+                Link to survey
+              </a>
+            )}
           </div>
           <div className="offset-md-1 col-md-4">
             {/* Only have this component if nusnetid don't match */}
@@ -136,9 +203,15 @@ function SurveyInfo() {
                 >
                   {isBookmarked ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
-                <button type="button" className="btn btn-primary">
-                  Mark as Completed
-                </button>
+                {isSurveyClosed(surveyInfo.closingDate) ? (
+                  <button type="button" className="btn btn-primary" disabled>
+                    Mark as Completed
+                  </button>
+                ) : (
+                  <button type="button" className="btn btn-primary">
+                    Mark as Completed
+                  </button>
+                )}
               </div>
             ) : (
               <></>
@@ -153,9 +226,22 @@ function SurveyInfo() {
                   <div className="card-body">
                     <p className="card-text">
                       <ul className={styles.noBullets}>
-                        <li>Edit listing</li>
-                        <li>Mark listing as closed</li>
-                        <li>Delete listing</li>
+                        <li>Edit listing {isClosed ? "(Disabled)" : ""}</li>
+                        {isClosed ? (
+                          <PopUp
+                            value="Open"
+                            handleOnClick={handleOpenListing}
+                          />
+                        ) : (
+                          <PopUp
+                            value="Close"
+                            handleOnClick={handleCloseListing}
+                          />
+                        )}
+                        <PopUp
+                          value="Delete"
+                          handleOnClick={handleDeleteListing}
+                        />
                       </ul>
                     </p>
                   </div>
@@ -177,6 +263,111 @@ function SurveyInfo() {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function PopUp(props) {
+  const target = props.value + "Modal";
+  const [newDate, setNewDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  return (
+    <>
+      <li
+        className={styles.cursorPointer}
+        data-bs-toggle="modal"
+        data-bs-target={`#${target}`}
+      >
+        {props.value === "Close"
+          ? "Mark listing as closed"
+          : props.value === "Open"
+          ? "Reopen listing"
+          : "Delete listing"}
+      </li>
+
+      <div
+        className="modal fade"
+        id={target}
+        aria-labelledby={`${target}Label`}
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id={`${target}Label`}>
+                {props.value === "Close"
+                  ? "Mark your listing as Closed?"
+                  : props.value === "Open"
+                  ? "Reopen your survey listing?"
+                  : "Delete this listing?"}
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              {props.value === "Close" ? (
+                "Users can no longer access the survey link."
+              ) : props.value === "Open" ? (
+                <>
+                  Set new closing date:
+                  <input
+                    type="date"
+                    min={new Date().toISOString().split("T")[0]}
+                    value={newDate}
+                    onChange={(e) => setNewDate(e.target.value)}
+                    id="newClosingDate"
+                  />
+                </>
+              ) : (
+                "You cannot undo this action."
+              )}
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              {props.value === "Close" ? (
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  onClick={props.handleOnClick}
+                >
+                  Close listing
+                </button>
+              ) : props.value === "Open" ? (
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  onClick={props.handleOnClick}
+                >
+                  Reopen
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  onClick={props.handleOnClick}
+                >
+                  Yes, delete
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -357,11 +548,12 @@ function useFetchListingInfo(surveyId) {
     fetchEthnicityEligibility();
     fetchAgeEligibility();
     fetchImgURL();
+    fetchWishlisted();
   }, []);
 
-  useEffect(() => {
-    fetchWishlisted();
-  }, [userInfo]);
+  // useEffect(() => {
+  //   fetchWishlisted();
+  // }, [userInfo]);
 
   return {
     isValidSurvey: isValidSurvey,

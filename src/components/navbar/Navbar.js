@@ -3,14 +3,11 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
 import { useAuth } from "../../contexts/Auth";
-import { supabaseClient } from "../../lib/client";
-import { useEffect, useState } from "react";
 
 function Navbar() {
-  const { user, signOut } = useAuth();
+  const { userInfo, signOut } = useAuth();
+  const userName = userInfo.full_name;
   const navigate = useNavigate();
-
-  const [userName, setUserName] = useState("");
 
   const handleSignOut = async () => {
     // Ends user session
@@ -23,24 +20,6 @@ function Navbar() {
       navigate("/login");
     }
   };
-
-  const getUserName = async () => {
-    const { data, error } = await supabaseClient
-      .from("users")
-      .select("full_name")
-      .eq("email", user.email);
-
-    if (error) {
-      console.log(error);
-    } else {
-      // console.log(data[0]);
-      setUserName(data[0]["full_name"]);
-    }
-  };
-
-  useEffect(() => {
-    getUserName();
-  }, []);
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
@@ -92,11 +71,18 @@ function Navbar() {
                 </a>
               </li>
             </NavLink>
-            <li className={`nav-item ${styles.navCenter}`}>
-              <a className="nav-link" href="#">
-                Wishlist
-              </a>
-            </li>
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                isActive ? styles.selectedNavItem : styles.unselectedNavItem
+              }
+            >
+              <li className={`nav-item ${styles.navCenter}`}>
+                <a className="nav-link" href="#">
+                  Wishlist
+                </a>
+              </li>
+            </NavLink>
           </ul>
         </div>
 

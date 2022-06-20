@@ -11,9 +11,6 @@ function useBookmark(initValue, surveyId) {
   // useState will only use initValue on first render.
   useEffect(() => setIsBookmarked(initValue), [initValue]);
 
-  // const { userInfo, userInfoIsLoading } = useFetchUser();
-  // const userId = userInfo?.id;
-
   function setAndUpdateIsBookmarked() {
     setIsBookmarked((prevState) => !prevState);
     updateWishlistDb(isBookmarked, surveyId, userId);
@@ -23,6 +20,7 @@ function useBookmark(initValue, surveyId) {
 }
 
 async function updateWishlistDb(isBookmarked, surveyId, userId) {
+  console.log("useBookmark fetch data from wishlisted_surveys");
   if (isBookmarked) {
     // remove wishlist data from database
     const { data, error } = await supabaseClient

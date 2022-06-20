@@ -1,7 +1,7 @@
 import styles from "./HomePage.module.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
-import HomeBody from "../Body/HomeBody";
+import Body from "../Body/Body";
 
 function HomePage() {
   return (
@@ -13,7 +13,7 @@ function HomePage() {
         <Sidebar />
       </div>
       <div className={styles.mainContent}>
-        <HomeBody />
+        <Body page="Home" />
       </div>
       <div className={styles.footer}></div>
     </div>
