@@ -21,7 +21,8 @@ function CreateSurveyForm({
   register,
   errors,
   watch,
-  other_eligibility_requirements
+  edit,
+  source,
 }) {
   const URL_REGEX =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
@@ -79,10 +80,10 @@ function CreateSurveyForm({
                     message: "Exceeded character limit of 250",
                   },
                 })}
-                value={survey.title}
+                value={source.title}
                 onChange={(e) => {
                   register("title").onChange(e);
-                  handleInputChange(e);
+                  handleInputChange(e, edit);
                 }}
                 class="form-control"
                 id={styles.title}
@@ -102,10 +103,10 @@ function CreateSurveyForm({
                     message: "Exceeded character limit of 1000",
                   },
                 })}
-                value={survey.description}
+                value={source.description}
                 onChange={(e) => {
                   register("description").onChange(e);
-                  handleInputChange(e);
+                  handleInputChange(e, edit);
                 }}
                 class="form-control"
                 id={styles.description}
@@ -127,10 +128,10 @@ function CreateSurveyForm({
                     message: "Invalid URL",
                   },
                 })}
-                value={survey.link}
+                value={source.link}
                 onChange={(e) => {
                   register("link").onChange(e);
-                  handleInputChange(e);
+                  handleInputChange(e, edit);
                 }}
                 class="form-control"
                 id={styles.link}
@@ -168,10 +169,10 @@ function CreateSurveyForm({
                 {...register("category_id", {
                   required: "Please select a survey type",
                 })}
-                defaultValue={survey.category_id}
+                value={source.category_id}
                 onChange={(e) => {
                   register("category_id").onChange(e);
-                  handleInputChange(e);
+                  handleInputChange(e, edit);
                 }}
                 id={styles.surveyType}
               >
@@ -196,10 +197,10 @@ function CreateSurveyForm({
                 {...register("remuneration_id", {
                   required: "Please select a remuneration type",
                 })}
-                defaultValue={survey.remuneration_id}
+                value={source.remuneration_id}
                 onChange={(e) => {
                   register("remuneration_id").onChange(e);
-                  handleInputChange(e);
+                  handleInputChange(e, edit);
                 }}
                 id={styles.remunerationType}
               >
@@ -232,10 +233,10 @@ function CreateSurveyForm({
                     message: "Invalid amount. Please try again",
                   },
                 })}
-                value={remunerationAmount}
+                value={edit ? source.remunerationAmount : remunerationAmount}
                 onChange={(e) => {
                   register("remunerationAmount").onChange(e);
-                  handleAmountInputChange(e);
+                  handleAmountInputChange(e, edit);
                 }}
                 class="form-control"
                 id={styles.remunerationAmount}
@@ -257,8 +258,11 @@ function CreateSurveyForm({
             name="closing_date"
             {...register("closing_date")}
             min={new Date().toISOString().split("T")[0]}
-            value={survey.closing_date}
-            onChange={handleInputChange}
+            value={source.closing_date}
+            onChange={(e) => {
+              register("closing_date").onChange(e);
+              handleInputChange(e, edit);
+            }}
             id={styles.closingDate}
           ></input>
         </div>
@@ -278,10 +282,10 @@ function CreateSurveyForm({
                 {...register("genderEligibility", {
                   required: "Please select a gender eligibility requirement",
                 })}
-                value={genderEligibility}
+                value={edit ? source.genderEligibility : genderEligibility}
                 onChange={(e) => {
                   register("genderEligibility").onChange(e);
-                  handleGenderInputChange(e);
+                  handleGenderInputChange(e, edit);
                 }}
                 id={styles.gender}
               >
@@ -313,8 +317,11 @@ function CreateSurveyForm({
                     message: "Invalid age. Please try again",
                   },
                 })}
-                value={minAge}
-                onChange={handleMinAgeInputChange}
+                value={edit ? source.minAge : minAge}
+                onChange={(e) => {
+                  register("minAge").onChange(e);
+                  handleMinAgeInputChange(e, edit);
+                }}
                 class="form-control"
                 id={styles.minAge}
               ></input>
@@ -339,8 +346,11 @@ function CreateSurveyForm({
                     message: "Invalid age. Please try again",
                   },
                 })}
-                value={maxAge}
-                onChange={handleMaxAgeInputChange}
+                value={edit ? source.maxAge : maxAge}
+                onChange={(e) => {
+                  register("maxAge").onChange(e);
+                  handleMaxAgeInputChange(e, edit);
+                }}
                 class="form-control"
                 id="max-age"
               ></input>
@@ -366,8 +376,11 @@ function CreateSurveyForm({
                   type="checkbox"
                   name="chinese"
                   {...register("chinese")}
-                  defaultValue={ethnicityEligibility.chinese}
-                  onChange={handleCheckboxChange}
+                  value={ethnicityEligibility.chinese}
+                  onChange={(e) => {
+                    register("chinese").onChange(e);
+                    handleCheckboxChange(e, edit);
+                  }}
                   id="flexCheckDefault"
                 ></input>
                 <label
@@ -384,8 +397,11 @@ function CreateSurveyForm({
                   type="checkbox"
                   name="malay"
                   {...register("malay")}
-                  defaultValue={ethnicityEligibility.malay}
-                  onChange={handleCheckboxChange}
+                  value={ethnicityEligibility.malay}
+                  onChange={(e) => {
+                    register("malay").onChange(e);
+                    handleCheckboxChange(e, edit);
+                  }}
                   id="flexCheckDefault"
                 ></input>
                 <label
@@ -402,8 +418,11 @@ function CreateSurveyForm({
                   type="checkbox"
                   name="indian"
                   {...register("indian")}
-                  defaultValue={ethnicityEligibility.indian}
-                  onChange={handleCheckboxChange}
+                  //defaultValue={ethnicityEligibility.indian}
+                  onChange={(e) => {
+                    register("indian").onChange(e);
+                    handleCheckboxChange(e, edit);
+                  }}
                   id="flexCheckDefault"
                 ></input>
                 <label
@@ -420,8 +439,11 @@ function CreateSurveyForm({
                   type="checkbox"
                   name="others"
                   {...register("others")}
-                  defaultValue={ethnicityEligibility.others}
-                  onChange={handleCheckboxChange}
+                  //defaultValue={ethnicityEligibility.others}
+                  onChange={(e) => {
+                    register("others").onChange(e);
+                    handleCheckboxChange(e, edit);
+                  }}
                   id="flexCheckDefault"
                 ></input>
                 <label
@@ -446,8 +468,11 @@ function CreateSurveyForm({
                 type="text"
                 name="other_eligibility_requirements"
                 {...register("other_eligibility_requirements")}
-                defaultValue={survey.other_eligibility_requirements}
-                onChange={handleInputChange}
+                //defaultValue={survey.other_eligibility_requirements}
+                onChange={(e) => {
+                  register("other_eligibility_requirements").onChange(e);
+                  handleInputChange(e, edit);
+                }}
                 class="form-control"
                 id={styles.otherRequirements}
                 placeholder="Have other eligibility requirements for your survey? List them here!"

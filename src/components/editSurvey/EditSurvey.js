@@ -36,6 +36,8 @@ function EditSurvey() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(true);
+  const [oldFields, setOldFields] = useState({});
   const [updatedFields, setUpdatedFields] = useState({});
 
   const [ethnicityEligibility, setEthnicityEligibility] = useState({
@@ -57,27 +59,25 @@ function EditSurvey() {
       .from("ethnicity_eligibilities")
       .select("ethnicities(name)")
       .eq("survey_id", surveyId);
-    console.log(data);
     return data;
   };
 
   const initEthnicityEligibility = async () => {
     const result = await fetchEthnicityEligibility();
-    surveyInfo = { ...surveyInfo, "ethnicityEligibility" : {}}
+    surveyInfo = { ...surveyInfo, ethnicityEligibility: {} };
     if (result.length !== 4) {
       result.map(async (record) => {
         const { data } = await supabaseClient
           .from("ethnicities")
           .select("id")
           .eq("name", record.ethnicities.name);
-        console.log(data);
         setEthnicityEligibility({
           ...ethnicityEligibility,
           [record.ethnicities.name]: true,
         });
         surveyInfo = {
           ...surveyInfo,
-          "ethnicityEligibility": {
+          ethnicityEligibility: {
             ...surveyInfo.ethnicityEligibility,
             [record.ethnicities.name]: true,
           },
@@ -159,44 +159,302 @@ function EditSurvey() {
     }
   };
 
-  const updateSurveyListing = async () => {
+  const cleanUpdatedFields = async () => {
     //TODO: update survey listing logic
+    let tempState = { ...updatedFields };
+    Object.keys(updatedFields).forEach((key) => {
+      if (key in oldFields && updatedFields[key] == oldFields[key]) {
+        delete tempState[key];
+      } else if (!(key in oldFields)) {
+        //checkbox for ethnicity was originally checked
+        let capitalisedKey = key.charAt(0).toUpperCase() + key.slice(1);
+        if (capitalisedKey in oldFields.ethnicityEligibility) {
+          if (
+            updatedFields[key] == oldFields.ethnicityEligibility[capitalisedKey]
+          ) {
+            delete tempState[key];
+          }
+        } else {
+          //checkbox was not originally checked
+          if (!updatedFields[key]) {
+            delete tempState[key];
+          }
+        }
+      }
+      setUpdatedFields(tempState);
+      setIsUpdating(false);
+    });
   };
 
   const onFormSubmit = async (e) => {
     //e.preventDefault();
-    await updateSurveyListing();
-    navigate("/mysurveys");
+    await cleanUpdatedFields();
+    //navigate("/mysurveys");
   };
 
-  const handleInputChange = (e) => {
+  const updateDatabaseRecords = async () => {
+    console.log(updatedFields);
+    console.log(oldFields);
+    //update title, desc, link, cat_id in surveys first
+    Object.keys(updatedFields).forEach(async (key) => {
+      if (
+        key === "title" ||
+        key === "description" ||
+        key === "link" ||
+        key === "category_id" ||
+        key === "closing_date" ||
+        key === "other_eligibility_requirements"
+      ) {
+        const { data, error } = await supabaseClient
+          .from("surveys")
+          .update({ [key]: updatedFields[key] })
+          .match({ id: surveyId });
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(`Updated ${key} successfully`);
+        }
+      }
+      //update remuneration info
+      if (key === "remuneration_id") {
+        if (updatedFields[key] === "3") {
+          const { data, error } = await supabaseClient
+            .from("surveys")
+            .update({
+              remuneration_id: 1,
+            })
+            .match({ id: surveyId });
+        } else {
+          if ("remunerationAmount" in updatedFields) {
+            const { count } = await supabaseClient
+              .from("remunerations")
+              .select("id", { count: "exact", head: true });
+
+            const { data: remunerationRecord, error } = await supabaseClient
+              .from("remunerations")
+              .select()
+              .eq("category_id", updatedFields[key])
+              .eq("amount", updatedFields["remunerationAmount"]);
+
+            //no existing remuneration record found. add to remunerations table
+            if (remunerationRecord.length === 0) {
+              const { error } = await supabaseClient
+                .from("remunerations")
+                .insert({
+                  id: count + 1,
+                  category_id: updatedFields[key],
+                  amount: updatedFields["remunerationAmount"],
+                });
+
+              const { data } = await supabaseClient
+                .from("surveys")
+                .update({
+                  remuneration_id: count + 1,
+                })
+                .match({ id: surveyId });
+            } else {
+              const { data } = await supabaseClient
+                .from("surveys")
+                .update({
+                  remuneration_id: remunerationRecord[0].id,
+                })
+                .match({ id: surveyId });
+            }
+          } else {
+            const { count } = await supabaseClient
+              .from("remunerations")
+              .select("id", { count: "exact", head: true });
+
+            const { data: remunerationRecord, error } = await supabaseClient
+              .from("remunerations")
+              .select()
+              .eq("category_id", updatedFields[key])
+              .eq("amount", oldFields["remunAmount"].amount);
+
+            //no existing remuneration record found. add to remunerations table
+            if (remunerationRecord.length === 0) {
+              const { error } = await supabaseClient
+                .from("remunerations")
+                .insert({
+                  id: count + 1,
+                  category_id: updatedFields[key],
+                  amount: oldFields["remunAmount"].amount,
+                });
+
+              const { data } = await supabaseClient
+                .from("surveys")
+                .update({
+                  remuneration_id: count + 1,
+                })
+                .match({ id: surveyId });
+            } else {
+              const { data } = await supabaseClient
+                .from("surveys")
+                .update({
+                  remuneration_id: remunerationRecord[0].id,
+                })
+                .match({ id: surveyId });
+            }
+          }
+        }
+        console.log("Updated remuneration information successfully");
+      }
+
+      if (key === "remunerationAmount") {
+        //console.log(oldFields["remunType"].category_id);
+        const { count } = await supabaseClient
+          .from("remunerations")
+          .select("id", { count: "exact", head: true });
+
+        const { data: remunerationRecord, error } = await supabaseClient
+          .from("remunerations")
+          .select()
+          .eq("category_id", oldFields["remuneration_id"])
+          .eq("amount", updatedFields["remunerationAmount"]);
+
+        console.log(remunerationRecord);
+
+        //no existing remuneration record found. add to remunerations table
+        if (remunerationRecord.length === 0) {
+          const { error } = await supabaseClient.from("remunerations").insert({
+            id: count + 1,
+            category_id: oldFields["remuneration_id"],
+            amount: updatedFields["remunerationAmount"],
+          });
+
+          const { data } = await supabaseClient
+            .from("surveys")
+            .update({
+              remuneration_id: count + 1,
+            })
+            .match({ id: surveyId });
+        } else {
+          const { data } = await supabaseClient
+            .from("surveys")
+            .update({
+              remuneration_id: remunerationRecord[0].id,
+            })
+            .match({ id: surveyId });
+        }
+        console.log("Updated remuneration amount successfully");
+      }
+
+      //update gender eligibility
+      if (key === "genderEligibility") {
+        const { data, error } = await supabaseClient
+          .from("gender_eligibilities")
+          .update({
+            gender_eligibility_id: updatedFields[key],
+          })
+          .match({ survey_id: surveyId });
+
+        if (!error) {
+          console.log("Updated gender eligibility successfully");
+        }
+      }
+
+      //update age eligibility
+      if (key === "minAge" || key === "maxAge") {
+        const { data, error } = await supabaseClient
+          .from("age_eligibilities")
+          .update({
+            [key === "minAge" ? "min_age" : "max_age"]: updatedFields[key],
+          })
+          .match({ survey_id: surveyId });
+
+        if (!error) {
+          console.log("Updated age eligibility successfully");
+        }
+      }
+
+      //update ethnicity eligibility
+      if (
+        key == "chinese" ||
+        key === "malay" ||
+        key === "indian" ||
+        key === "others"
+      ) {
+        const { data: ethnicity } = await supabaseClient
+          .from("ethnicities")
+          .select()
+          .ilike("name", key);
+        if (updatedFields[key]) {
+          const { data, error } = await supabaseClient
+            .from("ethnicity_eligibilities")
+            .insert([
+              {
+                survey_id: surveyId,
+                ethnicity_id: ethnicity[0].id,
+              },
+            ]);
+        } else {
+          const { data, error } = await supabaseClient
+            .from("ethnicity_eligibilities")
+            .delete()
+            .match({ survey_id: surveyId, ethnicity_id: ethnicity[0].id });
+        }
+        console.log("Updated ethnicity eligibility requirements");
+      }
+    });
+
+    setUpdatedFields({});
+    //update last_updated field
+    //console.log(updatedFields);
+  };
+
+  useEffect(() => {
+    if (!isUpdating) {
+      updateDatabaseRecords();
+      navigate("/mysurveys");
+    }
+  }, [isUpdating]);
+
+  const handleInputChange = (e, edit) => {
     const { name, value } = e.target;
     setSurvey({ ...survey, [name]: value });
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, [name]: value });
+    }
   };
 
-  const handleGenderInputChange = (e) => {
+  const handleGenderInputChange = (e, edit) => {
     const { value } = e.target;
     setGenderEligibility(value);
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, ["genderEligibility"]: value });
+    }
   };
 
-  const handleMinAgeInputChange = (e) => {
+  const handleMinAgeInputChange = (e, edit) => {
     const { value } = e.target;
     setMinAge(value);
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, ["minAge"]: value });
+    }
   };
 
-  const handleMaxAgeInputChange = (e) => {
+  const handleMaxAgeInputChange = (e, edit) => {
     const { value } = e.target;
     setMaxAge(value);
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, ["maxAge"]: value });
+    }
   };
 
-  const handleAmountInputChange = (e) => {
+  const handleAmountInputChange = (e, edit) => {
     const { value } = e.target;
     setRemunerationAmount(value);
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, ["remunerationAmount"]: value });
+    }
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e, edit) => {
     const { name, checked } = e.target;
     setEthnicityEligibility({ ...ethnicityEligibility, [name]: checked });
+    if (edit) {
+      setUpdatedFields({ ...updatedFields, [name]: checked });
+    }
   };
 
   const handleSideEffects = async () => {
@@ -211,7 +469,6 @@ function EditSurvey() {
 
   useEffect(() => {
     handleSideEffects().then(() => {
-      console.log(surveyInfo);
       let defaultValues = {
         title: surveyInfo.title,
         description: surveyInfo.description,
@@ -229,9 +486,10 @@ function EditSurvey() {
         chinese: "Chinese" in surveyInfo.ethnicityEligibility,
         malay: "Malay" in surveyInfo.ethnicityEligibility,
         indian: "Indian" in surveyInfo.ethnicityEligibility,
-        others: "Others" in surveyInfo.ethnicityEligibility
+        others: "Others" in surveyInfo.ethnicityEligibility,
       };
       reset({ ...defaultValues });
+      setOldFields(surveyInfo);
       setIsLoading(false);
     });
   }, []);
@@ -263,9 +521,9 @@ function EditSurvey() {
             register={register}
             errors={errors}
             watch={watch}
-            other_eligibility_requirements={
-              surveyInfo.other_eligibility_requirements
-            }
+            edit={true}
+            source={updatedFields}
+            setUpdatedFields={setUpdatedFields}
           />
           <div class="row" id={styles.btnContainer}>
             <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">

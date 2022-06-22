@@ -54,6 +54,7 @@ function LoginPage() {
         const { data, error } = await signIn({ email, password });
 
         if (error) {
+            console.log(error);
             if (error.message === "Email not confirmed") {
                 setError("password", { type: 'custom', message: error.message + ". Please try again after clicking on the confirmation link that was sent to your email"});
             }
