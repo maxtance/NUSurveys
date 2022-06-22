@@ -45,7 +45,6 @@ function CreateSurveyForm({
   */
 
   const renderErrorMsg = (component) => {
-    console.log(errors);
     return (
       <div class={styles.validation}>
         {warningIcon}
@@ -306,11 +305,20 @@ function CreateSurveyForm({
               <input
                 type="number"
                 name="minAge"
+                {...register("minAge", {
+                  min: {
+                    value: 1,
+                    message: "Invalid age. Please try again",
+                  },
+                })}
                 value={minAge}
                 onChange={handleMinAgeInputChange}
                 class="form-control"
                 id={styles.minAge}
               ></input>
+               {errors?.minAge
+                ? renderErrorMsg("minAge")
+                : null}
             </div>
 
             <div class={`form-group ${styles.formGroup}`}>
@@ -323,11 +331,20 @@ function CreateSurveyForm({
               <input
                 type="number"
                 name="maxAge"
+                {...register("maxAge", {
+                  min: {
+                    value: 1,
+                    message: "Invalid age. Please try again",
+                  },
+                })}
                 value={maxAge}
                 onChange={handleMaxAgeInputChange}
                 class="form-control"
                 id="max-age"
               ></input>
+               {errors?.maxAge
+                ? renderErrorMsg("maxAge")
+                : null}
             </div>
           </div>
         </div>

@@ -7,6 +7,12 @@ import useBookmark from "../../helpers/useBookmark";
 import { useAuth } from "../../contexts/Auth";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
 
+import closeListingImg from "../../assets/close_listing_img.png";
+import editListingImg from "../../assets/edit_listing_img.png";
+import deleteListingImg from "../../assets/delete_listing_img.png";
+import openListingImg from "../../assets/open_listing_img.png";
+import emailImg from "../../assets/email_img.png";
+
 // Things left to implement:
 // 1. For owner
 //     a. Edit listing
@@ -34,14 +40,16 @@ function SurveyInfo() {
   const [isClosed, setIsClosed] = useState(
     isSurveyClosed(surveyInfo.closingDate)
   );
-  useEffect(
-    () => setIsClosed(isSurveyClosed(surveyInfo.closingDate)),
-    [surveyInfo.closingDate]
-  );
+  const [closingDate, setClosingDate] = useState(surveyInfo.closingDate);
+
+  useEffect(() => {
+    setIsClosed(isSurveyClosed(surveyInfo.closingDate));
+    setClosingDate(surveyInfo.closingDate);
+  }, [surveyInfo.closingDate]);
 
   function handleCloseListing() {
-    // Update closing_date of survey to 2000-1-1
-    const newClosingDate = "2000-1-1";
+    // Update closing_date of survey to 2000-01-01
+    const newClosingDate = "2000-01-01";
     const updateClosingDate = async () => {
       console.log("Update closing data");
       const { data, error } = await supabaseClient
@@ -50,6 +58,7 @@ function SurveyInfo() {
         .eq("id", surveyId);
     };
     updateClosingDate();
+    setClosingDate(newClosingDate);
     // Rerender my listing component
     setIsClosed(true);
   }
@@ -80,7 +89,7 @@ function SurveyInfo() {
         .eq("id", surveyId);
     };
     updateClosingDate();
-
+    setClosingDate(newClosingDate);
     // Rerender my listing component
     setIsClosed(false);
   }
@@ -95,7 +104,7 @@ function SurveyInfo() {
     <>
       <Navbar />
       <div className={`container-fluid pt-5 pb-5 ${styles.mainContent}`}>
-        <div className={`offset-md-1 row pb-3 ${styles.title}`}>
+        <div className={`offset-md-1 row col-md-6 ${styles.title}`}>
           {surveyInfo.title}
         </div>
         <div className="row">
@@ -111,8 +120,9 @@ function SurveyInfo() {
               <></>
             )}
             <div>
-              <h3 className={styles.header}>About the study</h3>
-              <p>{surveyInfo.description}</p>
+              <h3 className={styles.aboutHeader}>About the study</h3>
+              {/* <p className={styles.descriptionHeader}>Description: </p> */}
+              <p className={styles.description}>{surveyInfo.description}</p>
               <p>
                 <ul className={styles.noBullets}>
                   <li>
@@ -127,21 +137,27 @@ function SurveyInfo() {
                     </span>
                     {surveyInfo.remunerationType}
                   </li>
-                  <li>
-                    <span className={styles.eligibilities}>
-                      Remuneration Amount:{" "}
-                    </span>
-                    {surveyInfo.remunerationAmount}
-                  </li>
+                  {surveyInfo.remunerationType === "No remuneration given" ? (
+                    <></>
+                  ) : (
+                    <li>
+                      <span className={styles.eligibilities}>
+                        Remuneration Amount:{" "}
+                      </span>
+                      ${surveyInfo.remunerationAmount}
+                    </li>
+                  )}
                   <li>
                     <span className={styles.eligibilities}>Closing date: </span>
-                    {surveyInfo.closingDate.split("-").reverse().join("/")}
+                    {closingDate === "2000-01-01"
+                      ? "-"
+                      : closingDate.split("-").reverse().join("/")}
                   </li>
                 </ul>
               </p>
             </div>
             <div>
-              <h3 className={styles.header}>Eligibility</h3>
+              <h3 className={styles.eligibilityHeader}>Eligibility</h3>
               <p>
                 <ul className={styles.noBullets}>
                   <li>
@@ -170,45 +186,38 @@ function SurveyInfo() {
               </p>
             </div>
             {isClosed ? (
-              <a
-                className="btn btn-primary disabled mt-3"
-                href={surveyInfo.surveyLink}
-                target="_blank"
-                rel="noreferrer noopener"
-                role="button"
-                aria-disabled="true"
-              >
+              <button className={styles.linkButton} disabled>
                 Survey is closed
-              </a>
+              </button>
             ) : (
-              <a
-                className="btn btn-primary mt-3"
-                href={surveyInfo.surveyLink}
-                target="_blank"
-                rel="noreferrer noopener"
-                role="button"
-              >
-                Link to survey
-              </a>
+              <form action={surveyInfo.surveyLink} target="_blank">
+                <button className={styles.linkButton} type="submit">
+                  Link to survey
+                </button>{" "}
+              </form>
             )}
           </div>
           <div className="offset-md-1 col-md-4">
             {/* Only have this component if nusnetid don't match */}
             {userId !== surveyInfo.publishedId ? (
-              <div className={styles.buttons}>
+              <div>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className={styles.wishlistButton}
                   onClick={toggleBookmark}
                 >
                   {isBookmarked ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
                 {isSurveyClosed(surveyInfo.closingDate) ? (
-                  <button type="button" className="btn btn-primary" disabled>
+                  <button
+                    type="button"
+                    className={styles.completedButton}
+                    disabled
+                  >
                     Mark as Completed
                   </button>
                 ) : (
-                  <button type="button" className="btn btn-primary">
+                  <button type="button" className={styles.completedButton}>
                     Mark as Completed
                   </button>
                 )}
@@ -226,7 +235,26 @@ function SurveyInfo() {
                   <div className="card-body">
                     <p className="card-text">
                       <ul className={styles.noBullets}>
-                        <li>Edit listing {isClosed ? "(Disabled)" : ""}</li>
+                        {" "}
+                        {isClosed ? (
+                          <li className={styles.editListingDisabled}>
+                            <img
+                              className={styles.icons}
+                              src={editListingImg}
+                              alt=""
+                            />{" "}
+                            Edit listing
+                          </li>
+                        ) : (
+                          <li className={styles.cursorPointer}>
+                            <img
+                              className={styles.icons}
+                              src={editListingImg}
+                              alt=""
+                            />{" "}
+                            Edit listing
+                          </li>
+                        )}
                         {isClosed ? (
                           <PopUp
                             value="Open"
@@ -255,11 +283,11 @@ function SurveyInfo() {
                 </div>
                 <div className="card-body">
                   <p className="card-text">
-                    <span className={styles.contactName}>
+                    <p className={styles.contactName}>
                       {surveyInfo.publisherName}
-                    </span>{" "}
-                    <br />
-                    {surveyInfo.publisherEmail}
+                    </p>
+                    <img className={styles.icons} src={emailImg} alt="" />
+                    {" " + surveyInfo.publisherEmail}
                   </p>
                 </div>
               </div>
@@ -284,11 +312,22 @@ function PopUp(props) {
         data-bs-toggle="modal"
         data-bs-target={`#${target}`}
       >
-        {props.value === "Close"
-          ? "Mark listing as closed"
-          : props.value === "Open"
-          ? "Reopen listing"
-          : "Delete listing"}
+        {props.value === "Close" ? (
+          <span>
+            <img className={styles.icons} src={closeListingImg} alt="" /> Mark
+            listing as closed
+          </span>
+        ) : props.value === "Open" ? (
+          <span>
+            <img className={styles.icons} src={openListingImg} alt="" /> Reopen
+            listing
+          </span>
+        ) : (
+          <span>
+            <img className={styles.icons} src={deleteListingImg} alt="" />{" "}
+            Delete listing
+          </span>
+        )}
       </li>
 
       <div
@@ -321,6 +360,7 @@ function PopUp(props) {
                 <>
                   Set new closing date:
                   <input
+                    className={styles.closeCalendar}
                     type="date"
                     min={new Date().toISOString().split("T")[0]}
                     value={newDate}
@@ -332,10 +372,10 @@ function PopUp(props) {
                 "You cannot undo this action."
               )}
             </div>
-            <div class="modal-footer">
+            <div className={styles.buttonsContainer}>
               <button
                 type="button"
-                class="btn btn-secondary"
+                className={styles.cancelButton}
                 data-bs-dismiss="modal"
               >
                 Cancel
@@ -343,7 +383,7 @@ function PopUp(props) {
               {props.value === "Close" ? (
                 <button
                   type="button"
-                  class="btn btn-primary"
+                  className={styles.confirmButton}
                   data-bs-dismiss="modal"
                   onClick={props.handleOnClick}
                 >
@@ -352,7 +392,7 @@ function PopUp(props) {
               ) : props.value === "Open" ? (
                 <button
                   type="button"
-                  class="btn btn-primary"
+                  className={styles.confirmButton}
                   data-bs-dismiss="modal"
                   onClick={props.handleOnClick}
                 >
@@ -361,7 +401,7 @@ function PopUp(props) {
               ) : (
                 <button
                   type="button"
-                  class="btn btn-primary"
+                  className={styles.confirmButton}
                   data-bs-dismiss="modal"
                   onClick={props.handleOnClick}
                 >
@@ -433,12 +473,10 @@ function useFetchListingInfo(surveyId) {
       setDescription(survey.description);
       setSurveyType(survey.category_id.cat_name);
       setClosingDate(survey.closing_date);
-      if (survey.remunType !== null) {
+      if (survey.remunType.category_id.cat_name !== "NA") {
         setRemunerationType(survey.remunType.category_id.cat_name);
       }
-      if (survey.remunAmount !== null) {
-        setRemunerationAmount(survey.remunAmount.amount);
-      }
+      setRemunerationAmount(survey.remunAmount.amount);
       if (survey.other_eligibility_requirements) {
         setOtherRequirements(survey.other_eligibility_requirements);
       } else {
@@ -478,7 +516,7 @@ function useFetchListingInfo(surveyId) {
       console.log(error);
     }
 
-    if (ethnicity_eligibility.length !== 0) {
+    if (ethnicity_eligibility.length !== 4) {
       let strOfEthnicities = ethnicity_eligibility.map(
         (ethnicity, index) => (index ? ", " : "") + ethnicity.ethnicities.name
       );
@@ -496,10 +534,13 @@ function useFetchListingInfo(surveyId) {
       console.log(error);
     }
 
-    if (age_eligibility.length !== 0) {
-      setMaxAge(age_eligibility[0].max_age);
-      setMinAge(age_eligibility[0].min_age);
-    }
+    // if age == 0 --> set to null
+    setMaxAge(
+      age_eligibility[0].max_age === 0 ? null : age_eligibility[0].max_age
+    );
+    setMinAge(
+      age_eligibility[0].min_age === 0 ? null : age_eligibility[0].min_age
+    );
   };
 
   const fetchImgURL = async () => {

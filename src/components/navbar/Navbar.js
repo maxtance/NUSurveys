@@ -54,7 +54,7 @@ function Navbar() {
               }
             >
               <li className={`nav-item ${styles.navCenter}`}>
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/">
                   Home
                 </a>
               </li>
@@ -66,7 +66,7 @@ function Navbar() {
               }
             >
               <li className={`nav-item ${styles.navCenter}`}>
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/mysurveys">
                   My Surveys
                 </a>
               </li>
@@ -78,7 +78,7 @@ function Navbar() {
               }
             >
               <li className={`nav-item ${styles.navCenter}`}>
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/wishlist">
                   Wishlist
                 </a>
               </li>

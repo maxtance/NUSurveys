@@ -58,7 +58,8 @@ function MySurveys() {
       .from("surveys")
       .select("*")
       .order("id", { ascending: false })
-      .eq("published_by", userId);
+      .eq("published_by", userId)
+      .eq("is_deleted", false);
 
     if (error) {
       console.log(error);
@@ -73,7 +74,7 @@ function MySurveys() {
 
   useEffect(() => {
     fetchMySurveys();
-  }, []);
+  }, [userInfo]);
 
   const renderMySurveys = () => {
     return surveys.map((survey) => {

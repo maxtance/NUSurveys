@@ -12,8 +12,8 @@ function useBookmark(initValue, surveyId) {
   useEffect(() => setIsBookmarked(initValue), [initValue]);
 
   function setAndUpdateIsBookmarked() {
-    setIsBookmarked((prevState) => !prevState);
-    updateWishlistDb(isBookmarked, surveyId, userId);
+      setIsBookmarked((prevState) => !prevState);
+      updateWishlistDb(isBookmarked, surveyId, userId);
   }
 
   return [isBookmarked, setAndUpdateIsBookmarked];

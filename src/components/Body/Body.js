@@ -3,10 +3,12 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
-import { useAuth } from "../../contexts/Auth";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
+import { getDate } from "../createSurvey/CreateSurvey";
+import { useAuth } from "../../contexts/Auth";
+import moment from "moment";
 
-function Body(props) {
+function Body({ page, filterCriteria, eligibility }) {
   const { userInfo } = useAuth();
   const userId = userInfo.id;
 
@@ -17,7 +19,7 @@ function Body(props) {
 
   useEffect(() => {
     fetchSurveyListings();
-  }, []);
+  }, [filterCriteria, userInfo]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -32,15 +34,103 @@ function Body(props) {
 
   const fetchSurveyListings = async () => {
     setSurveysIsLoading(true);
-    const { data: surveys, error: surveysError } = await supabaseClient
+
+    let filterByType = false;
+    let filterByStatus = false;
+    let filterByRemuneration = false;
+
+    let query = supabaseClient
       .from("surveys")
-      .select("*")
+      .select(
+        `*, 
+                gender_eligibilities!inner(*),
+                age_eligibilities!inner(*),
+                ethnicity_eligibilities!inner(*, ethnicities!inner(*)),
+                remunerations!inner(*, 
+                                    remuneration_categories!inner(*))`
+      )
+      .eq("is_deleted", false);
+
+    // Only do filter if at Home page
+    if (page === "Home") {
+      if (filterCriteria["survey_categories"].length !== 0) {
+        filterByType = true;
+      }
+      if (filterCriteria["remuneration_categories"].length !== 0) {
+        filterByRemuneration = true;
+      }
+      if (filterCriteria["status"].length === 1) {
+        filterByStatus = true;
+      }
+
+      //TODO: add filter logic here
+      if (filterByType) {
+        query = query.in("category_id", filterCriteria["survey_categories"]);
+      }
+
+      if (filterByRemuneration) {
+        query = query.in(
+          "remunerations.remuneration_categories.id",
+          filterCriteria["remuneration_categories"]
+        );
+      }
+
+      if (filterByStatus) {
+        if (filterCriteria["status"][0] == "ongoing") {
+          query = query.gte("closing_date", getDate(0));
+        } else {
+          query = query.lt("closing_date", getDate(0));
+        }
+      }
+
+      if (eligibility) {
+        //get user info
+        const userGender = userInfo.gender;
+        const userAge = moment().diff(userInfo.date_of_birth, "years");
+        const { data: userEthnicity, error } = await supabaseClient
+          .from("ethnicities")
+          .select("name")
+          .eq("id", userInfo.ethnicity_id);
+        console.log(userGender, userAge, userEthnicity[0].name);
+
+        //gender requirements
+        if (userGender == "Male") {
+          query = query.in(
+            "gender_eligibilities.gender_eligibility_id",
+            [1, 3]
+          );
+        } else {
+          query = query.in(
+            "gender_eligibilities.gender_eligibility_id",
+            [2, 3]
+          );
+        }
+
+        //age requirements
+        query = query.or(
+          `and(min_age.lte.${userAge}, max_age.gte.${userAge}), \
+                          and(min_age.lte.${userAge}, max_age.eq.0), \
+                          and(min_age.eq.0, max_age.gte.${userAge}), \
+                          and(min_age.eq.0, max_age.eq.0)`,
+          { foreignTable: "age_eligibilities" }
+        );
+
+        //ethnicity requirements
+        query = query.eq(
+          "ethnicity_eligibilities.ethnicities.name",
+          userEthnicity[0].name
+        );
+      }
+    }
+
+    const { data: surveys, error } = await query
       .neq("published_by", userId)
       .order("id", { ascending: false });
 
-    if (surveysError) {
-      console.log(surveysError);
+    if (error) {
+      console.log(error);
     }
+
     const { data: wishlists, error: wishlistsError } = await supabaseClient
       .from("wishlisted_surveys")
       .select("*")
@@ -63,14 +153,10 @@ function Body(props) {
     });
 
     // Filter survey listings based on Page
-    if (props.page === "Home") {
-      // Filter surveys based on Home page criteria
-      const newSurveys = surveys.filter(
-        (survey) => !isSurveyClosed(survey.closing_date)
-      );
-      setNumSurveys(newSurveys.length);
-      setSurveys(newSurveys);
-    } else if (props.page === "Wishlist") {
+    if (page === "Home") {
+      setNumSurveys(surveys.length);
+      setSurveys(surveys);
+    } else if (page === "Wishlist") {
       // Filter surveys based on Wishlist page criteria
       const newSurveys = surveys.filter((survey) => survey.isWishlisted);
       // console.log(newSurveys);
@@ -82,6 +168,7 @@ function Body(props) {
   };
 
   const renderSurveys = () => {
+    console.log(surveys);
     return surveys.map((survey) => {
       return <SurveyCard survey={survey} userInfo={userInfo} />;
     });
@@ -94,7 +181,7 @@ function Body(props) {
           <SearchBar />
         </div>
         <div className="d-flex justify-content-between pb-3">
-          {props.page === "Home" ? (
+          {page === "Home" ? (
             <div className={styles.pageHeader}>
               Showing{" "}
               <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}

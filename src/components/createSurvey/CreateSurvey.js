@@ -46,7 +46,7 @@ function CreateSurvey() {
 
   const [remunerationAmount, setRemunerationAmount] = useState();
 
-  const [image, setImage] = useState();
+  const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
 
   const { userInfo } = useFetchUser();
@@ -64,6 +64,12 @@ function CreateSurvey() {
     last_updated: getDate(0),
     published_by: userId,
   });
+  useEffect(() => {
+    setSurvey((prevSurvey) => {
+      return { ...prevSurvey, published_by: userId };
+    });
+  }, [userId]);
+
   useEffect(() => {
     setSurvey((prevSurvey) => {
       return { ...prevSurvey, published_by: userId };
@@ -118,97 +124,81 @@ function CreateSurvey() {
                 amount: remunerationAmount,
               });
             survey.remuneration_id = count + 1;
-          }
-          if (error) {
-            console.log(error);
+            if (error) {
+              console.log(error);
+            } 
+          } else {
+            survey.remuneration_id = remunerationRecord[0].id;
           }
         }
       } else {
-        survey.remuneration_id = null;
+        //first record in remunerations table is reserved for
+        //surveys that do not offer remuneration
+        survey.remuneration_id = 1;
       }
       //insert into surveys
-      const { count: surveyCount } = await supabaseClient
-        .from("surveys")
-        .select("id", { count: "exact", head: true });
       const { data: surveyRecord, error } = await supabaseClient
         .from("surveys")
-        .insert([{ ...survey, id: surveyCount + 1 }]);
+        .insert([survey]);
       if (error) {
         console.log(error);
       } else {
-        const { error, count: genderEligibilityCount } = await supabaseClient
+        //insert into gender eligibilities
+        const { error } = await supabaseClient
           .from("gender_eligibilities")
-          .select("id", { count: "exact", head: true });
+          .insert([
+            {
+              survey_id: surveyRecord[0]["id"],
+              gender_eligibility_id: genderEligibility,
+            },
+          ]);
         if (error) {
           console.log(error);
         } else {
-          //insert into gender eligibilities
+          //insert into age_eligibilities
           const { error } = await supabaseClient
-            .from("gender_eligibilities")
+            .from("age_eligibilities")
             .insert([
               {
-                id: genderEligibilityCount + 1,
                 survey_id: surveyRecord[0]["id"],
-                gender_eligibility_id: genderEligibility,
+                min_age: minAge === "" ? 0 : minAge,
+                max_age: maxAge === "" ? 0 : maxAge,
               },
             ]);
           if (error) {
             console.log(error);
-          } else {
-            if (minAge !== "" || maxAge !== "") {
-              //insert into age_eligibilities
-              const { error, count: ageEligibilityCount } = await supabaseClient
-                .from("age_eligibilities")
-                .select("id", { count: "exact", head: true });
+          }
+
+          let allEthnicities = false;
+          //insert into ethnicity_eligibilities
+          if (
+            !ethnicityEligibility.chinese &&
+            !ethnicityEligibility.malay &&
+            !ethnicityEligibility.indian &&
+            !ethnicityEligibility.others
+          ) {
+            allEthnicities = true;
+          } 
+          for (var key in ethnicityEligibility) {
+            if (ethnicityEligibility[key] || allEthnicities) {
+              const { data: ethnicity } = await supabaseClient
+                .from("ethnicities")
+                .select()
+                .ilike("name", key);
+              console.log(ethnicity);
+              const { data, error } = await supabaseClient
+                .from("ethnicity_eligibilities")
+                .insert([
+                  {
+                    survey_id: surveyRecord[0]["id"],
+                    ethnicity_id: ethnicity[0]["id"],
+                  },
+                ]);
               if (error) {
                 console.log(error);
-              } else {
-                const { error } = await supabaseClient
-                  .from("age_eligibilities")
-                  .insert([
-                    {
-                      id: ageEligibilityCount + 1,
-                      survey_id: surveyRecord[0]["id"],
-                      min_age: minAge === "" ? null : minAge,
-                      max_age: maxAge === "" ? null : maxAge,
-                    },
-                  ]);
-                if (error) {
-                  console.log(error);
-                }
               }
             }
-            //insert into ethnicity_eligibilities
-            for (var key in ethnicityEligibility) {
-              if (ethnicityEligibility[key]) {
-                const { error, count: ethnicityEligibilityCount } =
-                  await supabaseClient
-                    .from("ethnicity_eligibilities")
-                    .select("id", { count: "exact", head: true });
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log(key);
-                  const { data: ethnicity } = await supabaseClient
-                    .from("ethnicities")
-                    .select()
-                    .ilike("name", key);
-                  console.log(ethnicity);
-                  const { data, error } = await supabaseClient
-                    .from("ethnicity_eligibilities")
-                    .insert([
-                      {
-                        id: ethnicityEligibilityCount + 1,
-                        survey_id: surveyRecord[0]["id"],
-                        ethnicity_id: ethnicity[0]["id"],
-                      },
-                    ]);
-                  if (error) {
-                    console.log(error);
-                  }
-                }
-              }
-            }
+          }
             /*
             const { data, error } = await supabaseClient.storage
               .from('survey-images')
@@ -219,15 +209,14 @@ function CreateSurvey() {
               console.log(data);
             }
             */
-          }
         }
       }
     }
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = async (e) => {
     //e.preventDefault();
-    addSurveyListing();
+    await addSurveyListing();
     navigate("/mysurveys");
   };
 
@@ -258,7 +247,6 @@ function CreateSurvey() {
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    console.log(name, checked);
     setEthnicityEligibility({ ...ethnicityEligibility, [name]: checked });
   };
 
