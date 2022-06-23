@@ -14,11 +14,7 @@ import openListingImg from "../../assets/open_listing_img.png";
 import emailImg from "../../assets/email_img.png";
 
 // Things left to implement:
-// 1. For owner
-//     a. Edit listing
-//     b. Mark listing as closed
-//     c. Delete listing
-// 2. For surveyor
+// 1. For surveyor
 //     a. Mark survey as complete
 
 function SurveyInfo() {
@@ -46,6 +42,10 @@ function SurveyInfo() {
     setIsClosed(isSurveyClosed(surveyInfo.closingDate));
     setClosingDate(surveyInfo.closingDate);
   }, [surveyInfo.closingDate]);
+
+  function handleEditListing() {
+    navigate("/mysurveys/edit-survey/", { state: { surveyId: surveyId } });
+  }
 
   function handleCloseListing() {
     // Update closing_date of survey to 2000-01-01
@@ -180,7 +180,13 @@ function SurveyInfo() {
                     <span className={styles.eligibilities}>
                       Other Requirements:{" "}
                     </span>
-                    {surveyInfo.otherRequirements}
+                    {surveyInfo.otherRequirements === "Nil" ? (
+                      "Nil"
+                    ) : (
+                      <p className={styles.otherRequirements}>
+                        {surveyInfo.otherRequirements}
+                      </p>
+                    )}
                   </li>
                 </ul>
               </p>
@@ -246,7 +252,10 @@ function SurveyInfo() {
                             Edit listing
                           </li>
                         ) : (
-                          <li className={styles.cursorPointer}>
+                          <li
+                            className={styles.cursorPointer}
+                            onClick={handleEditListing}
+                          >
                             <img
                               className={styles.icons}
                               src={editListingImg}
@@ -416,6 +425,35 @@ function PopUp(props) {
   );
 }
 
+export const fetchSurveyInfo = async (surveyId) => {
+  const { data: surveys, error } = await supabaseClient
+    .from("surveys")
+    .select(
+      `
+      title,
+      description,
+      category_id(cat_name),
+      closing_date,
+      remunType: remunerations(category_id(cat_name)),
+      remunAmount: remunerations(amount),
+      other_eligibility_requirements,
+      publisherName: users!surveys_published_by_fkey(full_name),
+      publisherEmail: users!surveys_published_by_fkey(email),
+      link,
+      published_by
+    `
+    )
+    .eq("id", surveyId);
+
+  if (error) {
+    console.log(error);
+  }
+
+  const survey = surveys[0];
+  // console.log(survey);
+  return survey;
+};
+
 function useFetchListingInfo(surveyId) {
   const [isValidSurvey, setIsValidSurvey] = useState(null);
   const [title, setTitle] = useState("");
@@ -441,32 +479,8 @@ function useFetchListingInfo(surveyId) {
   const { userInfo } = useAuth();
   const userFetchingId = userInfo?.id;
 
-  const fetchSurveyInfo = async () => {
-    const { data: surveys, error } = await supabaseClient
-      .from("surveys")
-      .select(
-        `
-        title,
-        description,
-        category_id(cat_name),
-        closing_date,
-        remunType: remunerations(category_id(cat_name)),
-        remunAmount: remunerations(amount),
-        other_eligibility_requirements,
-        publisherName: users!surveys_published_by_fkey(full_name),
-        publisherEmail: users!surveys_published_by_fkey(email),
-        link,
-        published_by
-      `
-      )
-      .eq("id", surveyId);
-
-    if (error) {
-      console.log(error);
-    }
-
-    const survey = surveys[0];
-    // console.log(survey);
+  const initialiseVariables = async () => {
+    const survey = await fetchSurveyInfo(surveyId);
     if (survey !== undefined) {
       setIsValidSurvey(true);
       setTitle(survey.title);
@@ -584,7 +598,7 @@ function useFetchListingInfo(surveyId) {
   };
 
   useEffect(() => {
-    fetchSurveyInfo();
+    initialiseVariables();
     fetchGenderEligibility();
     fetchEthnicityEligibility();
     fetchAgeEligibility();

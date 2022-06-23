@@ -64,6 +64,7 @@ function CreateSurvey() {
     last_updated: getDate(0),
     published_by: userId,
   });
+
   useEffect(() => {
     setSurvey((prevSurvey) => {
       return { ...prevSurvey, published_by: userId };
@@ -275,6 +276,8 @@ function CreateSurvey() {
         register={register}
         errors={errors}
         watch={watch}
+        edit={false}
+        source={survey}
       />
       <div class="row" id={styles.btnContainer}>
         <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">

@@ -84,6 +84,11 @@ p {
     font-weight: 500;
 }
 
+.otherRequirements {
+    white-space: pre-line;
+    margin: 0 0 0 0;
+}
+
 .contactName {
     font-weight: 600;
     margin-bottom: 3px;

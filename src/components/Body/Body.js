@@ -23,6 +23,10 @@ function Body({ page, filterCriteria, eligibility }) {
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
+    sortListingsBy(sortValue, surveys);
+  }
+
+  function sortListingsBy(sortValue, surveys) {
     if (sortValue === "Newest survey") {
       surveys.sort((a, b) => b.id - a.id);
     } else if (sortValue === "Oldest survey") {
@@ -94,7 +98,7 @@ function Body({ page, filterCriteria, eligibility }) {
         console.log(userGender, userAge, userEthnicity[0].name);
 
         //gender requirements
-        if (userGender == "Male") {
+        if (userGender === "Male") {
           query = query.in(
             "gender_eligibilities.gender_eligibility_id",
             [1, 3]
@@ -155,6 +159,7 @@ function Body({ page, filterCriteria, eligibility }) {
     // Filter survey listings based on Page
     if (page === "Home") {
       setNumSurveys(surveys.length);
+      sortListingsBy(sortBy, surveys);
       setSurveys(surveys);
     } else if (page === "Wishlist") {
       // Filter surveys based on Wishlist page criteria

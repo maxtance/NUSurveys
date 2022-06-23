@@ -18,6 +18,7 @@ import GeneralMessage from "./components/GeneralMessage/GeneralMessage";
 import { useEffect } from "react";
 import SurveyInfo from "./components/SurveyInfo/SurveyInfo";
 import WishlistPage from "./components/WishlistPage/WishlistPage";
+import EditSurvey from "./components/editSurvey/EditSurvey";
 
 function App() {
   const errorTitle = "Oops!";
@@ -69,6 +70,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <WishlistPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mysurveys/edit-survey/"
+            element={
+              <ProtectedRoute>
+                <EditSurvey />
               </ProtectedRoute>
             }
           />
