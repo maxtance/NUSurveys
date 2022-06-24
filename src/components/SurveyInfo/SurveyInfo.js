@@ -526,9 +526,18 @@ function useFetchListingInfo(surveyId) {
       .select("ethnicities(name)")
       .eq("survey_id", surveyId);
 
+    console.log(ethnicity_eligibility);
+
     if (error) {
       console.log(error);
     }
+
+    const { data: e2 } = await supabaseClient
+      .from("ethnicity_eligibilities")
+      .select()
+      .eq("survey_id", surveyId);
+    
+    console.log(e2);
 
     if (ethnicity_eligibility.length !== 4) {
       let strOfEthnicities = ethnicity_eligibility.map(

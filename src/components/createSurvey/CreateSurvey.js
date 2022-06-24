@@ -181,6 +181,7 @@ function CreateSurvey() {
             allEthnicities = true;
           } 
           for (var key in ethnicityEligibility) {
+            console.log("Insert!!!!!!!")
             if (ethnicityEligibility[key] || allEthnicities) {
               const { data: ethnicity } = await supabaseClient
                 .from("ethnicities")

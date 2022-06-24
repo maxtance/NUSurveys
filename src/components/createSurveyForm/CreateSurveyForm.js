@@ -55,10 +55,11 @@ function CreateSurveyForm({
     );
   };
 
-  const requiredField = () =>
-    (watch("remuneration_id") === "3") | (watch("remuneration_id") === "")
+  const requiredField = () => {
+    return (watch("remuneration_id") == 3 || watch("remuneration_id") === "")
       ? false
       : "Please enter a remuneration amount";
+  }
 
   return (
     <form class="form-horizontal" id={styles.surveyForm}>

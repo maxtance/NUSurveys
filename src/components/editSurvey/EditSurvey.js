@@ -164,28 +164,54 @@ function EditSurvey() {
   const cleanUpdatedFields = async () => {
     //TODO: update survey listing logic
     let tempState = { ...updatedFields };
-    Object.keys(updatedFields).forEach((key) => {
+    console.log(oldFields);
+    console.log(updatedFields);
+    Object.keys(updatedFields).forEach(async (key) => {
+      if (key === "remuneration_id") {
+        //dont do anything, since you need to know remunerationAmt
+        return;
+      }
+      if (key === "remunerationAmount") {
+        if (
+          "remuneration_id" in updatedFields &&
+          updatedFields["remuneration_id"] == 3
+        ) {
+          delete tempState[key]; //we dont need remunAmt anymore
+        }
+        return;
+      }
       if (key in oldFields && updatedFields[key] == oldFields[key]) {
         delete tempState[key];
       } else if (!(key in oldFields)) {
-        //checkbox for ethnicity was originally checked
-        let capitalisedKey = key.charAt(0).toUpperCase() + key.slice(1);
-        if (capitalisedKey in oldFields.ethnicityEligibility) {
-          if (
-            updatedFields[key] == oldFields.ethnicityEligibility[capitalisedKey]
-          ) {
-            delete tempState[key];
-          }
+        //key is an ethnicity
+        if (Object.keys(oldFields.ethnicityEligibility).length === 0) {
+          const { data, error } = await supabaseClient
+            .from("ethnicity_eligibilities")
+            .delete()
+            .match({ survey_id: surveyId });
         } else {
-          //checkbox was not originally checked
-          if (!updatedFields[key]) {
-            delete tempState[key];
+          //checkbox for ethnicity was originally checked
+          let capitalisedKey = key.charAt(0).toUpperCase() + key.slice(1);
+          if (capitalisedKey in oldFields.ethnicityEligibility) {
+            if (
+              updatedFields[key] ==
+              oldFields.ethnicityEligibility[capitalisedKey]
+            ) {
+              delete tempState[key];
+            }
+          } else {
+            //checkbox was not originally checked
+            if (!updatedFields[key]) {
+              delete tempState[key];
+            }
           }
         }
       }
+      console.log(tempState);
       setUpdatedFields(tempState);
-      setIsUpdating(false);
+      //setIsUpdating(false);
     });
+    setIsUpdating(false);
   };
 
   const onFormSubmit = async (e) => {
@@ -194,9 +220,40 @@ function EditSurvey() {
     //navigate("/mysurveys");
   };
 
+  //updates last_updated field and perform sanity check for ethnicity eligibilities
+  //executed after iterating through all fields in updatedFields
+  const cleanUpAfterUpdate = async () => {
+    //sanity check: if there are no more records for the survey in ethnicity_eligibilities, add all 4 rows
+    const { count, error } = await supabaseClient
+      .from("ethnicity_eligibilities")
+      .select("survey_id", { count: "exact", head: true })
+      .eq("survey_id", surveyId);
+
+    console.log(count);
+    if (count === 0) {
+      console.log("Insert everything");
+      const { data } = await supabaseClient
+        .from("ethnicity_eligibilities")
+        .insert([
+          { survey_id: surveyId, ethnicity_id: 1 },
+          { survey_id: surveyId, ethnicity_id: 2 },
+          { survey_id: surveyId, ethnicity_id: 3 },
+          { survey_id: surveyId, ethnicity_id: 4 },
+        ]);
+    }
+
+    // update last_updated
+    let todaysDate = new Date().toISOString().split("T")[0];
+    const { data } = await supabaseClient
+      .from("surveys")
+      .update({ last_updated: todaysDate })
+      .eq("id", surveyId);
+  };
+
   const updateDatabaseRecords = async () => {
     console.log(updatedFields);
-    console.log(oldFields);
+    let counter = Object.keys(updatedFields).length;
+
     //update title, desc, link, cat_id in surveys first
     Object.keys(updatedFields).forEach(async (key) => {
       if (
@@ -219,8 +276,8 @@ function EditSurvey() {
       }
       //update remuneration info
       if (key === "remuneration_id") {
-        if (updatedFields[key] === "3") {
-          const { data, error } = await supabaseClient
+        if (updatedFields[key] == "3") {
+          const { data } = await supabaseClient
             .from("surveys")
             .update({
               remuneration_id: 1,
@@ -228,117 +285,109 @@ function EditSurvey() {
             .match({ id: surveyId });
         } else {
           if ("remunerationAmount" in updatedFields) {
-            const { count } = await supabaseClient
-              .from("remunerations")
-              .select("id", { count: "exact", head: true });
-
-            const { data: remunerationRecord, error } = await supabaseClient
-              .from("remunerations")
-              .select()
-              .eq("category_id", updatedFields[key])
-              .eq("amount", updatedFields["remunerationAmount"]);
-
-            //no existing remuneration record found. add to remunerations table
-            if (remunerationRecord.length === 0) {
-              const { error } = await supabaseClient
-                .from("remunerations")
-                .insert({
-                  id: count + 1,
-                  category_id: updatedFields[key],
-                  amount: updatedFields["remunerationAmount"],
-                });
-
-              const { data } = await supabaseClient
-                .from("surveys")
-                .update({
-                  remuneration_id: count + 1,
-                })
-                .match({ id: surveyId });
-            } else {
-              const { data } = await supabaseClient
-                .from("surveys")
-                .update({
-                  remuneration_id: remunerationRecord[0].id,
-                })
-                .match({ id: surveyId });
-            }
+            return;
           } else {
-            const { count } = await supabaseClient
-              .from("remunerations")
-              .select("id", { count: "exact", head: true });
-
-            const { data: remunerationRecord, error } = await supabaseClient
+            console.log("reached")
+            let currAmt = oldFields.remunAmount.amount;
+            console.log(currAmt);
+            const { data: record } = await supabaseClient
               .from("remunerations")
               .select()
-              .eq("category_id", updatedFields[key])
-              .eq("amount", oldFields["remunAmount"].amount);
-
-            //no existing remuneration record found. add to remunerations table
-            if (remunerationRecord.length === 0) {
+              .match({ category_id: updatedFields[key], amount: currAmt });
+            console.log(record);
+            if (record.length === 0) {
+              //no existing record found. insert
+              const { count } = await supabaseClient
+                .from("remunerations")
+                .select("id", { count: "exact", head: true });
               const { error } = await supabaseClient
                 .from("remunerations")
                 .insert({
                   id: count + 1,
                   category_id: updatedFields[key],
-                  amount: oldFields["remunAmount"].amount,
+                  amount: currAmt,
                 });
-
               const { data } = await supabaseClient
                 .from("surveys")
-                .update({
-                  remuneration_id: count + 1,
-                })
+                .update({ remuneration_id: count + 1 })
                 .match({ id: surveyId });
             } else {
+              //remuneration record exists. update remuneration_id
               const { data } = await supabaseClient
                 .from("surveys")
-                .update({
-                  remuneration_id: remunerationRecord[0].id,
-                })
+                .update({ remuneration_id: record[0].id })
                 .match({ id: surveyId });
             }
           }
         }
-        console.log("Updated remuneration information successfully");
       }
 
       if (key === "remunerationAmount") {
-        //console.log(oldFields["remunType"].category_id);
-        const { count } = await supabaseClient
-          .from("remunerations")
-          .select("id", { count: "exact", head: true });
+        if ("remuneration_id" in updatedFields) {
+          const { data: record } = await supabaseClient
+            .from("remunerations")
+            .select()
+            .match({
+              category_id: updatedFields["remuneration_id"],
+              amount: updatedFields[key],
+            });
 
-        const { data: remunerationRecord, error } = await supabaseClient
-          .from("remunerations")
-          .select()
-          .eq("category_id", oldFields["remuneration_id"])
-          .eq("amount", updatedFields["remunerationAmount"]);
-
-        console.log(remunerationRecord);
-
-        //no existing remuneration record found. add to remunerations table
-        if (remunerationRecord.length === 0) {
-          const { error } = await supabaseClient.from("remunerations").insert({
-            id: count + 1,
-            category_id: oldFields["remuneration_id"],
-            amount: updatedFields["remunerationAmount"],
-          });
-
-          const { data } = await supabaseClient
-            .from("surveys")
-            .update({
-              remuneration_id: count + 1,
-            })
-            .match({ id: surveyId });
+          if (record.length === 0) {
+            //no existing record found. insert
+            const { count } = await supabaseClient
+              .from("remunerations")
+              .select("id", { count: "exact", head: true });
+            const { error } = await supabaseClient
+              .from("remunerations")
+              .insert({
+                id: count + 1,
+                category_id: updatedFields["remuneration_id"],
+                amount: updatedFields[key],
+              });
+            const { data } = await supabaseClient
+              .from("surveys")
+              .update({ remuneration_id: count + 1 })
+              .match({ id: surveyId });
+          } else {
+            //remuneration record exists. update remuneration_id
+            const { data } = await supabaseClient
+              .from("surveys")
+              .update({ remuneration_id: record[0].id })
+              .match({ id: surveyId });
+          }
         } else {
-          const { data } = await supabaseClient
-            .from("surveys")
-            .update({
-              remuneration_id: remunerationRecord[0].id,
-            })
-            .match({ id: surveyId });
+          const { data: record } = await supabaseClient
+            .from("remunerations")
+            .select()
+            .match({
+              category_id: oldFields["remuneration_id"],
+              amount: updatedFields[key],
+            });
+
+          if (record.length === 0) {
+            //no existing record found. insert
+            const { count } = await supabaseClient
+              .from("remunerations")
+              .select("id", { count: "exact", head: true });
+            const { error } = await supabaseClient
+              .from("remunerations")
+              .insert({
+                id: count + 1,
+                category_id: oldFields["remuneration_id"],
+                amount: updatedFields[key],
+              });
+            const { data } = await supabaseClient
+              .from("surveys")
+              .update({ remuneration_id: count + 1 })
+              .match({ id: surveyId });
+          } else {
+            //remuneration record exists. update remuneration_id
+            const { data } = await supabaseClient
+              .from("surveys")
+              .update({ remuneration_id: record[0].id })
+              .match({ id: surveyId });
+          }
         }
-        console.log("Updated remuneration amount successfully");
       }
 
       //update gender eligibility
@@ -380,7 +429,11 @@ function EditSurvey() {
           .from("ethnicities")
           .select()
           .ilike("name", key);
+        console.log(updatedFields);
+        console.log(ethnicity);
+        console.log(key);
         if (updatedFields[key]) {
+          console.log("Inserting ethnicity eligibility...");
           const { data, error } = await supabaseClient
             .from("ethnicity_eligibilities")
             .insert([
@@ -389,6 +442,11 @@ function EditSurvey() {
                 ethnicity_id: ethnicity[0].id,
               },
             ]);
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(data);
+          }
         } else {
           const { data, error } = await supabaseClient
             .from("ethnicity_eligibilities")
@@ -397,14 +455,12 @@ function EditSurvey() {
         }
         console.log("Updated ethnicity eligibility requirements");
       }
-    });
 
-    // update last_updated
-    let todaysDate = new Date().toISOString().split("T")[0];
-    const { data, error } = await supabaseClient
-      .from("surveys")
-      .update({ last_updated: todaysDate })
-      .eq("id", surveyId);
+      counter--;
+      if (counter === 0) {
+        await cleanUpAfterUpdate();
+      }
+    });
 
     setUpdatedFields({});
     //update last_updated field
@@ -413,8 +469,7 @@ function EditSurvey() {
 
   useEffect(() => {
     if (!isUpdating) {
-      updateDatabaseRecords();
-      navigate("/surveys/" + surveyId);
+      updateDatabaseRecords().then(navigate("/surveys/" + surveyId));
     }
   }, [isUpdating]);
 
@@ -485,7 +540,10 @@ function EditSurvey() {
         category_id: surveyInfo.category_id,
         photo: surveyInfo.photo,
         remuneration_id: surveyInfo.remuneration_id,
-        remunerationAmount: surveyInfo.remunAmount.amount,
+        remunerationAmount:
+          surveyInfo.remunAmount.amount === 0
+            ? ""
+            : surveyInfo.remunAmount.amount,
         closing_date: surveyInfo.closing_date,
         other_eligibility_requirements:
           surveyInfo.other_eligibility_requirements,
@@ -551,6 +609,7 @@ function EditSurvey() {
               <button
                 class="btn"
                 id={styles.updateBtn}
+                disabled={Object.keys(updatedFields).length === 0}
                 onClick={handleSubmit(onFormSubmit)}
               >
                 Update
