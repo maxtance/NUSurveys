@@ -1,0 +1,165 @@
+p {
+    margin-bottom: 1.5rem;
+}
+
+.eligibilityHeader, .aboutHeader {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgb(6, 17, 79);
+    margin-bottom: 1.5rem;
+}
+
+.eligibilityHeader {
+    margin-top: 2rem;
+}
+
+.aboutHeader {
+  margin-top: 2rem;
+}
+
+.descriptionHeader {
+    font-weight: 500;
+    margin: 0 0 0 0;
+}
+
+.mainContent {
+    background: rgb(242, 242, 242);
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgb(6, 17, 79);
+}
+
+.surveyImg {
+    max-width: 540px;
+    width: auto;
+    max-height: 420px;
+    height: auto;
+    margin-top: 1rem;
+}
+
+.wishlistButton, .completedButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 190px;
+    height: 42px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: rgb(6, 17, 79);
+    color: white;
+}
+
+.completedButton {
+    margin-bottom: 4rem;
+}
+
+.completedButton:disabled {
+    background-color: rgba(6, 17, 79, 0.6);
+}
+
+.editListingDisabled {
+    opacity: 40%;
+    color: rgba(0, 0, 0, 0.6);
+    cursor: default;
+    margin-bottom: 5px;
+}
+
+.cards {
+    width: 75%;
+}
+
+.noBullets {
+    list-style: none;
+    padding-left: 0;
+}
+
+.eligibilities, .cardHeader{
+    font-weight: 500;
+}
+
+.otherRequirements {
+    white-space: pre-line;
+    margin: 0 0 0 0;
+}
+
+.contactName {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.cursorPointer {
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.cursorPointer:hover {
+    background-color: #F1F1F5;
+}
+
+.closeCalendar {
+    margin-left: 0.5rem;
+    font-family: Roboto;
+    font-size: 14px;
+}
+
+.linkButton {
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: rgb(6, 17, 79);
+    color: white;
+}
+
+.linkButton:disabled {
+    background-color: rgba(6, 17, 79, 0.6);
+}
+
+.cancelButton {
+    background-color: #CCCCCC;
+    color: rgb(6, 17, 79);
+    font-weight: 500;
+    border-radius: 4px;
+    border: none;
+    height: 34px;
+    padding: 0 0.7rem;
+}
+
+.confirmButton {
+    background-color: rgb(6, 17, 79);
+    color: white;
+    font-weight: 500;
+    border-radius: 4px;
+    border: none;
+    height: 34px;
+    padding: 0 0.7rem;
+}
+
+.icons {
+    height: 25px;
+    width: 25px;
+}
+
+.buttonsContainer {
+    text-align: right;
+    margin: 15px 20px 20px 0;
+}
+
+.cancelButton {
+    margin-right: 10px;
+}
+
+.description {
+    white-space: pre-line;
+    line-height: 20px;
+    margin-bottom: 3rem;
+}

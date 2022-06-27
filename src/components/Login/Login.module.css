@@ -1,0 +1,82 @@
+.NUSurveysLogo {
+    padding-left: 1rem;
+    height: 45px;
+    width: 100%;
+}
+
+.formTitle {
+    font-size: 24px;
+    color: #06114F;
+    font-weight: 900;
+    margin-bottom: 30px;
+}
+
+#formwrapper {
+    margin-top: 100px;
+}
+
+small {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #92929d;
+}
+
+.password {
+    display: inline-block;
+    margin-top: 26px;
+    margin-bottom: 10px;
+}
+
+.email, .password {
+    font-size: 16px;
+    font-weight: 600;
+    color: #06114F;
+}
+
+.resetpwd {
+    font-weight: 600;
+    color: #06114f;
+    float: right;
+    font-size: 14px;
+    text-decoration: none;
+    padding-top: 5px;
+}
+
+#login {
+    background-color: #06114F;
+    color: #f9f9f9;
+    width: 165px;
+}
+
+.signup {
+    color: #06114f;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.signupBanner {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+    background-color: #f9f9f9;
+    height: 100vh;
+}
+
+#warningIcon {
+    margin-right: 8px;
+    align-self: center;
+}
+
+.errorMsg {
+    margin-bottom: 0px;
+}
+
+.validation {
+    font-family: Roboto;
+    font-size: 14px;
+    color: #e34646;
+    display: flex;
+    margin-bottom: 10px;
+}

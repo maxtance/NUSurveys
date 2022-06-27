@@ -1,9 +1,26 @@
 import styles from "./Navbar.module.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
+import { useAuth } from "../../contexts/Auth";
 
 function Navbar() {
+  const { userInfo, signOut } = useAuth();
+  const userName = userInfo.full_name;
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    // Ends user session
+    const { data, error } = await signOut();
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      navigate("/login");
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
       <div className="container-fluid">
@@ -31,13 +48,13 @@ function Navbar() {
         >
           <ul className="navbar-nav">
             <NavLink
-              to="/"
+              to="/home"
               className={({ isActive }) =>
                 isActive ? styles.selectedNavItem : styles.unselectedNavItem
               }
             >
               <li className={`nav-item ${styles.navCenter}`}>
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/">
                   Home
                 </a>
               </li>
@@ -49,16 +66,23 @@ function Navbar() {
               }
             >
               <li className={`nav-item ${styles.navCenter}`}>
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/mysurveys">
                   My Surveys
                 </a>
               </li>
             </NavLink>
-            <li className={`nav-item ${styles.navCenter}`}>
-              <a className="nav-link" href="#">
-                Wishlist
-              </a>
-            </li>
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                isActive ? styles.selectedNavItem : styles.unselectedNavItem
+              }
+            >
+              <li className={`nav-item ${styles.navCenter}`}>
+                <a className="nav-link" href="/wishlist">
+                  Wishlist
+                </a>
+              </li>
+            </NavLink>
           </ul>
         </div>
 
@@ -81,7 +105,7 @@ function Navbar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Henry Wong
+                {userName}
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -93,7 +117,7 @@ function Navbar() {
                   </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <a className="dropdown-item" onClick={handleSignOut} href="#">
                     Log out
                   </a>
                 </li>
