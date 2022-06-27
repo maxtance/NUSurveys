@@ -14,6 +14,7 @@ function EditSurvey() {
     handleSubmit,
     watch,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -591,6 +592,7 @@ function EditSurvey() {
             edit={true}
             source={updatedFields}
             setUpdatedFields={setUpdatedFields}
+            getValues={getValues}
           />
           <div class="row" id={styles.btnContainer}>
             <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">

@@ -263,6 +263,10 @@ function Registration() {
                                 type='password'
                                 name='password'
                                 {...register("password", {
+                                    minLength: {
+                                        value: 6,
+                                        message: "Password is too short. Please choose a password that is no less than 6 characters"
+                                    },
                                     required: "Please enter a password no less than 6 characters",
                                 })}
                                 onChange={(e) => {

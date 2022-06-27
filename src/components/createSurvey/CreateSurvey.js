@@ -28,6 +28,7 @@ function CreateSurvey() {
     register,
     handleSubmit,
     watch,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -279,6 +280,7 @@ function CreateSurvey() {
         watch={watch}
         edit={false}
         source={survey}
+        getValues={getValues}
       />
       <div class="row" id={styles.btnContainer}>
         <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">
