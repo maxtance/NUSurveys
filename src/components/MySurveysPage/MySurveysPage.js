@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/client";
 import createSurveyIcon from "../../assets/create_survey_img.png";
 import { useAuth } from "../../contexts/Auth";
+import { isSurveyClosed } from "../../helpers/helperFunctions";
 
 function MySurveys() {
   const { userInfo } = useAuth();
@@ -65,7 +66,9 @@ function MySurveys() {
       console.log(error);
     }
 
-    setNumSurveys(surveys.length);
+    setNumSurveys(
+      surveys.filter((survey) => !isSurveyClosed(survey.closing_date)).length
+    );
 
     setUneditedSurveys(surveys);
     setSurveys(surveys);
