@@ -94,6 +94,14 @@ function SurveyInfo() {
     setIsClosed(false);
   }
 
+  function validateURL(link) {
+    if (link.indexOf("http://") == 0 || link.indexOf("https://") == 0) {
+      return link;
+    } else {
+      return "https://" + link;
+    }
+  }
+
   if (surveyInfo.isValidSurvey === null) {
     return <p>Loading survey info...</p>;
   } else if (!surveyInfo.isValidSurvey) {
@@ -196,7 +204,7 @@ function SurveyInfo() {
                 Survey is closed
               </button>
             ) : (
-              <form action={surveyInfo.surveyLink} target="_blank">
+              <form action={validateURL(surveyInfo.surveyLink)} target="_blank">
                 <button className={styles.linkButton} type="submit">
                   Link to survey
                 </button>{" "}
