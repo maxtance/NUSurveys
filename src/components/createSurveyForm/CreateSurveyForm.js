@@ -23,6 +23,7 @@ function CreateSurveyForm({
   watch,
   edit,
   source,
+  getValues
 }) {
   const URL_REGEX =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
@@ -342,6 +343,7 @@ function CreateSurveyForm({
                 type="number"
                 name="maxAge"
                 {...register("maxAge", {
+                  validate: value => value >= getValues("minAge") ? true : "Maximum age entered is smaller than minimum age. Please try again",
                   min: {
                     value: 1,
                     message: "Invalid age. Please try again",
