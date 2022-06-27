@@ -34,12 +34,12 @@ function SurveyCard(props) {
         )}
 
         <h2 className={styles.surveyCard__title}>
-          {props.survey.title}
           {isSurveyClosed(props.survey.closing_date) ? (
-            <span className={styles.closedTitle}> (CLOSED)</span>
+            <span className={styles.closedTitle}>(CLOSED) </span>
           ) : (
             <></>
           )}
+          {props.survey.title}
         </h2>
         <p className={styles.surveyCard__description}>
           {props.survey.description}

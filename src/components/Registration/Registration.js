@@ -289,13 +289,16 @@ function Registration() {
                 <label for="password" className={styles.fieldName}>
                   Password
                 </label>
-                <br />
                 <input
                   className={`form-control ${styles.field}`}
                   type="password"
                   name="password"
-                  placeholder="A minimum of 6 characters"
                   {...register("password", {
+                    minLength: {
+                      value: 6,
+                      message:
+                        "Password is too short. Please choose a password that is no less than 6 characters",
+                    },
                     required:
                       "Please enter a password no less than 6 characters",
                   })}
