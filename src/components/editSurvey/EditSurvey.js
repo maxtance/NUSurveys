@@ -288,7 +288,7 @@ function EditSurvey() {
           if ("remunerationAmount" in updatedFields) {
             return;
           } else {
-            console.log("reached")
+            console.log("reached");
             let currAmt = oldFields.remunAmount.amount;
             console.log(currAmt);
             const { data: record } = await supabaseClient
@@ -470,7 +470,18 @@ function EditSurvey() {
 
   useEffect(() => {
     if (!isUpdating) {
-      updateDatabaseRecords().then(navigate("/surveys/" + surveyId));
+      // updateDatabaseRecords().then(() => navigate("/surveys/" + surveyId));
+
+      // Note: fix this in Milestone 3
+      function delay(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+      }
+      async function test() {
+        updateDatabaseRecords();
+        await delay(500);
+        navigate("/surveys/" + surveyId);
+      }
+      test();
     }
   }, [isUpdating]);
 
@@ -601,7 +612,7 @@ function EditSurvey() {
                 id={styles.resetBtn}
                 type="reset"
                 onClick={() => {
-                  navigate("/mysurveys");
+                  navigate("/surveys/" + surveyId);
                 }}
               >
                 Cancel

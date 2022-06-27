@@ -108,6 +108,8 @@ function SurveyInfo() {
     return <div>Survey does not exist!</div>;
   }
 
+  console.log(surveyInfo);
+
   return (
     <>
       <Navbar />
@@ -544,7 +546,7 @@ function useFetchListingInfo(surveyId) {
       .from("ethnicity_eligibilities")
       .select()
       .eq("survey_id", surveyId);
-    
+
     console.log(e2);
 
     if (ethnicity_eligibility.length !== 4) {
