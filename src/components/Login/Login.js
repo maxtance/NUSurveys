@@ -137,14 +137,15 @@ function LoginPage() {
               <p>Forgot password?</p>
             </Link>
             <br></br>
-            <div>
+            {/* Commented out for demo purposes */}
+            {/* <div>
               <small className={styles.signupBanner}>
                 New to NUSurveys?{" "}
                 <Link to="/register" className={styles.signup}>
                   Sign up here
                 </Link>
               </small>
-            </div>
+            </div> */}
             <button
               type="submit"
               className="loginBtn btn btn-block"
