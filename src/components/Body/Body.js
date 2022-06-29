@@ -173,7 +173,7 @@ function Body({ page, filterCriteria, eligibility }) {
   };
 
   const renderSurveys = () => {
-    console.log(surveys);
+    // console.log(surveys);
     return surveys.map((survey) => {
       return <SurveyCard survey={survey} userInfo={userInfo} />;
     });

@@ -8,27 +8,38 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(supabaseClient.auth.user());
+  const [user, setUser] = useState();
   const [userLoading, setUserLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
 
   useEffect(() => {
     const session = supabaseClient.auth.session();
-
     setUser(session?.user ?? null);
     setUserLoading(false);
-
     const { data: listener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
+        const userEmail = session?.user.email;
+        const { data: users, error } = await supabaseClient
+          .from("users")
+          .select("*")
+          .eq("email", userEmail);
+        setUserInfo(users[0] ?? null);
+        setUserInfoLoading(false);
+
         setUser(session?.user ?? null);
         setUserLoading(false);
       }
     );
 
-    // fetching the userInfo from users table
-    // Problem? every re render of page will fetch info
+    return () => {
+      listener?.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchUserInfo = async () => {
+      const session = supabaseClient.auth.session();
       const userEmail = session?.user.email;
       const { data: users, error } = await supabaseClient
         .from("users")
@@ -40,12 +51,7 @@ export function AuthProvider({ children }) {
       setUserInfo(users[0]);
       setUserInfoLoading(false);
     };
-
     fetchUserInfo();
-
-    return () => {
-      listener?.unsubscribe();
-    };
   }, []);
 
   const value = {

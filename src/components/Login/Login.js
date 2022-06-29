@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 
 function LoginPage() {
   const { signIn, user } = useAuth();
+
   const navigate = useNavigate();
 
   const {
