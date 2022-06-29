@@ -23,7 +23,7 @@ function CreateSurveyForm({
   watch,
   edit,
   source,
-  getValues
+  getValues,
 }) {
   const URL_REGEX =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
@@ -57,10 +57,10 @@ function CreateSurveyForm({
   };
 
   const requiredField = () => {
-    return (watch("remuneration_id") == 3 || watch("remuneration_id") === "")
+    return watch("remuneration_id") == 3 || watch("remuneration_id") === ""
       ? false
       : "Please enter a remuneration amount";
-  }
+  };
 
   return (
     <form class="form-horizontal" id={styles.surveyForm}>
@@ -150,11 +150,12 @@ function CreateSurveyForm({
               You may choose to upload a picture to go with your listing. This
               is not compulsory.
             </small>
-            <DragAndDropImage 
-              image={image} 
+            <DragAndDropImage
+              image={image}
               setImage={setImage}
               previewUrl={previewUrl}
-              setPreviewUrl={setPreviewUrl} />
+              setPreviewUrl={setPreviewUrl}
+            />
           </div>
         </div>
 
@@ -327,9 +328,7 @@ function CreateSurveyForm({
                 class="form-control"
                 id={styles.minAge}
               ></input>
-               {errors?.minAge
-                ? renderErrorMsg("minAge")
-                : null}
+              {errors?.minAge ? renderErrorMsg("minAge") : null}
             </div>
 
             <div class={`form-group ${styles.formGroup}`}>
@@ -343,7 +342,10 @@ function CreateSurveyForm({
                 type="number"
                 name="maxAge"
                 {...register("maxAge", {
-                  validate: value => value >= getValues("minAge") ? true : "Maximum age entered is smaller than minimum age. Please try again",
+                  validate: (value) =>
+                    value >= getValues("minAge")
+                      ? true
+                      : "Maximum age entered is smaller than minimum age. Please try again",
                   min: {
                     value: 1,
                     message: "Invalid age. Please try again",
@@ -357,9 +359,7 @@ function CreateSurveyForm({
                 class="form-control"
                 id="max-age"
               ></input>
-               {errors?.maxAge
-                ? renderErrorMsg("maxAge")
-                : null}
+              {errors?.maxAge ? renderErrorMsg("maxAge") : null}
             </div>
           </div>
         </div>

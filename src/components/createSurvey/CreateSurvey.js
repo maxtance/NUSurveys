@@ -128,7 +128,7 @@ function CreateSurvey() {
             survey.remuneration_id = count + 1;
             if (error) {
               console.log(error);
-            } 
+            }
           } else {
             survey.remuneration_id = remunerationRecord[0].id;
           }
@@ -180,9 +180,9 @@ function CreateSurvey() {
             !ethnicityEligibility.others
           ) {
             allEthnicities = true;
-          } 
+          }
           for (var key in ethnicityEligibility) {
-            console.log("Insert!!!!!!!")
+            console.log("Insert!!!!!!!");
             if (ethnicityEligibility[key] || allEthnicities) {
               const { data: ethnicity } = await supabaseClient
                 .from("ethnicities")
@@ -202,7 +202,7 @@ function CreateSurvey() {
               }
             }
           }
-            /*
+          /*
             const { data, error } = await supabaseClient.storage
               .from('survey-images')
               .download(`public/E0789289/${previewUrl}`);
@@ -256,53 +256,55 @@ function CreateSurvey() {
   const navigate = useNavigate();
 
   return (
-    <div id={styles.createSurveyWindow}>
-      <h1 id={styles.createSurveyHeader}>Create New Survey</h1>
-      <CreateSurveyForm
-        survey={survey}
-        genderEligibility={genderEligibility}
-        ethnicityEligibility={ethnicityEligibility}
-        minAge={minAge}
-        maxAge={maxAge}
-        remunerationAmount={remunerationAmount}
-        image={image}
-        setImage={setImage}
-        previewUrl={previewUrl}
-        setPreviewUrl={setPreviewUrl}
-        handleInputChange={handleInputChange}
-        handleCheckboxChange={handleCheckboxChange}
-        handleGenderInputChange={handleGenderInputChange}
-        handleMinAgeInputChange={handleMinAgeInputChange}
-        handleMaxAgeInputChange={handleMaxAgeInputChange}
-        handleAmountInputChange={handleAmountInputChange}
-        register={register}
-        errors={errors}
-        watch={watch}
-        edit={false}
-        source={survey}
-        getValues={getValues}
-      />
-      <div class="row" id={styles.btnContainer}>
-        <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">
-          <button
-            class="btn"
-            id={styles.resetBtn}
-            type="reset"
-            onClick={() => {
-              navigate("/mysurveys");
-            }}
-          >
-            Cancel
-          </button>
-        </div>
-        <div class="col-lg-1 col-md-2">
-          <button
-            class="btn"
-            id={styles.submitBtn}
-            onClick={handleSubmit(onFormSubmit)}
-          >
-            Submit
-          </button>
+    <div className={styles.formBody}>
+      <div id={styles.createSurveyWindow}>
+        <h1 id={styles.createSurveyHeader}>Create New Survey</h1>
+        <CreateSurveyForm
+          survey={survey}
+          genderEligibility={genderEligibility}
+          ethnicityEligibility={ethnicityEligibility}
+          minAge={minAge}
+          maxAge={maxAge}
+          remunerationAmount={remunerationAmount}
+          image={image}
+          setImage={setImage}
+          previewUrl={previewUrl}
+          setPreviewUrl={setPreviewUrl}
+          handleInputChange={handleInputChange}
+          handleCheckboxChange={handleCheckboxChange}
+          handleGenderInputChange={handleGenderInputChange}
+          handleMinAgeInputChange={handleMinAgeInputChange}
+          handleMaxAgeInputChange={handleMaxAgeInputChange}
+          handleAmountInputChange={handleAmountInputChange}
+          register={register}
+          errors={errors}
+          watch={watch}
+          edit={false}
+          source={survey}
+          getValues={getValues}
+        />
+        <div class="row" id={styles.btnContainer}>
+          <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">
+            <button
+              class="btn"
+              id={styles.resetBtn}
+              type="reset"
+              onClick={() => {
+                navigate("/mysurveys");
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+          <div class="col-lg-1 col-md-2">
+            <button
+              class="btn"
+              id={styles.submitBtn}
+              onClick={handleSubmit(onFormSubmit)}
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </div>

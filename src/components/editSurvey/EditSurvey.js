@@ -217,7 +217,7 @@ function EditSurvey() {
 
   const onFormSubmit = async (e) => {
     //e.preventDefault();
-    await cleanUpdatedFields();
+    cleanUpdatedFields();
     //navigate("/mysurveys");
   };
 
@@ -256,7 +256,11 @@ function EditSurvey() {
     let counter = Object.keys(updatedFields).length;
 
     //update title, desc, link, cat_id in surveys first
-    Object.keys(updatedFields).forEach(async (key) => {
+    for (const key in updatedFields) {
+      await update(key);
+    }
+
+    async function update(key) {
       if (
         key === "title" ||
         key === "description" ||
@@ -458,27 +462,24 @@ function EditSurvey() {
       }
 
       counter--;
+      console.log(counter);
       if (counter === 0) {
         await cleanUpAfterUpdate();
+        console.log("clean up done");
       }
-    });
+    }
 
     setUpdatedFields({});
     //update last_updated field
-    //console.log(updatedFields);
+    console.log("finished updating");
   };
 
   useEffect(() => {
     if (!isUpdating) {
       // updateDatabaseRecords().then(() => navigate("/surveys/" + surveyId));
-
       // Note: fix this in Milestone 3
-      function delay(time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-      }
       async function test() {
-        updateDatabaseRecords();
-        await delay(500);
+        await updateDatabaseRecords();
         navigate("/surveys/" + surveyId);
       }
       test();
@@ -574,64 +575,66 @@ function EditSurvey() {
   }, []);
 
   return (
-    <div id={styles.editSurveyWindow}>
-      {isLoading ? (
+    <>
+      {isLoading || !isUpdating ? (
         <p>Loading...</p>
       ) : (
-        <div>
-          <h1 id={styles.editSurveyHeader}>Edit Survey</h1>
-          <CreateSurveyForm
-            survey={survey}
-            genderEligibility={genderEligibility}
-            ethnicityEligibility={ethnicityEligibility}
-            minAge={minAge}
-            maxAge={maxAge}
-            remunerationAmount={remunerationAmount}
-            image={image}
-            setImage={setImage}
-            previewUrl={previewUrl}
-            setPreviewUrl={setPreviewUrl}
-            handleInputChange={handleInputChange}
-            handleCheckboxChange={handleCheckboxChange}
-            handleGenderInputChange={handleGenderInputChange}
-            handleMinAgeInputChange={handleMinAgeInputChange}
-            handleMaxAgeInputChange={handleMaxAgeInputChange}
-            handleAmountInputChange={handleAmountInputChange}
-            register={register}
-            errors={errors}
-            watch={watch}
-            edit={true}
-            source={updatedFields}
-            setUpdatedFields={setUpdatedFields}
-            getValues={getValues}
-          />
-          <div class="row" id={styles.btnContainer}>
-            <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">
-              <button
-                class="btn"
-                id={styles.resetBtn}
-                type="reset"
-                onClick={() => {
-                  navigate("/surveys/" + surveyId);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-            <div class="col-lg-1 col-md-2">
-              <button
-                class="btn"
-                id={styles.updateBtn}
-                disabled={Object.keys(updatedFields).length === 0}
-                onClick={handleSubmit(onFormSubmit)}
-              >
-                Update
-              </button>
+        <div className={styles.editSurveyBody}>
+          <div id={styles.editSurveyWindow}>
+            <h1 id={styles.editSurveyHeader}>Edit Survey</h1>
+            <CreateSurveyForm
+              survey={survey}
+              genderEligibility={genderEligibility}
+              ethnicityEligibility={ethnicityEligibility}
+              minAge={minAge}
+              maxAge={maxAge}
+              remunerationAmount={remunerationAmount}
+              image={image}
+              setImage={setImage}
+              previewUrl={previewUrl}
+              setPreviewUrl={setPreviewUrl}
+              handleInputChange={handleInputChange}
+              handleCheckboxChange={handleCheckboxChange}
+              handleGenderInputChange={handleGenderInputChange}
+              handleMinAgeInputChange={handleMinAgeInputChange}
+              handleMaxAgeInputChange={handleMaxAgeInputChange}
+              handleAmountInputChange={handleAmountInputChange}
+              register={register}
+              errors={errors}
+              watch={watch}
+              edit={true}
+              source={updatedFields}
+              setUpdatedFields={setUpdatedFields}
+              getValues={getValues}
+            />
+            <div class="row" id={styles.btnContainer}>
+              <div class="col-lg-1 offset-lg-10 col-md-1 offset-md-9">
+                <button
+                  class="btn"
+                  id={styles.resetBtn}
+                  type="reset"
+                  onClick={() => {
+                    navigate("/surveys/" + surveyId);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div class="col-lg-1 col-md-2">
+                <button
+                  class="btn"
+                  id={styles.updateBtn}
+                  disabled={Object.keys(updatedFields).length === 0}
+                  onClick={handleSubmit(onFormSubmit)}
+                >
+                  Update
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

@@ -24,6 +24,8 @@ function SurveyInfo() {
   const userId = userInfo.id;
 
   const surveyInfo = useFetchListingInfo(surveyId);
+  console.log(surveyInfo);
+
   const [isBookmarked, setAndUpdateIsBookmarked] = useBookmark(
     surveyInfo.isWishlisted,
     surveyId
@@ -103,12 +105,14 @@ function SurveyInfo() {
   }
 
   if (surveyInfo.isValidSurvey === null) {
-    return <p>Loading survey info...</p>;
+    return (
+      <>
+        <Navbar /> <p>Loading survey info...</p>
+      </>
+    );
   } else if (!surveyInfo.isValidSurvey) {
     return <div>Survey does not exist!</div>;
   }
-
-  console.log(surveyInfo);
 
   return (
     <>
@@ -536,8 +540,6 @@ function useFetchListingInfo(surveyId) {
       .select("ethnicities(name)")
       .eq("survey_id", surveyId);
 
-    console.log(ethnicity_eligibility);
-
     if (error) {
       console.log(error);
     }
@@ -546,8 +548,6 @@ function useFetchListingInfo(surveyId) {
       .from("ethnicity_eligibilities")
       .select()
       .eq("survey_id", surveyId);
-
-    console.log(e2);
 
     if (ethnicity_eligibility.length !== 4) {
       let strOfEthnicities = ethnicity_eligibility.map(
