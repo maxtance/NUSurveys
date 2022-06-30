@@ -12,6 +12,7 @@ import editListingImg from "../../assets/edit_listing_img.png";
 import deleteListingImg from "../../assets/delete_listing_img.png";
 import openListingImg from "../../assets/open_listing_img.png";
 import emailImg from "../../assets/email_img.png";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 // Things left to implement:
 // 1. For surveyor
@@ -24,7 +25,7 @@ function SurveyInfo() {
   const userId = userInfo.id;
 
   const surveyInfo = useFetchListingInfo(surveyId);
-  console.log(surveyInfo);
+  // console.log(surveyInfo);
 
   const [isBookmarked, setAndUpdateIsBookmarked] = useBookmark(
     surveyInfo.isWishlisted,
@@ -229,17 +230,17 @@ function SurveyInfo() {
                   {isBookmarked ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
                 {isSurveyClosed(surveyInfo.closingDate) ? (
-                  <button
-                    type="button"
-                    className={styles.completedButton}
-                    disabled
-                  >
-                    Mark as Completed
-                  </button>
+                  <MarkCompletedButton
+                    surveyId={surveyId}
+                    userId={userId}
+                    initValue={surveyInfo.isCompleted}
+                  />
                 ) : (
-                  <button type="button" className={styles.completedButton}>
-                    Mark as Completed
-                  </button>
+                  <MarkCompletedButton
+                    surveyId={surveyId}
+                    userId={userId}
+                    initValue={surveyInfo.isCompleted}
+                  />
                 )}
               </div>
             ) : (
@@ -319,6 +320,63 @@ function SurveyInfo() {
         </div>
       </div>
     </>
+  );
+}
+
+function MarkCompletedButton(props) {
+  const { surveyId, userId, initValue } = props;
+
+  const [isCompleted, setIsCompleted] = useState(initValue);
+  useEffect(() => setIsCompleted(initValue), [initValue]);
+
+  function toggleCompleted() {
+    setChange();
+    updateCompletedDb(isCompleted);
+  }
+
+  function setChange() {
+    setIsCompleted((prevState) => !prevState);
+  }
+
+  async function updateCompletedDb(isCompleted) {
+    console.log("updating db");
+    console.log(isCompleted);
+    if (isCompleted) {
+      const { data, error } = await supabaseClient
+        .from("completed_surveys")
+        .delete()
+        .eq("survey_id", surveyId)
+        .eq("user_id", userId);
+    } else {
+      let currDate = new Date();
+      let todaysDate = `${currDate.getFullYear()}-${String(
+        currDate.getMonth() + 1
+      ).padStart(2, 0)}-${String(currDate.getDate()).padStart(2, 0)}`;
+
+      const { data, error } = await supabaseClient
+        .from("completed_surveys")
+        .insert([
+          {
+            survey_id: String(surveyId),
+            user_id: String(userId),
+            date_added: String(todaysDate),
+          },
+        ]);
+
+      if (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      className={styles.completedButton}
+      onClick={toggleCompleted}
+    >
+      {isCompleted ? "Undo Completed" : "Mark as Completed"}
+    </button>
   );
 }
 
@@ -457,7 +515,8 @@ export const fetchSurveyInfo = async (surveyId) => {
       published_by
     `
     )
-    .eq("id", surveyId);
+    .eq("id", surveyId)
+    .neq("is_deleted", true);
 
   if (error) {
     console.log(error);
@@ -486,6 +545,7 @@ function useFetchListingInfo(surveyId) {
   const [otherRequirements, setOtherRequirements] = useState("");
   const [surveyLink, setSurveyLink] = useState("");
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [publishedId, setPublisherId] = useState("");
   const [publisherName, setPublisherName] = useState("");
   const [publisherEmail, setPublisherEmail] = useState("");
@@ -616,6 +676,22 @@ function useFetchListingInfo(surveyId) {
     }
   };
 
+  const fetchCompleted = async () => {
+    const { data: completed_surveys, error } = await supabaseClient
+      .from("completed_surveys")
+      .select("*")
+      .eq("survey_id", surveyId)
+      .eq("user_id", userFetchingId);
+
+    if (error) {
+      console.log(error);
+    }
+
+    if (completed_surveys?.length === 1) {
+      setIsCompleted(true);
+    }
+  };
+
   useEffect(() => {
     initialiseVariables();
     fetchGenderEligibility();
@@ -623,6 +699,7 @@ function useFetchListingInfo(surveyId) {
     fetchAgeEligibility();
     fetchImgURL();
     fetchWishlisted();
+    fetchCompleted();
   }, []);
 
   // useEffect(() => {
@@ -645,6 +722,7 @@ function useFetchListingInfo(surveyId) {
     otherRequirements: otherRequirements,
     surveyLink: surveyLink,
     isWishlisted: isWishlisted,
+    isCompleted: isCompleted,
     publishedId: publishedId,
     publisherName: publisherName,
     publisherEmail: publisherEmail,
