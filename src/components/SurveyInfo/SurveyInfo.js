@@ -32,6 +32,12 @@ function SurveyInfo() {
     surveyId
   );
 
+  const [isCompleted, setIsCompleted] = useState(surveyInfo.isCompleted);
+  useEffect(
+    () => setIsCompleted(surveyInfo.isCompleted),
+    [surveyInfo.isCompleted]
+  );
+
   function toggleBookmark() {
     setAndUpdateIsBookmarked();
   }
@@ -112,7 +118,12 @@ function SurveyInfo() {
       </>
     );
   } else if (!surveyInfo.isValidSurvey) {
-    return <div>Survey does not exist!</div>;
+    return (
+      <>
+        <Navbar />
+        <div>Survey does not exist!</div>
+      </>
+    );
   }
 
   return (
@@ -206,9 +217,9 @@ function SurveyInfo() {
                 </ul>
               </p>
             </div>
-            {isClosed ? (
+            {isClosed || isCompleted ? (
               <button className={styles.linkButton} disabled>
-                Survey is closed
+                {isClosed ? "Survey is closed" : "Survey completed"}
               </button>
             ) : (
               <form action={validateURL(surveyInfo.surveyLink)} target="_blank">
@@ -233,13 +244,15 @@ function SurveyInfo() {
                   <MarkCompletedButton
                     surveyId={surveyId}
                     userId={userId}
-                    initValue={surveyInfo.isCompleted}
+                    isCompleted={isCompleted}
+                    setIsCompleted={setIsCompleted}
                   />
                 ) : (
                   <MarkCompletedButton
                     surveyId={surveyId}
                     userId={userId}
-                    initValue={surveyInfo.isCompleted}
+                    isCompleted={isCompleted}
+                    setIsCompleted={setIsCompleted}
                   />
                 )}
               </div>
@@ -324,10 +337,7 @@ function SurveyInfo() {
 }
 
 function MarkCompletedButton(props) {
-  const { surveyId, userId, initValue } = props;
-
-  const [isCompleted, setIsCompleted] = useState(initValue);
-  useEffect(() => setIsCompleted(initValue), [initValue]);
+  const { surveyId, userId, isCompleted, setIsCompleted } = props;
 
   function toggleCompleted() {
     setChange();
