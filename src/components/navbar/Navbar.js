@@ -1,5 +1,5 @@
 import styles from "./Navbar.module.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
 import { useAuth } from "../../contexts/Auth";
@@ -8,6 +8,10 @@ function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const locationArray = location.pathname.split("/");
+  const currPath = locationArray[locationArray.length - 1];
 
   const handleSignOut = async () => {
     // Ends user session
@@ -59,8 +63,8 @@ function Navbar() {
                 </a>
               </li>
             </NavLink>
-            <NavLink
-              to="/mysurveys"
+            {/* <NavLink
+              to="/mysurveys/published-surveys"
               className={({ isActive }) =>
                 isActive ? styles.selectedNavItem : styles.unselectedNavItem
               }
@@ -70,7 +74,30 @@ function Navbar() {
                   My Surveys
                 </a>
               </li>
-            </NavLink>
+            </NavLink> */}
+
+            <li className={`nav-item ${styles.navCenter}`}>
+              <div className={styles.mySurveysDropdown}>
+                <span
+                  className={
+                    currPath === "published-surveys" ||
+                    currPath === "completed-surveys"
+                      ? styles.selectedNavItem
+                      : styles.unselectedNavItem
+                  }
+                >
+                  <span className="nav-link">My Surveys</span>
+                </span>
+                <div className={styles.dropdownContent}>
+                  <NavLink to="/mysurveys/published-surveys">
+                    Published surveys
+                  </NavLink>
+                  <NavLink to="/mysurveys/completed-surveys">
+                    Completed surveys
+                  </NavLink>
+                </div>
+              </div>
+            </li>
             <NavLink
               to="/wishlist"
               className={({ isActive }) =>

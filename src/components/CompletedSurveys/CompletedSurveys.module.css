@@ -1,0 +1,93 @@
+.bodyContainer {
+    background-color: #f2f2f2;
+    padding: 2rem;
+    height: 80vh;
+}
+
+.searchBar{
+    text-align: right;
+    padding-bottom: 1rem;
+}
+
+.pageHeader {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding-bottom: 1rem;
+}
+
+.noSurveysHeader {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.colouredHeader {
+    color: #6f3096;
+}
+
+.toHomeLink {
+    font-weight: bold;
+    color: #6f3096;
+}
+
+.toHomeLink:hover{
+    cursor: pointer;
+}
+
+.surveyTableContainer {
+    font-size: 0.75rem;
+}
+
+table {
+    display: table;
+    border: solid 1px #979797;
+    width: 100%;
+}
+
+table > tr {
+    border: inherit;
+}
+
+th, td {
+    padding: 0.75rem 2.5rem;
+}
+
+th {
+    background-color: white;
+    color: #06114F;
+    cursor: default;
+}
+
+td {
+    overflow-y: hidden;
+    
+}
+
+tr:nth-child(1) {
+    background-color: white;
+    border-bottom: solid 3px #979797;
+}
+
+tr:nth-child(even) {
+    background-color: white;
+}
+
+tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+}
+
+.surveyTitle {
+    width: 75%;
+}
+
+.dateCompleted {
+    width: 25%;
+}
+
+.closedTitle {
+    color: #F87171;
+}
