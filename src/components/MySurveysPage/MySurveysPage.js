@@ -20,6 +20,7 @@ function MySurveys() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("Last created");
   const [view, setView] = useState("View all");
+  const [keyword, setKeyword] = useState("");
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -55,7 +56,7 @@ function MySurveys() {
   }
 
   const fetchMySurveys = async () => {
-    const { data: surveys, error } = await supabaseClient
+    let { data: surveys, error } = await supabaseClient
       .from("surveys")
       .select("*")
       .order("id", { ascending: false })
@@ -64,6 +65,18 @@ function MySurveys() {
 
     if (error) {
       console.log(error);
+    }
+
+     //searching logic
+     if (keyword != "") {
+      console.log(keyword);
+      surveys = surveys.filter((survey) => {
+        return (
+          survey.title.toLowerCase().includes(keyword.toLowerCase()) ||
+          survey.description.toLowerCase().includes(keyword.toLowerCase())
+        );
+      });
+      //console.log(surveys);
     }
 
     setNumSurveys(
@@ -77,7 +90,7 @@ function MySurveys() {
 
   useEffect(() => {
     fetchMySurveys();
-  }, [userInfo]);
+  }, [userInfo, keyword]);
 
   const renderMySurveys = () => {
     return surveys.map((survey) => {
@@ -92,7 +105,7 @@ function MySurveys() {
       </div>
       <div className={styles.mainContent}>
         <div className={styles.searchBarForm}>
-          <SearchBar />
+          <SearchBar setKeyword={setKeyword} />
         </div>
         <div className="row pb-3">
           <div className={`col-md-4 ${styles.pageHeader}`}>

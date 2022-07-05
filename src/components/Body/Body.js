@@ -138,14 +138,14 @@ function Body({ page, filterCriteria, eligibility }) {
 
     //searching logic
     if (keyword != "") {
-      console.log(keyword);
+      //console.log(keyword);
       surveys = surveys.filter((survey) => {
         return (
           survey.title.toLowerCase().includes(keyword.toLowerCase()) ||
           survey.description.toLowerCase().includes(keyword.toLowerCase())
         );
       });
-      console.log(surveys);
+      //console.log(surveys);
     }
 
     const { data: wishlists, error: wishlistsError } = await supabaseClient

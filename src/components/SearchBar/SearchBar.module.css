@@ -8,8 +8,40 @@
     background-color: #06114F;
     color: white;
     border-color: #06114F;
+    border-width: 0px;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
     height: 30px;
     font-size: 0.8rem;
 }
+
+.cancelBtn:disabled {
+    background-color: #a9a9a9;
+    color: white;
+    border-color: #a9a9a9;
+    border-width: 0px;
+    border-radius: 0.5rem;
+    height: 30px;
+    font-size: 0.8rem;
+    margin-left: 10px;
+}
+
+.cancelBtn {
+    background-color: #06114f;
+    color: white;
+    border-color: #06114f;
+    border-width: 0px;
+    border-radius: 0.5rem;
+    height: 30px;
+    font-size: 0.8rem;
+    margin-left: 10px;
+}
+
+/* clears the ‘X’ from Internet Explorer */
+input[type=search]::-ms-clear { display: none; width : 0; height: 0; }
+input[type=search]::-ms-reveal { display: none; width : 0; height: 0; }
+/* clears the ‘X’ from Chrome */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }

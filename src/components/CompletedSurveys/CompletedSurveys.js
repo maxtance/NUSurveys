@@ -6,6 +6,7 @@ import Navbar from "../navbar/Navbar";
 import SearchBar from "../SearchBar/SearchBar";
 import styles from "./CompletedSurveys.module.css";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
+import { SurveyTable } from "../SurveyTable/SurveyTable";
 
 function CompletedSurveys() {
   return (
@@ -56,45 +57,19 @@ function NoCompletedSurveysBody(props) {
 }
 
 function HaveCompletedSurveysBody(props) {
-  const { completedSurveys, navigate } = props;
+  let { completedSurveys, navigate } = props;
+  const [keyword, setKeyword] = useState("");
 
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.searchBar}>
-        <SearchBar />
+        <SearchBar setKeyword={setKeyword} />
       </div>
       <div className={styles.pageHeader}>
         My <span className={styles.colouredHeader}>Completed</span> Surveys
       </div>
       <div className={styles.surveyTableContainer}>
-        <table>
-          <tr>
-            <th className={styles.surveyTitle}>Survey Title</th>
-            <th className={styles.dateCompleted}>Date Completed</th>
-          </tr>
-          {completedSurveys.map((completedSurvey) => {
-            const isClosed = isSurveyClosed(
-              completedSurvey.surveyClosingDate.closing_date
-            );
-            return (
-              <tr
-                onClick={() =>
-                  navigate("/surveys/" + completedSurvey.survey_id)
-                }
-              >
-                <td>
-                  <span className={styles.closedTitle}>
-                    {isClosed ? "(CLOSED) " : ""}
-                  </span>
-                  {completedSurvey.surveyTitle.title}
-                </td>
-                <td>
-                  {completedSurvey.date_added.split("-").reverse().join("/")}
-                </td>
-              </tr>
-            );
-          })}
-        </table>
+        <SurveyTable keyword={keyword} completedSurveys={completedSurveys} />
       </div>
     </div>
   );
