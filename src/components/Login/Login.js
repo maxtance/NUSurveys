@@ -134,7 +134,7 @@ function LoginPage() {
               />
               {errors?.password ? renderErrorMsg("password") : null}
             </div>
-            <Link to="/" className={styles.resetpwd}>
+            <Link to="/forgot-password" className={styles.resetpwd}>
               <p>Forgot password?</p>
             </Link>
             <br></br>

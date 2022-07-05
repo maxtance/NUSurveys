@@ -343,13 +343,13 @@ function CreateSurveyForm({
                 name="maxAge"
                 {...register("maxAge", {
                   validate: (value) =>
-                    value >= getValues("minAge")
+                    value == "" || value == null
                       ? true
-                      : "Maximum age entered is smaller than minimum age. Please try again",
-                  min: {
-                    value: 1,
-                    message: "Invalid age. Please try again",
-                  },
+                      : value < 1 
+                      ? "Invalid age. Please try again"
+                      : value < getValues("minAge")
+                      ? "Maximum age entered is smaller than minimum age. Please try again"
+                      : true,
                 })}
                 value={edit ? source.maxAge : maxAge}
                 onChange={(e) => {

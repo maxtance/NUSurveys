@@ -1,11 +1,20 @@
 import styles from "./SearchBar.module.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
 
-function SearchBar() {
-  const [search, setSearch] = useState("");
+function SearchBar({ setKeyword }) {
+  const {
+    register,
+    watch,
+  } = useForm();
+
+  const searchRef = useRef();
+  searchRef.current = watch("search-bar");
+
+  //const [search, setSearch] = useState("");
   const searchButtonPressed = () => {
-    console.log(search);
-    setSearch("");
+    setKeyword(searchRef.current);
+    //setSearch("");
   };
 
   return (
@@ -13,10 +22,11 @@ function SearchBar() {
       <input
         type="search"
         name="search-bar"
+        {...register("search-bar")}
         placeholder="Search for keyword/tag"
         className={styles.searchBar}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        //value={search}
+        //onChange={(e) => setKeyword(e.target.value)}
       />
       <button
         type="button"

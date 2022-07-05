@@ -19,6 +19,8 @@ import { useEffect } from "react";
 import SurveyInfo from "./components/SurveyInfo/SurveyInfo";
 import WishlistPage from "./components/WishlistPage/WishlistPage";
 import EditSurvey from "./components/editSurvey/EditSurvey";
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
 
 function App() {
   const errorTitle = "Oops!";
@@ -29,11 +31,42 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let hash = window.location.hash;
+    console.log(hash);
     if (
-      window.location.hash ==
-      "#error_code=404&error_description=Confirmation+Token+not+found"
+      hash == "#error_code=404&error_description=Confirmation+Token+not+found" || 
+      hash == "#error_code=404&error_description=User+not+found"
     ) {
-      navigate("/error");
+      navigate("/error", {
+        state: {
+          title: "Oops!",
+          message: "An unknown error occurred. Please try again."
+        }
+      });
+    } else if (hash != "") {
+      const hashArr = hash
+        .substring(1)
+        .split("&")
+        .map((param) => param.split("="));
+      let type;
+      let accessToken;
+      for (const [key, value] of hashArr) {
+        if (key === "type") {
+          type = value;
+        } else if (key === "access_token") {
+          accessToken = value;
+        }
+      }
+      if (type === "recovery" && accessToken) {
+        navigate("/reset-password", {
+          state: {
+            type: type,
+            access_token: accessToken,
+          },
+        });
+      } else {
+        //navigate("/home");
+      }
     }
   }, []);
 
@@ -83,17 +116,12 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/welcome" element={<Welcome />} />
-          <Route
-            path="/error"
-            element={
-              <GeneralMessage
-                title={errorTitle}
-                message={doubleSignUpMessage}
-              />
-            }
-          />
+          <Route path="/success" element={<GeneralMessage />} />
+          <Route path="/error" element={<GeneralMessage />} />
           <Route
             path="/"
             element={

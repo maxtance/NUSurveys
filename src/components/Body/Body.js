@@ -16,10 +16,11 @@ function Body({ page, filterCriteria, eligibility }) {
   const [surveys, setSurveys] = useState([]);
   const [surveysIsLoading, setSurveysIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("Newest survey");
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     fetchSurveyListings();
-  }, [filterCriteria, userInfo]);
+  }, [filterCriteria, keyword, userInfo]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -127,12 +128,24 @@ function Body({ page, filterCriteria, eligibility }) {
       }
     }
 
-    const { data: surveys, error } = await query
+    let { data: surveys, error } = await query
       .neq("published_by", userId)
       .order("id", { ascending: false });
 
     if (error) {
       console.log(error);
+    }
+
+    //searching logic
+    if (keyword != "") {
+      console.log(keyword);
+      surveys = surveys.filter((survey) => {
+        return (
+          survey.title.toLowerCase().includes(keyword.toLowerCase()) ||
+          survey.description.toLowerCase().includes(keyword.toLowerCase())
+        );
+      });
+      console.log(surveys);
     }
 
     const { data: wishlists, error: wishlistsError } = await supabaseClient
@@ -145,6 +158,7 @@ function Body({ page, filterCriteria, eligibility }) {
     }
 
     surveys.map((survey) => {
+      console.log(survey);
       const match = wishlists.filter(
         (wishlist) => wishlist.survey_id === survey.id
       );
@@ -183,7 +197,7 @@ function Body({ page, filterCriteria, eligibility }) {
     <div className={styles.container}>
       <div>
         <div className={styles.searchBarForm}>
-          <SearchBar />
+          <SearchBar setKeyword={setKeyword} />
         </div>
         <div className="d-flex justify-content-between pb-3">
           {page === "Home" ? (

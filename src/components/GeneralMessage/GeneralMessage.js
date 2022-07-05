@@ -1,8 +1,10 @@
 import styles from "./GeneralMessage.module.css";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-function GeneralMessage({title, message}) {
+function GeneralMessage() {
+    const { state } = useLocation();
+
     return (
         <div className={styles.container}>
             <nav className="navbar navbar-expand-md navbar-light bg-white">
@@ -17,8 +19,8 @@ function GeneralMessage({title, message}) {
                 </div>
             </nav>
             <div className={styles.mainBody}>
-                <h2 className={styles.title}>{title}</h2>
-                <p className={styles.message}>{message}</p>
+                <h2 className={styles.title}>{state.title}</h2>
+                <p className={styles.message}>{state.message}</p>
                 <Link to="/login">
                     <button class={styles.button}>
                         Back to Login

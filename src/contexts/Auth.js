@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { supabaseClient } from "../lib/client";
 
 const AuthContext = React.createContext();
@@ -19,6 +20,8 @@ export function AuthProvider({ children }) {
     setUserLoading(false);
     const { data: listener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
+        console.log(event);
+        console.log(session);
         const userEmail = session?.user.email;
         const { data: users, error } = await supabaseClient
           .from("users")
