@@ -220,7 +220,7 @@ function CreateSurvey() {
   const onFormSubmit = async (e) => {
     //e.preventDefault();
     await addSurveyListing();
-    navigate("/mysurveys");
+    navigate("/mysurveys/published-surveys");
   };
 
   const handleInputChange = (e) => {
@@ -290,7 +290,7 @@ function CreateSurvey() {
               id={styles.resetBtn}
               type="reset"
               onClick={() => {
-                navigate("/mysurveys");
+                navigate("/mysurveys/published-surveys");
               }}
             >
               Cancel

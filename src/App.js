@@ -21,6 +21,7 @@ import WishlistPage from "./components/WishlistPage/WishlistPage";
 import EditSurvey from "./components/editSurvey/EditSurvey";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
+import CompletedSurveys from "./components/CompletedSurveys/CompletedSurveys";
 
 function App() {
   const errorTitle = "Oops!";
@@ -83,7 +84,7 @@ function App() {
             }
           />
           <Route
-            path="/mysurveys"
+            path="/mysurveys/published-surveys"
             element={
               <ProtectedRoute>
                 <MySurveysPage />
@@ -95,6 +96,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateSurvey />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mysurveys/completed-surveys"
+            element={
+              <ProtectedRoute>
+                <CompletedSurveys />
               </ProtectedRoute>
             }
           />

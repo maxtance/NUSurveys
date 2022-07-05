@@ -12,8 +12,8 @@ function useBookmark(initValue, surveyId) {
   useEffect(() => setIsBookmarked(initValue), [initValue]);
 
   function setAndUpdateIsBookmarked() {
-      setIsBookmarked((prevState) => !prevState);
-      updateWishlistDb(isBookmarked, surveyId, userId);
+    setIsBookmarked((prevState) => !prevState);
+    updateWishlistDb(isBookmarked, surveyId, userId);
   }
 
   return [isBookmarked, setAndUpdateIsBookmarked];
@@ -26,7 +26,8 @@ async function updateWishlistDb(isBookmarked, surveyId, userId) {
     const { data, error } = await supabaseClient
       .from("wishlisted_surveys")
       .delete()
-      .eq("survey_id", surveyId);
+      .eq("survey_id", surveyId)
+      .eq("user_id", userId);
 
     if (error) {
       console.log(error);

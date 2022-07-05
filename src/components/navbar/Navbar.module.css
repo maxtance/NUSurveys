@@ -17,10 +17,47 @@
 
 .selectedNavItem {
     font-weight: bold;
-    text-decoration: underline;
+    text-decoration: underline #979797; 
+    /* change colour */
     text-underline-offset: 0.5rem;
 }
 
 .unselectedNavItem {
     text-decoration: none;
+}
+
+.mySurveysDropdown {
+    position: relative;
+    cursor: pointer;
+    /* display: inline-block; */
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: solid 1px #979797;
+    border-radius: 4px;
+    min-width: 200%;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdownContent a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-weight: 300;
+}
+
+.dropdownContent a:hover {
+    color: black;
+    background-color: #ddd;
+    font-weight: 400;
+    border-radius: 4px;
+}
+
+.mySurveysDropdown:hover .dropdownContent {
+    display: block;
 }
