@@ -34,7 +34,7 @@ function SearchBar({ setKeyword }) {
         ref={ref}
         name="search-bar"
         {...register("search-bar")}
-        placeholder="Search for keyword/tag"
+        placeholder="Search for keyword(s)"
         className={styles.searchBar}
         //value={search}
         //onChange={(e) => setKeyword(e.target.value)}

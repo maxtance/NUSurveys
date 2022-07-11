@@ -42,7 +42,9 @@ function SurveyCard(props) {
           {props.survey.title}
         </h2>
         <p className={styles.surveyCard__description}>
-          {props.survey.description}
+          {props.survey.description.trim().length === 0
+            ? "No description provided by the publisher."
+            : props.survey.description}
         </p>
       </div>
       <button

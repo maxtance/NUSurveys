@@ -13,7 +13,8 @@ function Sidebar({
   filterCriteria,
   setFilterCriteria,
   eligibility,
-  handleEligibilityChange
+  handleEligibilityChange,
+  clearFilter
 }) {
   // get setSurveys from HomeBody.js to set the changes when filter button is clicked
   // need to lift things up to HomePage since HomePage is the parent of Sidebar and HomeBody
@@ -45,6 +46,24 @@ function Sidebar({
     setFilterCriteria({ ...filterCriteria, ...temp });
   };
 
+  const filterPressed = () => {
+    return (
+      eligibility ||
+      criteriaChecked(type) ||
+      criteriaChecked(remuneration) ||
+      criteriaChecked(status)
+    );
+  };
+
+  const criteriaChecked = (cat) => {
+    for (let key in cat) {
+      if (cat[key]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -54,10 +73,11 @@ function Sidebar({
       <form className={styles.filter} onSubmit={handleSubmit}>
         <div className={styles.filterEligibility}>
           <label for="eligibleSurveys">Only show eligible surveys: </label>
-          <input 
-            type="checkbox" 
-            className={styles.eligibilityCheckbox} 
+          <input
+            type="checkbox"
+            className={styles.eligibilityCheckbox}
             value={eligibility}
+            checked={eligibility}
             onChange={handleEligibilityChange}
           />
         </div>
@@ -68,6 +88,7 @@ function Sidebar({
             name="1"
             className={styles.checkbox}
             value={type[1]}
+            checked={type[1]}
             onChange={handleTypeChange}
           />
           <label for="onlineSurvey">Online Survey</label> <br />
@@ -76,6 +97,7 @@ function Sidebar({
             name="2"
             className={styles.checkbox}
             value={type[2]}
+            checked={type[2]}
             onChange={handleTypeChange}
           />
           <label for="researchPhysical">Research Study (Remote)</label> <br />
@@ -84,6 +106,7 @@ function Sidebar({
             name="3"
             className={styles.checkbox}
             value={type[3]}
+            checked={type[3]}
             onChange={handleTypeChange}
           />
           <label for="researchRemote">Research Study (On-site)</label> <br />
@@ -95,6 +118,7 @@ function Sidebar({
             name="1"
             className={styles.checkbox}
             value={remuneration[1]}
+            checked={remuneration[1]}
             onChange={handleRemunerationChange}
           />
           <label for="cash">Cash</label> <br />
@@ -103,6 +127,7 @@ function Sidebar({
             name="2"
             className={styles.checkbox}
             value={remuneration[2]}
+            checked={remuneration[2]}
             onChange={handleRemunerationChange}
           />
           <label for="vouchers">Vouchers</label> <br />
@@ -111,6 +136,7 @@ function Sidebar({
             name="3"
             className={styles.checkbox}
             value={remuneration[3]}
+            checked={remuneration[3]}
             onChange={handleRemunerationChange}
           />
           <label for="na">N/A</label> <br />
@@ -122,6 +148,7 @@ function Sidebar({
             name="ongoing"
             className={styles.checkbox}
             value={status.ongoing}
+            checked={status.ongoing}
             onChange={handleStatusChange}
           />
           <label for="ongoing">Ongoing</label> <br />
@@ -130,12 +157,20 @@ function Sidebar({
             name="closed"
             className={styles.checkbox}
             value={status.closed}
+            checked={status.closed}
             onChange={handleStatusChange}
           />
           <label for="closed">Closed</label> <br />
         </div>
         <button type="submit" className={styles.filterBtn}>
           Filter
+        </button>
+        <button
+          className={styles.cancelBtn}
+          disabled={!filterPressed()}
+          onClick={clearFilter}
+        >
+          Cancel
         </button>
       </form>
     </div>

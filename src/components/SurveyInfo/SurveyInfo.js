@@ -148,7 +148,11 @@ function SurveyInfo() {
             <div>
               <h3 className={styles.aboutHeader}>About the study</h3>
               {/* <p className={styles.descriptionHeader}>Description: </p> */}
-              <p className={styles.description}>{surveyInfo.description}</p>
+              <p className={styles.description}>
+                {surveyInfo.description.trim().length === 0
+                  ? "No description provided by the publisher."
+                  : surveyInfo.description}
+              </p>
               <p>
                 <ul className={styles.noBullets}>
                   <li>
@@ -575,7 +579,7 @@ function useFetchListingInfo(surveyId) {
         setRemunerationType(survey.remunType.category_id.cat_name);
       }
       setRemunerationAmount(survey.remunAmount.amount);
-      if (survey.other_eligibility_requirements) {
+      if (survey.other_eligibility_requirements.trim().length !== 0) {
         setOtherRequirements(survey.other_eligibility_requirements);
       } else {
         setOtherRequirements("Nil");

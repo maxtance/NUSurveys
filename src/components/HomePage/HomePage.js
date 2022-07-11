@@ -51,6 +51,20 @@ function HomePage() {
     setEligibility(checked);
   };
 
+  const clearFilter = (e) => {
+    e.preventDefault();
+    setEligibility(false);
+    setType({ 1: false, 2: false, 3: false });
+    setRemuneration({ 1: false, 2: false, 3: false });
+    setStatus({ ongoing: false, closed: false });
+    setFilterCriteria({
+      survey_categories: [],
+      remuneration_categories: [],
+      status: [],
+      eligibility: false,
+    });
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
@@ -68,6 +82,7 @@ function HomePage() {
           setFilterCriteria={setFilterCriteria}
           eligibility={eligibility}
           handleEligibilityChange={handleEligibilityChange}
+          clearFilter={clearFilter}
         />
       </div>
       <div className={styles.mainContent}>
