@@ -22,6 +22,7 @@ import EditSurvey from "./components/editSurvey/EditSurvey";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import CompletedSurveys from "./components/CompletedSurveys/CompletedSurveys";
+import Profile from "./components/Profile/Profile";
 
 function App() {
   const errorTitle = "Oops!";
@@ -35,14 +36,15 @@ function App() {
     let hash = window.location.hash;
     console.log(hash);
     if (
-      hash == "#error_code=404&error_description=Confirmation+Token+not+found" || 
+      hash ==
+        "#error_code=404&error_description=Confirmation+Token+not+found" ||
       hash == "#error_code=404&error_description=User+not+found"
     ) {
       navigate("/error", {
         state: {
           title: "Oops!",
-          message: "An unknown error occurred. Please try again."
-        }
+          message: "An unknown error occurred. Please try again.",
+        },
       });
     } else if (hash != "") {
       const hashArr = hash
@@ -139,7 +141,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* I think need to protect route */}
           <Route path="/surveys/:surveyId" element={<SurveyInfo />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </AuthProvider>
     </div>

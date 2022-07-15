@@ -61,3 +61,7 @@
 .mySurveysDropdown:hover .dropdownContent {
     display: block;
 }
+
+.profileLink {
+    text-decoration: none;
+}

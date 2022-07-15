@@ -3,10 +3,17 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
 import { useAuth } from "../../contexts/Auth";
+import { useState, useEffect } from "react";
 
 function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
+  // const [userName, setUserName] = useState(userInfo.full_name);
+  // useEffect(() => {
+  //   console.log("getting new name");
+  //   setUserName(userInfo.full_name);
+  // }, [userInfo.full_name]);
+
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -138,11 +145,14 @@ function Navbar() {
                 className="dropdown-menu dropdown-menu-end"
                 aria-labelledby="navbarDropdownMenuLink"
               >
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Profile
-                  </a>
-                </li>
+                <Link to="/profile" className={styles.profileLink}>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Profile
+                    </a>
+                  </li>
+                </Link>
+
                 <li>
                   <a className="dropdown-item" onClick={handleSignOut} href="#">
                     Log out

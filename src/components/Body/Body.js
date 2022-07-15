@@ -158,7 +158,7 @@ function Body({ page, filterCriteria, eligibility }) {
     }
 
     surveys.map((survey) => {
-      console.log(survey);
+      // console.log(survey);
       const match = wishlists.filter(
         (wishlist) => wishlist.survey_id === survey.id
       );

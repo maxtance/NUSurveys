@@ -1,0 +1,93 @@
+.pageContainer{
+    padding-top: 5%;
+    background-color: #f9f9f9;
+}
+
+.pageBody {
+    margin-left: 8%;
+    margin-right: 8%;
+}
+
+.profilePageHeader {
+    font-size: 150%;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+
+.formBody {
+    padding: 3%;
+    background-color: white;
+}
+
+.sectionHeader {
+    font-size: 130%;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.avatarSection, .profileInfoSection, .demographicsSection {
+    margin-bottom: 3rem;
+}
+
+.notifSection {
+    margin-bottom: 2rem;
+}
+
+.selectedImg {
+    height: 120px;
+    width: 120px;
+    margin-bottom: 2rem;
+}
+
+.avatarImg {
+    height: 120px;
+    width: 120px;
+    margin-bottom: 2rem;
+}
+
+.uploadImgButton, .deleteImgButton {
+    font-weight: 500;
+    border: none;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.uploadImgButton {
+    background-color: #06114f;
+    color: #fafafb;
+}
+
+.deleteImgButton {
+    background-color: #CCCCCC;
+    color: rgb(6, 17, 79);
+}
+
+.validation {
+    font-family: Roboto;
+    font-size: 14px;
+    color: #e34646;
+    display: flex;
+}
+
+.saveChangesButtonContainer {
+    background-color: #f9f9f9;
+    padding: 2rem 0 3rem 0;
+    text-align: right;
+}
+
+.saveChangesButton {
+    background-color: #06114f;
+    color: #fafafb;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+.saveChangesButton:disabled {
+    background-color: rgba(6, 17, 79, 0.6);
+}
