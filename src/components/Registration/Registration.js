@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../contexts/Auth.js";
 import { supabaseClient } from "../../lib/client";
 import { getDate } from "../createSurvey/CreateSurvey";
+import defaultAvatar from "../../assets/avatar.png";
 
 function Registration() {
   const validEmail = (email) =>
@@ -30,7 +31,12 @@ function Registration() {
     ethnicity: "",
     email: "",
     password: "",
+    notification: true,
+    avatarFile: "",
+    avatarURL: "",
   });
+
+  console.log(user.avatarFile, user.avatarURL);
 
   const {
     register,
@@ -87,6 +93,8 @@ function Registration() {
 
     const { data: userObj, error } = await signUp({ email, password });
 
+    console.log(user);
+
     if (error) {
       console.log(error);
     } else {
@@ -97,10 +105,17 @@ function Registration() {
         ethnicity_id: user.ethnicity,
         date_of_birth: user.dob,
         created_at: getDate(0),
+        notification: user.notification,
+        avatar: `public/${user.avatarURL}`,
       });
 
-      if (error) {
-        console.log(error);
+      const { data: avatar_images, error: avatar_images_error } =
+        await supabaseClient.storage
+          .from("avatar-images")
+          .upload(`public/${user.avatarURL}`, user.avatarFile);
+
+      if (error || avatar_images_error) {
+        console.log(error, avatar_images_error);
       } else {
         // Redirect user to Thank You page
         console.log(data);
@@ -129,6 +144,54 @@ function Registration() {
             className="form-horizontal registrationForm"
             onSubmit={handleSubmit(onFormSubmit)}
           >
+            <div class="row">
+              <div className="form-group">
+                <div className={styles.fieldName}>Avatar</div>
+                {user.avatarURL ? (
+                  <img
+                    src={user.avatarURL}
+                    className={styles.userAvatar}
+                    alt=""
+                  />
+                ) : (
+                  <img
+                    src={defaultAvatar}
+                    className={styles.defaultAvatar}
+                    alt=""
+                  />
+                )}
+                <div>
+                  <label className={styles.uploadImgButton}>
+                    Upload image
+                    <input
+                      type="file"
+                      name="avatar"
+                      onChange={(e) => {
+                        setUser({
+                          ...user,
+                          ["avatarFile"]: e.target.files[0],
+                          ["avatarURL"]: URL.createObjectURL(e.target.files[0]),
+                        });
+                      }}
+                      accept="image/png, image/jpg"
+                    />
+                  </label>
+
+                  <input
+                    type="button"
+                    className={styles.deleteImgButton}
+                    value="Delete picture"
+                    onClick={() => {
+                      setUser({
+                        ...user,
+                        ["avatarFile"]: "",
+                        ["avatarURL"]: "",
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="col-md-5">
                 <div className="form-group">
@@ -327,6 +390,33 @@ function Registration() {
                   }}
                 />
                 {errors?.password2 ? renderErrorMsg("password2") : null}
+              </div>
+              <div className="row">
+                <div className="form-group">
+                  <label for="notification" className={styles.fieldName}>
+                    Notification
+                  </label>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      name="notification"
+                      className="form-check-input"
+                      checked={user.notification}
+                      {...register("notification")}
+                      onChange={(e) => {
+                        register("notification").onChange(e);
+                        setUser({
+                          ...user,
+                          ["notification"]: e.target.checked,
+                        });
+                      }}
+                    />
+                    <label for="notification" className="form-check-label">
+                      Enable email notification for expiring surveys that you
+                      have wishlisted but yet to mark as complete
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
             <button

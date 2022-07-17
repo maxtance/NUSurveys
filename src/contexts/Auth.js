@@ -20,8 +20,8 @@ export function AuthProvider({ children }) {
     setUserLoading(false);
     const { data: listener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
-        console.log(event);
-        console.log(session);
+        // console.log(event);
+        // console.log(session);
         const userEmail = session?.user.email;
         const { data: users, error } = await supabaseClient
           .from("users")
@@ -54,8 +54,24 @@ export function AuthProvider({ children }) {
       setUserInfo(users[0]);
       setUserInfoLoading(false);
     };
+
     fetchUserInfo();
   }, []);
+
+  useEffect(() => {
+    const users = supabaseClient
+      .from("users")
+      .on("UPDATE", (payload) => {
+        console.log("Received changes", payload);
+      })
+      .subscribe();
+
+    console.log(users);
+    console.log(supabaseClient.getSubscriptions());
+
+    return () => supabaseClient.removeSubscription(users);
+  }, []);
+  supabaseClient.getSubscriptions();
 
   const value = {
     signUp: (data) => supabaseClient.auth.signUp(data),

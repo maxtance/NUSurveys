@@ -4,10 +4,16 @@
     width: 100%;
 }
 
-.avatar {
-    height: 30px;
+.avatar, .userAvatar {
+    height: 35px;
     width: 100%;
+    margin-top: 2px;
     padding-bottom: 2px;
+}
+
+.userAvatar {
+    border-radius: 50%;
+    border: #CCCCCC solid 1px;
 }
 
 .navCenter {

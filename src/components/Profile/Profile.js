@@ -40,10 +40,16 @@ function EditProfileForm(props) {
   const { userInfo } = useAuth();
 
   const [currAvatarURL, setCurrAvatarURL] = useState(null);
-  console.log(currAvatarURL);
+  // console.log(currAvatarURL);
   const [prevAvatarURL, setPrevAvatarURL] = useState(null);
+  const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   useEffect(() => {
-    GetAvatar(userInfo.email, setCurrAvatarURL, setPrevAvatarURL);
+    GetAvatar(
+      userInfo.email,
+      setCurrAvatarURL,
+      setPrevAvatarURL,
+      setIsAvatarLoading
+    );
   }, []);
 
   const [currAvatarFile, setCurrAvatarFile] = useState(null);
@@ -65,7 +71,7 @@ function EditProfileForm(props) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     UpdateDB(data, currAvatarFile, currAvatarURL, prevAvatarURL);
     props.setHasSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -83,7 +89,7 @@ function EditProfileForm(props) {
     setCurrAvatarURL(null);
   }
 
-  console.log(prevAvatarURL, currAvatarURL, currAvatarFile);
+  // console.log(prevAvatarURL, currAvatarURL, currAvatarFile);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -91,20 +97,33 @@ function EditProfileForm(props) {
         <div className={styles.avatarSection}>
           <h2 className={styles.sectionHeader}>Avatar</h2>
           <div>
-            {!currAvatarURL ? (
+            {isAvatarLoading ? (
+              "Loading Avatar..."
+            ) : !currAvatarURL ? (
               <img src={avatarImg} className={styles.avatarImg} />
             ) : (
               <img src={currAvatarURL} className={styles.selectedImg} />
             )}
+            {/* {!currAvatarURL ? (
+              <img src={avatarImg} className={styles.avatarImg} />
+            ) : (
+              <img src={currAvatarURL} className={styles.selectedImg} />
+            )} */}
           </div>
           <div>
-            <input
-              type="file"
-              name="avatar"
-              onChange={(e) => handleUpdateFile(e)}
-            />
+            <label className={styles.uploadImgButton}>
+              Upload image
+              <input
+                type="file"
+                name="avatar"
+                onChange={(e) => handleUpdateFile(e)}
+                accept="image/png, image/jpg"
+              />
+            </label>
+
             <input
               type="button"
+              className={styles.deleteImgButton}
               value="Delete picture"
               onClick={() => handleDeleteFile()}
             />
@@ -233,7 +252,12 @@ function EditProfileForm(props) {
   );
 }
 
-async function GetAvatar(userEmail, setCurrAvatarURL, setPrevAvatarURL) {
+async function GetAvatar(
+  userEmail,
+  setCurrAvatarURL,
+  setPrevAvatarURL,
+  setIsAvatarLoading
+) {
   const { data, error } = await supabaseClient
     .from("users")
     .select("avatar")
@@ -252,11 +276,13 @@ async function GetAvatar(userEmail, setCurrAvatarURL, setPrevAvatarURL) {
     console.log(error);
   }
   if (data) {
-    console.log(data);
+    // console.log(data);
     setCurrAvatarURL(data.publicURL);
     setPrevAvatarURL(data.publicURL);
+    setIsAvatarLoading(false);
     return data.publicURL;
   }
+  setIsAvatarLoading(false);
   return null;
 }
 
@@ -319,7 +345,7 @@ async function UpdateDB(
 
   // Update storage for avatar images. TODO: Remove image from data base (needed??)
   // if no change: do nothing
-  console.log(prevAvatarURL, currAvatarURL);
+  // console.log(prevAvatarURL, currAvatarURL);
   if (prevAvatarURL === currAvatarURL) {
   }
   // if deleted: remove from storage. update users table
