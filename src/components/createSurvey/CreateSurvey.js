@@ -83,7 +83,7 @@ function CreateSurvey() {
 
     const { data, error } = await supabaseClient.storage
       .from("survey-images")
-      .upload(`public/E0789289/${previewUrl}`, file);
+      .upload(`public/${previewUrl}`, file);
 
     if (error) {
       console.log(error);
@@ -95,7 +95,7 @@ function CreateSurvey() {
   const addSurveyListing = async () => {
     if (image !== null) {
       await handleFile(image);
-      survey.photo = `public/E0789289/${previewUrl}`;
+      survey.photo = `public/${previewUrl}`;
     }
 
     //get id for new remuneration record

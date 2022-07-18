@@ -104,16 +104,13 @@ function LoginPage() {
         <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
           <label className={styles.email}>Email</label>
           <br></br>
-          <small>
-            This should be your NUS email ending with @u.nus.edu or @nus.edu.sg
-          </small>
           <div className="form-group">
             <input
               className="form-control"
               type="email"
               name="email"
               {...register("email", {
-                required: "Please enter a valid NUS email",
+                required: "Please enter a valid email",
               })}
               onChange={(e) => {
                 register("email").onChange(e);

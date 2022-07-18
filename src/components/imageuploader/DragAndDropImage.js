@@ -2,7 +2,14 @@ import { useState, useRef } from "react";
 import { supabaseClient } from "../../lib/client";
 import styles from "./DragAndDropImage.module.css";
 
-function DragAndDropImage({ image, setImage, previewUrl, setPreviewUrl }) {
+function DragAndDropImage({
+  image,
+  setImage,
+  previewUrl,
+  setPreviewUrl,
+  updatedFields,
+  setUpdatedFields,
+}) {
   const [isDragged, setIsDragged] = useState(false);
   const inputRef = useRef(null);
 
@@ -10,6 +17,10 @@ function DragAndDropImage({ image, setImage, previewUrl, setPreviewUrl }) {
     const filename = URL.createObjectURL(file);
     setImage(file);
     setPreviewUrl(filename);
+
+    //if (previewUrl != "") {
+      setUpdatedFields({ ...updatedFields, photo: file });
+    //}
   };
 
   const handleDrag = (event) => {
@@ -45,6 +56,12 @@ function DragAndDropImage({ image, setImage, previewUrl, setPreviewUrl }) {
   const handleClick = () => {
     inputRef.current.click();
   };
+
+  const removeImage = () => {
+    setPreviewUrl("");
+    setImage(null);
+    setUpdatedFields({ ...updatedFields, photo: null });
+  }
 
   return (
     <div>
@@ -87,7 +104,10 @@ function DragAndDropImage({ image, setImage, previewUrl, setPreviewUrl }) {
       </div>
       {previewUrl && (
         <div className={styles.imagePreview}>
-          <img src={previewUrl} alt="image" className={styles.img} />
+          <div className={styles.container} onClick={removeImage}>
+            <img src={previewUrl} alt="image" className={styles.img} />
+            <div className={styles.hiddenTxt}>Click to remove image</div>
+          </div>
           <span className={styles.imgName}> {image.name}</span>
         </div>
       )}

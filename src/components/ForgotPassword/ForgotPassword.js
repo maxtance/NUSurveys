@@ -116,8 +116,8 @@ function ForgotPassword() {
         )}
         <h2 className={styles.formTitle}>Forgot password?</h2>
         <p className={styles.formDesc}>
-          That’s ok! Enter your NUS email and we will send you a link to reset
-          your password.
+          That’s ok! Enter your email and we will send you a link to reset your
+          password.
         </p>
         <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
           <label className={styles.email}>Email</label>
@@ -128,7 +128,7 @@ function ForgotPassword() {
               type="email"
               name="email"
               {...register("email", {
-                required: "Please enter a valid NUS email",
+                required: "Please enter a valid email",
               })}
               onChange={(e) => {
                 setEmailSent(false);

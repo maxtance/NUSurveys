@@ -9,10 +9,10 @@ import { getDate } from "../createSurvey/CreateSurvey";
 import defaultAvatar from "../../assets/avatar.png";
 
 function Registration() {
-  const validEmail = (email) =>
-    email.endsWith("@u.nus.edu") || email.endsWith("nus.edu.sg")
-      ? true
-      : "Not a valid NUS email. Please try again";
+  // const validEmail = (email) =>
+  //   email.endsWith("@u.nus.edu") || email.endsWith("nus.edu.sg")
+  //     ? true
+  //     : "Not a valid NUS email. Please try again";
   const checkDuplicateEmail = async (email) => {
     const { data, error } = await supabaseClient
       .from("users")
@@ -91,10 +91,8 @@ function Registration() {
     const email = emailRef.current;
     const password = passwordRef.current;
 
-    const { data: userObj, error } = await signUp({ email, password });
-
-    console.log(user);
-
+    const { user: userObj, error } = await signUp({ email, password });
+    
     if (error) {
       console.log(error);
     } else {
@@ -325,18 +323,13 @@ function Registration() {
                   Email
                 </label>
                 <br></br>
-                <small>
-                  This should be your NUS email ending with @u.nus.edu or
-                  @nus.edu.sg
-                </small>
                 <input
                   className={`form-control ${styles.field}`}
                   type="email"
                   name="email"
                   {...register("email", {
-                    required: "Please enter a valid NUS email",
+                    required: "Please enter a valid email",
                     validate: {
-                      //validateEmail: validEmail,
                       checkDuplicate: checkDuplicateEmail,
                     },
                   })}
