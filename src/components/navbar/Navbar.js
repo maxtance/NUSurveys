@@ -10,8 +10,6 @@ function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
   const [avatarURL, setAvatarURL] = useState("");
-  console.log(userInfo.avatar, avatarURL);
-  // console.log("userInfo.avatar: " + userInfo.avatar);
 
   useEffect(() => {
     function GetAvatarURL() {
@@ -22,7 +20,6 @@ function Navbar() {
       if (error) {
         console.log(error);
       }
-      console.log("setting to publicURL");
       setAvatarURL(publicURL);
     }
     if (userInfo.avatar) {

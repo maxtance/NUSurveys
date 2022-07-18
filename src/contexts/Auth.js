@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
         setUserLoading(false);
       }
     );
+    console.log("checking");
 
     return () => {
       listener?.unsubscribe();
@@ -53,7 +54,7 @@ export function AuthProvider({ children }) {
       if (error) {
         console.log(error);
       }
-      console.log("setting user info", users[0]);
+      console.log("setting user info");
       setUserInfo(users[0]);
       setUserInfoLoading(false);
     };
@@ -69,8 +70,6 @@ export function AuthProvider({ children }) {
     userInfo,
     setChange,
   };
-
-  console.log(change);
 
   return (
     <AuthContext.Provider value={value}>

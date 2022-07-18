@@ -6,13 +6,13 @@ h6 {
 .container{
     display: flex;
     flex-direction: column;
-
     font-size: 0.8rem;
 }
 
 .header {
     background: rgba(237, 148, 139, 0.2);
     padding: 1rem;
+    margin: 0.5rem 0;
     font-weight: bold;
 }
 
@@ -35,12 +35,15 @@ h6 {
     font-weight: bold;
     font-size: 0.7rem;
     border-radius: 0.5rem;
-    /* padding: 0.3rem 0.8rem; */
     height: 30px;
     width: 55px;
-    border: 1.5px solid;
+    border: 1px solid transparent;
     background-color: #06114F;
     color: white;
+}
+
+.filterBtn:hover, .cancelBtn:hover {
+    border: 1px solid white;
 }
 
 .eligibilityCheckbox {
@@ -55,24 +58,23 @@ h6 {
     font-weight: bold;
     font-size: 0.7rem;
     border-radius: 0.5rem;
-    background-color: #06114f;
-    color: white;
-    border-color: #06114f;
+    background-color: #CCCCCC;
+    color: #06114F;
     width: 60px;
     height: 30px;
     margin-left: 10px;
-    border: 1.5px solid;
+    border: 1px solid transparent;
 }
 
 .cancelBtn:disabled {
     font-weight: bold;
     font-size: 0.7rem;
     border-radius: 0.5rem;
-    background-color: #a9a9a9;
-    color: white;
-    border-color: #a9a9a9;
+    background-color: rgba(204, 204, 204, 0.6);
+    color: rgba(6, 17,79, 0.6);
     width: 60px;
     height: 30px;
     margin-left: 10px;
-    border: 1.5px solid;
+    border: 1px solid transparent;
+    cursor:not-allowed
 }

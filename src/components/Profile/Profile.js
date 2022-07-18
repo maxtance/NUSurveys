@@ -104,9 +104,9 @@ function EditProfileForm(props) {
             {isAvatarLoading ? (
               "Loading Avatar..."
             ) : !currAvatarURL ? (
-              <img src={avatarImg} className={styles.avatarImg} />
+              <img src={avatarImg} className={styles.avatarImg} alt="" />
             ) : (
-              <img src={currAvatarURL} className={styles.selectedImg} />
+              <img src={currAvatarURL} className={styles.selectedImg} alt="" />
             )}
             {/* {!currAvatarURL ? (
               <img src={avatarImg} className={styles.avatarImg} />
@@ -146,6 +146,9 @@ function EditProfileForm(props) {
                 className="form-control"
                 {...register("firstName", {
                   required: "First name is required.",
+                  validate: (value) => {
+                    return value.trim().length === 0 ? "Invalid input" : true;
+                  },
                 })}
               />
               <p className={styles.validation}>{errors.firstName?.message}</p>
@@ -160,6 +163,9 @@ function EditProfileForm(props) {
                 className="form-control"
                 {...register("lastName", {
                   required: "Last name is required.",
+                  validate: (value) => {
+                    return value.trim().length === 0 ? "Invalid input" : true;
+                  },
                 })}
               />
               <p className={styles.validation}>{errors.lastName?.message}</p>

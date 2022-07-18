@@ -7,34 +7,40 @@
 .searchBtn {
     background-color: #06114F;
     color: white;
-    border-color: #06114F;
-    border-width: 0px;
+    font-weight: bold;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
+    border: 1px solid transparent;
     height: 30px;
-    font-size: 0.8rem;
-}
-
-.cancelBtn:disabled {
-    background-color: #a9a9a9;
-    color: white;
-    border-color: #a9a9a9;
-    border-width: 0px;
-    border-radius: 0.5rem;
-    height: 30px;
-    font-size: 0.8rem;
-    margin-left: 10px;
+    font-size: 0.7rem;
+    padding-top: 0.2rem;
 }
 
 .cancelBtn {
-    background-color: #06114f;
-    color: white;
-    border-color: #06114f;
-    border-width: 0px;
+    background-color: #CCCCCC;
+    color: #06114F;
+    font-weight: bold;
     border-radius: 0.5rem;
     height: 30px;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     margin-left: 10px;
+    border: 1px solid transparent;
+}
+
+.cancelBtn:hover {
+    border: 1px solid #f9f9f9;
+}
+
+.cancelBtn:disabled {
+    background-color: rgba(204, 204, 204, 0.6);
+    color: rgba(6, 17, 79, 0.6);
+    font-weight: bold;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    height: 30px;
+    font-size: 0.7rem;
+    margin-left: 10px;
+    cursor:not-allowed
 }
 
 /* clears the ‘X’ from Internet Explorer */

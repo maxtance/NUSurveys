@@ -61,7 +61,7 @@ function ForgotPassword() {
 
     console.log(email);
     const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
-      email, 
+      email
     );
 
     if (error) {
@@ -99,51 +99,52 @@ function ForgotPassword() {
           </Link>
         </div>
       </nav>
-      <div className="row justify-content-center">
-        <div className="col col-md-7" id={styles.formwrapper}>
-          { !emailSent ? (
-            <div></div>
-          ) : errorMsg !== null ? (
-            <div id={styles.errorMsg}>{xmarkIcon}{errorMsg}</div>
-          ) : (
-            <div id={styles.confirmationMsg}>
-              {checkmarkIcon}
-              We've sent an email to {emailRef.current}. Click the link in the
-              email to reset your password.
-            </div>
-          )}
-          <h2 className={styles.formTitle}>Forgot password?</h2>
-          <p className={styles.formDesc}>
-            That’s ok! Enter your NUS email and we will send you a link to reset
-            your password.
-          </p>
-          <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
-            <label className={styles.email}>Email</label>
-            <br></br>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="email"
-                name="email"
-                {...register("email", {
-                  required: "Please enter a valid NUS email",
-                })}
-                onChange={(e) => {
-                  setEmailSent(false);
-                  register("email").onChange(e);
-                }}
-              />
-            </div>
-            <button
-              type="submit"
-              className="submitBtn btn btn-block"
-              id={styles.submit}
-              disabled={isLoading}
-            >
-              {isLoading ? "Sending..." : "Submit"}
-            </button>
-          </form>
-        </div>
+      <div className="offset-2 col-md-7" id={styles.formwrapper}>
+        {!emailSent ? (
+          <div></div>
+        ) : errorMsg !== null ? (
+          <div id={styles.errorMsg}>
+            {xmarkIcon}
+            {errorMsg}
+          </div>
+        ) : (
+          <div id={styles.confirmationMsg}>
+            {checkmarkIcon}
+            We've sent an email to {emailRef.current}. Click the link in the
+            email to reset your password.
+          </div>
+        )}
+        <h2 className={styles.formTitle}>Forgot password?</h2>
+        <p className={styles.formDesc}>
+          That’s ok! Enter your NUS email and we will send you a link to reset
+          your password.
+        </p>
+        <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
+          <label className={styles.email}>Email</label>
+          <br></br>
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="email"
+              name="email"
+              {...register("email", {
+                required: "Please enter a valid NUS email",
+              })}
+              onChange={(e) => {
+                setEmailSent(false);
+                register("email").onChange(e);
+              }}
+            />
+          </div>
+          <button
+            type="submit"
+            className="submitBtn btn btn-block"
+            id={styles.submit}
+            disabled={isLoading}
+          >
+            {isLoading ? "Sending..." : "Submit"}
+          </button>
+        </form>
       </div>
     </div>
   );

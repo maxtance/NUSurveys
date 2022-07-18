@@ -20,7 +20,8 @@ function Body({ page, filterCriteria, eligibility }) {
 
   useEffect(() => {
     fetchSurveyListings();
-  }, [filterCriteria, keyword, userInfo]);
+    // Removed userInfo as dependency on 19/7
+  }, [filterCriteria, keyword]);
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);

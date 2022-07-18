@@ -3,11 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 function SearchBar({ setKeyword }) {
-  const {
-    register,
-    watch,
-    setValue
-  } = useForm();
+  const { register, watch, setValue, handleSubmit } = useForm();
 
   const searchRef = useRef();
   searchRef.current = watch("search-bar");
@@ -24,10 +20,10 @@ function SearchBar({ setKeyword }) {
   const cancelButtonPressed = () => {
     setKeyword("");
     setValue("search-bar", "");
-  }
+  };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(searchButtonPressed)}>
       <input
         type="search"
         id="search"
@@ -38,7 +34,7 @@ function SearchBar({ setKeyword }) {
         className={styles.searchBar}
         //value={search}
         //onChange={(e) => setKeyword(e.target.value)}
-        onsearch={searchButtonPressed}
+        // onsearch={searchButtonPressed}
       />
       <button
         type="button"

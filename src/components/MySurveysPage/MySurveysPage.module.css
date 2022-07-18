@@ -59,9 +59,15 @@
     border: 1px solid;
     background-color: white;
     border-color: rgb(237,148,139);
+    /* border: 1px solid rgb(237,148,139); */
     width: 300px; 
     height: 360px;
     align-items: center;
+}
+
+.surveyCard:hover {
+    border-width: 2px;
+    box-shadow: rgba(149, 157, 165, 0.4) 0px 8px 24px;
 }
 
 .surveyCardImage {

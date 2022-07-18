@@ -3,7 +3,7 @@ import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Auth.js";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 function LoginPage() {
   const { signIn, user } = useAuth();
@@ -47,7 +47,10 @@ function LoginPage() {
     );
   };
 
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
   const onFormSubmit = async (e) => {
+    setIsSigningIn(true);
     //sign-in logic
     const email = emailRef.current;
     const password = passwordRef.current;
@@ -74,6 +77,7 @@ function LoginPage() {
       // Redirect user to Dashboard
       navigate("/home");
     }
+    setIsSigningIn(false);
   };
 
   useEffect(() => {
@@ -95,57 +99,65 @@ function LoginPage() {
           </Link>
         </div>
       </nav>
-      <div className="row justify-content-center">
-        <div className="col col-md-7" id={styles.formwrapper}>
-          <h2 className={styles.formTitle}>Login</h2>
-          <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
-            <label className={styles.email}>Email</label>
-            <br></br>
-            <small>
-              This should be your NUS email ending with @u.nus.edu or
-              @nus.edu.sg
+      <div className="offset-2 col-md-7" id={styles.formwrapper}>
+        <h2 className={styles.formTitle}>Login</h2>
+        <form className="loginForm" onSubmit={handleSubmit(onFormSubmit)}>
+          <label className={styles.email}>Email</label>
+          <br></br>
+          <small>
+            This should be your NUS email ending with @u.nus.edu or @nus.edu.sg
+          </small>
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="email"
+              name="email"
+              {...register("email", {
+                required: "Please enter a valid NUS email",
+              })}
+              onChange={(e) => {
+                register("email").onChange(e);
+              }}
+            />
+            {errors?.email ? renderErrorMsg("email") : null}
+          </div>
+          <label className={styles.password}>Password</label>
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="password"
+              name="password"
+              {...register("password", {
+                required: "Please enter your password",
+              })}
+              onChange={(e) => {
+                register("password").onChange(e);
+              }}
+            />
+            {errors?.password ? renderErrorMsg("password") : null}
+          </div>
+          <Link to="/forgot-password" className={styles.resetpwd}>
+            <p>Forgot password?</p>
+          </Link>
+          <br></br>
+          <div>
+            <small className={styles.signupBanner}>
+              New to NUSurveys?{" "}
+              <Link to="/register" className={styles.signup}>
+                Sign up here
+              </Link>
             </small>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="email"
-                name="email"
-                {...register("email", {
-                  required: "Please enter a valid NUS email",
-                })}
-                onChange={(e) => {
-                  register("email").onChange(e);
-                }}
-              />
-              {errors?.email ? renderErrorMsg("email") : null}
-            </div>
-            <label className={styles.password}>Password</label>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="password"
-                name="password"
-                {...register("password", {
-                  required: "Please enter your password",
-                })}
-                onChange={(e) => {
-                  register("password").onChange(e);
-                }}
-              />
-              {errors?.password ? renderErrorMsg("password") : null}
-            </div>
-            <Link to="/forgot-password" className={styles.resetpwd}>
-              <p>Forgot password?</p>
-            </Link>
-            <br></br>
-            <div>
-              <small className={styles.signupBanner}>
-                New to NUSurveys?{" "}
-                <Link to="/register" className={styles.signup}>
-                  Sign up here
-                </Link>
-              </small>
-            </div>
+          </div>
+          {isSigningIn ? (
+            <button
+              type="submit"
+              className="loginBtn btn btn-block"
+              id={styles.login}
+              disabled
+            >
+              Login
+            </button>
+          ) : (
             <button
               type="submit"
               className="loginBtn btn btn-block"
@@ -153,8 +165,15 @@ function LoginPage() {
             >
               Login
             </button>
-          </form>
-        </div>
+          )}
+          {/* <button
+            type="submit"
+            className="loginBtn btn btn-block"
+            id={styles.login}
+          >
+            Login
+          </button> */}
+        </form>
       </div>
     </div>
   );
