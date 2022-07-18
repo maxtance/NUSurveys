@@ -57,3 +57,13 @@
 .errorMsg {
     margin-bottom: 0px;
 }
+
+.userAvatar {
+    border: #CCCCCC solid 2px;
+    border-radius: 50%;
+}
+
+.defaultAvatar, .userAvatar {
+    height: 125px;
+    width: 125px;
+}

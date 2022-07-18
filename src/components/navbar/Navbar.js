@@ -4,15 +4,30 @@ import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
 import avatar from "../../assets/avatar.png";
 import { useAuth } from "../../contexts/Auth";
 import { useState, useEffect } from "react";
+import { supabaseClient } from "../../lib/client";
 
 function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
-  // const [userName, setUserName] = useState(userInfo.full_name);
-  // useEffect(() => {
-  //   console.log("getting new name");
-  //   setUserName(userInfo.full_name);
-  // }, [userInfo.full_name]);
+  const [avatarURL, setAvatarURL] = useState(userInfo.avatar);
+  // console.log("userInfo.avatar: " + userInfo.avatar);
+
+  useState(() => {
+    function GetAvatarURL() {
+      const { publicURL, error } = supabaseClient.storage
+        .from("avatar-images")
+        .getPublicUrl(avatarURL);
+
+      if (error) {
+        console.log(error);
+      }
+
+      setAvatarURL(publicURL);
+    }
+    if (avatarURL) {
+      GetAvatarURL();
+    }
+  }, [avatarURL]);
 
   const navigate = useNavigate();
 
@@ -31,6 +46,8 @@ function Navbar() {
       navigate("/login");
     }
   };
+
+  console.log(supabaseClient.getSubscriptions());
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">
@@ -127,12 +144,16 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item">
               <span className="nav-link">
-                <img className={styles.avatar} src={avatar} alt="" />
+                {avatarURL ? (
+                  <img className={styles.userAvatar} src={avatarURL} alt="" />
+                ) : (
+                  <img className={styles.avatar} src={avatar} alt="" />
+                )}
               </span>
             </li>
             <li className="nav-item dropdown">
               <a
-                className="nav-link dropdown-toggle"
+                className="nav-link dropdown-toggle mt-2"
                 href="#"
                 id="navbarDropdownMenuLink"
                 role="button"
