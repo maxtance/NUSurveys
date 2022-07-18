@@ -6,9 +6,9 @@
 
 .avatar, .userAvatar {
     height: 35px;
-    width: 100%;
+    width: 35px;
     margin-top: 2px;
-    padding-bottom: 2px;
+    margin-bottom: 2px;
 }
 
 .userAvatar {

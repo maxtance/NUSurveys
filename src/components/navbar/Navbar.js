@@ -9,25 +9,28 @@ import { supabaseClient } from "../../lib/client";
 function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
-  const [avatarURL, setAvatarURL] = useState(userInfo.avatar);
+  const [avatarURL, setAvatarURL] = useState("");
+  console.log(userInfo.avatar, avatarURL);
   // console.log("userInfo.avatar: " + userInfo.avatar);
 
-  useState(() => {
+  useEffect(() => {
     function GetAvatarURL() {
       const { publicURL, error } = supabaseClient.storage
         .from("avatar-images")
-        .getPublicUrl(avatarURL);
+        .getPublicUrl(userInfo.avatar);
 
       if (error) {
         console.log(error);
       }
-
+      console.log("setting to publicURL");
       setAvatarURL(publicURL);
     }
-    if (avatarURL) {
+    if (userInfo.avatar) {
       GetAvatarURL();
+    } else {
+      setAvatarURL("");
     }
-  }, [avatarURL]);
+  }, [userInfo.avatar]);
 
   const navigate = useNavigate();
 
@@ -46,8 +49,6 @@ function Navbar() {
       navigate("/login");
     }
   };
-
-  console.log(supabaseClient.getSubscriptions());
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white">

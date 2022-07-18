@@ -37,10 +37,9 @@ function Profile() {
 }
 
 function EditProfileForm(props) {
-  const { userInfo } = useAuth();
+  const { userInfo, setChange } = useAuth();
 
   const [currAvatarURL, setCurrAvatarURL] = useState(null);
-  // console.log(currAvatarURL);
   const [prevAvatarURL, setPrevAvatarURL] = useState(null);
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   useEffect(() => {
@@ -70,10 +69,17 @@ function EditProfileForm(props) {
     },
   });
 
-  const onSubmit = (data) => {
-    // console.log(data);
-    UpdateDB(data, currAvatarFile, currAvatarURL, prevAvatarURL);
+  const [hasBeenDirtied, setHasBeenDirtied] = useState(false);
+  useEffect(() => {
+    if (!hasBeenDirtied) {
+      setHasBeenDirtied(isDirty);
+    }
+  }, [isDirty]);
+
+  const onSubmit = async (data) => {
+    await UpdateDB(data, currAvatarFile, currAvatarURL, prevAvatarURL);
     props.setHasSubmitted(true);
+    setChange((prevState) => !prevState);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -88,8 +94,6 @@ function EditProfileForm(props) {
     setCurrAvatarFile(null);
     setCurrAvatarURL(null);
   }
-
-  // console.log(prevAvatarURL, currAvatarURL, currAvatarFile);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -240,7 +244,7 @@ function EditProfileForm(props) {
         </div>
       </div>
       <div className={styles.saveChangesButtonContainer}>
-        {isDirty || currAvatarURL !== prevAvatarURL ? (
+        {hasBeenDirtied || currAvatarURL !== prevAvatarURL ? (
           <button className={styles.saveChangesButton}>Save changes</button>
         ) : (
           <button className={styles.saveChangesButton} disabled>
@@ -276,7 +280,6 @@ async function GetAvatar(
     console.log(error);
   }
   if (data) {
-    // console.log(data);
     setCurrAvatarURL(data.publicURL);
     setPrevAvatarURL(data.publicURL);
     setIsAvatarLoading(false);
@@ -345,7 +348,6 @@ async function UpdateDB(
 
   // Update storage for avatar images. TODO: Remove image from data base (needed??)
   // if no change: do nothing
-  // console.log(prevAvatarURL, currAvatarURL);
   if (prevAvatarURL === currAvatarURL) {
   }
   // if deleted: remove from storage. update users table

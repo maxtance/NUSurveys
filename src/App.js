@@ -23,6 +23,7 @@ import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import CompletedSurveys from "./components/CompletedSurveys/CompletedSurveys";
 import Profile from "./components/Profile/Profile";
+import { supabaseClient } from "./lib/client";
 
 function App() {
   const errorTitle = "Oops!";

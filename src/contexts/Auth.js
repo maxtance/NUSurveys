@@ -14,6 +14,8 @@ export function AuthProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
 
+  const [change, setChange] = useState(false);
+
   useEffect(() => {
     const session = supabaseClient.auth.session();
     setUser(session?.user ?? null);
@@ -51,27 +53,13 @@ export function AuthProvider({ children }) {
       if (error) {
         console.log(error);
       }
+      console.log("setting user info", users[0]);
       setUserInfo(users[0]);
       setUserInfoLoading(false);
     };
 
     fetchUserInfo();
-  }, []);
-
-  useEffect(() => {
-    const users = supabaseClient
-      .from("users")
-      .on("UPDATE", (payload) => {
-        console.log("Received changes", payload);
-      })
-      .subscribe();
-
-    console.log(users);
-    console.log(supabaseClient.getSubscriptions());
-
-    return () => supabaseClient.removeSubscription(users);
-  }, []);
-  supabaseClient.getSubscriptions();
+  }, [change]);
 
   const value = {
     signUp: (data) => supabaseClient.auth.signUp(data),
@@ -79,7 +67,10 @@ export function AuthProvider({ children }) {
     signOut: () => supabaseClient.auth.signOut(),
     user,
     userInfo,
+    setChange,
   };
+
+  console.log(change);
 
   return (
     <AuthContext.Provider value={value}>
