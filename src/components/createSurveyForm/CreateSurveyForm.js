@@ -23,6 +23,7 @@ function CreateSurveyForm({
   watch,
   edit,
   source,
+  setUpdatedFields,
   getValues,
 }) {
   const URL_REGEX =
@@ -159,6 +160,8 @@ function CreateSurveyForm({
               setImage={setImage}
               previewUrl={previewUrl}
               setPreviewUrl={setPreviewUrl}
+              updatedFields={source}
+              setUpdatedFields={setUpdatedFields}
             />
           </div>
         </div>

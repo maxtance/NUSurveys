@@ -156,17 +156,37 @@ function EditSurvey() {
     surveyInfo = { ...surveyInfo, ["category_id"]: result.category_id };
   };
 
-  const fetchImageInfo = async () => {
-    if (surveyInfo.photo !== "") {
-      setPreviewUrl(surveyInfo.photo);
+  const fetchImageInfo = async (surveyId) => {
+    const { data: imgURL, error } = await supabaseClient
+      .from("surveys")
+      .select("photo")
+      .eq("id", surveyId);
+
+    if (imgURL[0].photo) {
+      const { publicURL, error } = supabaseClient.storage
+        .from("survey-images")
+        .getPublicUrl(imgURL[0].photo);
+      console.log(imgURL);
+      setPreviewUrl(publicURL);
+      let arr = publicURL.split("/");
+      setImage({ name: arr[arr.length - 1] });
     }
+
+    console.log(imgURL);
+    // .then((photoLocation) => {
+    //   if (photoLocation[0].photo) {
+    //     supabaseClient.storage
+    //       .from("survey-images")
+    //       .getPublicUrl(photoLocation[0].photo);
+    //   } else {
+    //     // set imgURL.publicURL to null
+    //     return { publicURL: null };
+    //   }
+    // });
   };
 
   const cleanUpdatedFields = async () => {
-    //TODO: update survey listing logic
     let tempState = { ...updatedFields };
-    console.log(oldFields);
-    console.log(updatedFields);
     Object.keys(updatedFields).forEach(async (key) => {
       if (key === "remuneration_id") {
         //dont do anything, since you need to know remunerationAmt
@@ -209,9 +229,9 @@ function EditSurvey() {
         }
       }
       console.log(tempState);
-      setUpdatedFields(tempState);
       //setIsUpdating(false);
     });
+    setUpdatedFields(tempState);
     setIsUpdating(false);
   };
 
@@ -263,6 +283,27 @@ function EditSurvey() {
   };
 
   async function update(key) {
+    if (key === "photo") {
+      console.log(updatedFields[key]);
+      if (previewUrl === "" || updatedFields[key] === null) {
+        const { data } = await supabaseClient
+          .from("surveys")
+          .update({ photo: "" })
+          .match({ id: surveyId });
+      } else {
+        const { data, error } = await supabaseClient.storage
+          .from("survey-images")
+          .upload(`public/${previewUrl}`, updatedFields[key]);
+
+        if (!error) {
+          const { data } = await supabaseClient
+            .from("surveys")
+            .update({ photo: `public/${previewUrl}` })
+            .match({ id: surveyId });
+        }
+      }
+    }
+
     if (
       key === "title" ||
       key === "description" ||
@@ -479,7 +520,7 @@ function EditSurvey() {
           setUpdatedFields({});
           console.log("finished updating");
           navigate("/surveys/" + surveyId);
-      });
+        });
       }
       runUpdates();
     }
@@ -540,7 +581,7 @@ function EditSurvey() {
     await initGenderEligibility();
     await initRemunerationInfo();
     await initSurveyType();
-    await fetchImageInfo();
+    await fetchImageInfo(surveyId);
   };
 
   useEffect(() => {
