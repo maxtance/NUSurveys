@@ -77,8 +77,11 @@ function HaveCompletedSurveysBody(props) {
 
 function LoadingPage() {
   return (
-    <div>
-      <p>Loading...</p>
+    <div className="container-fluid">
+      <p>
+        <span class="spinner-border spinner-border-sm" role="status" />{" "}
+        Loading...
+      </p>
     </div>
   );
 }

@@ -29,7 +29,7 @@ function CreateSurvey() {
     handleSubmit,
     watch,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const [ethnicityEligibility, setEthnicityEligibility] = useState({
@@ -297,13 +297,28 @@ function CreateSurvey() {
             </button>
           </div>
           <div class="col-lg-1 col-md-2">
-            <button
-              class="btn"
-              id={styles.submitBtn}
-              onClick={handleSubmit(onFormSubmit)}
-            >
-              Submit
-            </button>
+            {isSubmitting ? (
+              <button
+                class="btn"
+                id={styles.submitBtn}
+                onClick={handleSubmit(onFormSubmit)}
+                disabled
+              >
+                <span
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              </button>
+            ) : (
+              <button
+                class="btn"
+                id={styles.submitBtn}
+                onClick={handleSubmit(onFormSubmit)}
+              >
+                Submit
+              </button>
+            )}
           </div>
         </div>
       </div>

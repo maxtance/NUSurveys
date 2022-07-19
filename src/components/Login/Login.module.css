@@ -48,6 +48,10 @@ small {
     width: 165px;
 }
 
+#login:disabled {
+    cursor: not-allowed;
+}
+
 .signup {
     color: #06114f;
     font-weight: 600;

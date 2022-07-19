@@ -83,7 +83,7 @@ function SurveyInfo() {
     };
     updateIsDeleted();
     // redirect to mysurveys
-    navigate("/mysurveys");
+    navigate("/mysurveys/published-surveys");
   }
 
   function handleOpenListing() {
@@ -114,7 +114,11 @@ function SurveyInfo() {
   if (surveyInfo.isValidSurvey === null) {
     return (
       <>
-        <Navbar /> <p>Loading survey info...</p>
+        <Navbar />{" "}
+        <div className="container-fluid">
+          <span class="spinner-border spinner-border-sm" role="status" />{" "}
+          Loading survey info...
+        </div>
       </>
     );
   } else if (!surveyInfo.isValidSurvey) {
@@ -426,7 +430,7 @@ function PopUp(props) {
       </li>
 
       <div
-        className="modal fade"
+        className="modal"
         id={target}
         aria-labelledby={`${target}Label`}
         aria-hidden="true"

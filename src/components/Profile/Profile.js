@@ -56,7 +56,7 @@ function EditProfileForm(props) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm({
     defaultValues: {
       firstName: userInfo.full_name.split(" ")[0],
@@ -250,7 +250,7 @@ function EditProfileForm(props) {
         </div>
       </div>
       <div className={styles.saveChangesButtonContainer}>
-        {hasBeenDirtied || currAvatarURL !== prevAvatarURL ? (
+        {hasBeenDirtied || currAvatarURL !== prevAvatarURL || isSubmitting ? (
           <button className={styles.saveChangesButton}>Save changes</button>
         ) : (
           <button className={styles.saveChangesButton} disabled>

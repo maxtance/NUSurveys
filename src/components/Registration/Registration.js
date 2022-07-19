@@ -36,13 +36,11 @@ function Registration() {
     avatarURL: "",
   });
 
-  console.log(user.avatarFile, user.avatarURL);
-
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const warningIcon = (
@@ -92,10 +90,12 @@ function Registration() {
     const password = passwordRef.current;
 
     const { user: userObj, error } = await signUp({ email, password });
-    
+
     if (error) {
       console.log(error);
     } else {
+      let avatar = user.avatarURL;
+      avatar ? (avatar = `public/${avatar}`) : (avatar = "");
       const { data, error } = await supabaseClient.from("users").insert({
         full_name: user.firstName + " " + user.lastName,
         email: email,
@@ -104,16 +104,21 @@ function Registration() {
         date_of_birth: user.dob,
         created_at: getDate(0),
         notification: user.notification,
-        avatar: `public/${user.avatarURL}`,
+        avatar: avatar,
       });
 
-      const { data: avatar_images, error: avatar_images_error } =
-        await supabaseClient.storage
-          .from("avatar-images")
-          .upload(`public/${user.avatarURL}`, user.avatarFile);
+      if (avatar) {
+        const { data: avatar_images, error: avatar_images_error } =
+          await supabaseClient.storage
+            .from("avatar-images")
+            .upload(`public/${user.avatarURL}`, user.avatarFile);
+        if (avatar_images_error) {
+          console.log(avatar_images_error);
+        }
+      }
 
-      if (error || avatar_images_error) {
-        console.log(error, avatar_images_error);
+      if (error) {
+        console.log(error);
       } else {
         // Redirect user to Thank You page
         console.log(data);
@@ -412,13 +417,29 @@ function Registration() {
                 </div>
               </div>
             </div>
-            <button
-              type="submit"
-              className="btn btn-block"
-              id={styles.register}
-            >
-              Sign up
-            </button>
+            {isSubmitting ? (
+              <button
+                type="submit"
+                className="btn btn-block"
+                id={styles.register}
+                disabled
+              >
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Signing up...
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="btn btn-block"
+                id={styles.register}
+              >
+                Sign up
+              </button>
+            )}
           </form>
         </div>
       </div>

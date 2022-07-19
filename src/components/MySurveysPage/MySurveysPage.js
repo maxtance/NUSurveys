@@ -67,8 +67,8 @@ function MySurveys() {
       console.log(error);
     }
 
-     //searching logic
-     if (keyword != "") {
+    //searching logic
+    if (keyword != "") {
       console.log(keyword);
       surveys = surveys.filter((survey) => {
         return (
@@ -197,7 +197,10 @@ function MySurveys() {
           </div>
         </div>
         {isLoading ? (
-          <p>Loading your surveys...</p>
+          <p>
+            <span class="spinner-border spinner-border-sm" role="status" />{" "}
+            Loading your surveys...
+          </p>
         ) : (
           <div className={styles.mySurveys}>
             <MakeNewSurvey />

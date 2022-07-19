@@ -15,7 +15,7 @@ function LoginPage() {
     handleSubmit,
     watch,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const emailRef = useRef();
@@ -47,10 +47,7 @@ function LoginPage() {
     );
   };
 
-  const [isSigningIn, setIsSigningIn] = useState(false);
-
   const onFormSubmit = async (e) => {
-    setIsSigningIn(true);
     //sign-in logic
     const email = emailRef.current;
     const password = passwordRef.current;
@@ -77,7 +74,6 @@ function LoginPage() {
       // Redirect user to Dashboard
       navigate("/home");
     }
-    setIsSigningIn(false);
   };
 
   useEffect(() => {
@@ -145,14 +141,19 @@ function LoginPage() {
               </Link>
             </small>
           </div>
-          {isSigningIn ? (
+          {isSubmitting ? (
             <button
               type="submit"
               className="loginBtn btn btn-block"
               id={styles.login}
               disabled
             >
-              Login
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              />{" "}
+              Logging in...
             </button>
           ) : (
             <button

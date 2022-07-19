@@ -261,7 +261,10 @@ function Body({ page, filterCriteria, eligibility }) {
         </div>
       </div>
       {surveysIsLoading ? (
-        <div>Loading surveys...</div>
+        <div>
+          <span class="spinner-border spinner-border-sm" role="status" />{" "}
+          Loading surveys...
+        </div>
       ) : (
         <div className={styles.surveyListings}>{renderSurveys()}</div>
       )}

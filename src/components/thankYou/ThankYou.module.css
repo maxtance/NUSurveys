@@ -13,6 +13,11 @@
     height: 45px;
     margin-top: 20px;
     border-radius: 10px;
+    border: 1px solid transparent
+}
+
+.button:hover {
+    border: 1px solid white
 }
 
 .mainBody {

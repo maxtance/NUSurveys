@@ -15,7 +15,7 @@ function EditSurvey() {
     watch,
     reset,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const { state } = useLocation();
@@ -617,7 +617,10 @@ function EditSurvey() {
   return (
     <>
       {isLoading || !isUpdating ? (
-        <p>Loading...</p>
+        <div className="container-fluid">
+          <span class="spinner-border spinner-border-sm" role="status" />{" "}
+          Loading...
+        </div>
       ) : (
         <div className={styles.editSurveyBody}>
           <div id={styles.editSurveyWindow}>
@@ -661,14 +664,29 @@ function EditSurvey() {
                 </button>
               </div>
               <div class="col-lg-1 col-md-2">
-                <button
-                  class="btn"
-                  id={styles.updateBtn}
-                  disabled={Object.keys(updatedFields).length === 0}
-                  onClick={handleSubmit(onFormSubmit)}
-                >
-                  Update
-                </button>
+                {isSubmitting ? (
+                  <button
+                    class="btn"
+                    id={styles.updateBtn}
+                    disabled
+                    onClick={handleSubmit(onFormSubmit)}
+                  >
+                    <span
+                      class="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    class="btn"
+                    id={styles.updateBtn}
+                    disabled={Object.keys(updatedFields).length === 0}
+                    onClick={handleSubmit(onFormSubmit)}
+                  >
+                    Update
+                  </button>
+                )}
               </div>
             </div>
           </div>
