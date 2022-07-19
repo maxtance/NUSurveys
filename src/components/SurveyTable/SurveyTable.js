@@ -9,7 +9,7 @@ export const SurveyTable = ({ keyword, completedSurveys }) => {
 
   //searching logic
   if (keyword != "") {
-    console.log(completedSurveys);
+    //console.log(completedSurveys);
     completedSurveys = completedSurveys.filter((survey) => {
       return survey.surveys.title.toLowerCase().includes(keyword.toLowerCase());
     });

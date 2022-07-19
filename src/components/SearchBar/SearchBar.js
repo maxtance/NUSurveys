@@ -12,7 +12,7 @@ function SearchBar({ setKeyword }) {
 
   //const [search, setSearch] = useState("");
   const searchButtonPressed = () => {
-    console.log(searchRef.current);
+    //console.log(searchRef.current);
     setKeyword(searchRef.current);
     //setSearch("");
   };

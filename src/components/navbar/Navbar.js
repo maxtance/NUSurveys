@@ -18,7 +18,7 @@ function Navbar() {
         .getPublicUrl(userInfo.avatar);
 
       if (error) {
-        console.log(error);
+        navigate("/error");
       }
       setAvatarURL(publicURL);
     }
@@ -40,9 +40,9 @@ function Navbar() {
     const { data, error } = await signOut();
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     } else {
-      console.log(data);
+      //console.log(data);
       navigate("/login");
     }
   };

@@ -38,8 +38,7 @@ function DragAndDropImage({
     event.stopPropagation();
     setIsDragged(false);
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
-      //TODO: add backend logic
-      console.log("File drop detected.");
+      //console.log("File drop detected.");
       handleFile(event.dataTransfer.files[0]);
     }
   };
@@ -47,8 +46,7 @@ function DragAndDropImage({
   const handleChange = (event) => {
     event.preventDefault();
     if (event.target.files && event.target.files[0]) {
-      //TODO: add backend logic
-      console.log("File upload detected.");
+      //console.log("File upload detected.");
       handleFile(event.target.files[0]);
     }
   };

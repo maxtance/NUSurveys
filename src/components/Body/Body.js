@@ -7,6 +7,7 @@ import { isSurveyClosed } from "../../helpers/helperFunctions";
 import { getDate } from "../createSurvey/CreateSurvey";
 import { useAuth } from "../../contexts/Auth";
 import moment from "moment";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Body({ page, filterCriteria, eligibility }) {
   const { userInfo } = useAuth();
@@ -17,6 +18,8 @@ function Body({ page, filterCriteria, eligibility }) {
   const [surveysIsLoading, setSurveysIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("Newest survey");
   const [keyword, setKeyword] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSurveyListings();
@@ -97,7 +100,10 @@ function Body({ page, filterCriteria, eligibility }) {
           .from("ethnicities")
           .select("name")
           .eq("id", userInfo.ethnicity_id);
-        console.log(userGender, userAge, userEthnicity[0].name);
+        if (error) {
+          navigate("/error");
+        }
+        //console.log(userGender, userAge, userEthnicity[0].name);
 
         //gender requirements
         if (userGender === "Male") {
@@ -134,7 +140,7 @@ function Body({ page, filterCriteria, eligibility }) {
       .order("id", { ascending: false });
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     //searching logic
@@ -155,7 +161,7 @@ function Body({ page, filterCriteria, eligibility }) {
       .eq("user_id", userId);
 
     if (wishlistsError) {
-      console.log(wishlistsError);
+      navigate("/error");
     }
 
     surveys.map((survey) => {

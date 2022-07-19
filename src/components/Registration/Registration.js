@@ -92,7 +92,7 @@ function Registration() {
     const { user: userObj, error } = await signUp({ email, password });
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     } else {
       let avatar = user.avatarURL;
       avatar ? (avatar = `public/${avatar}`) : (avatar = "");
@@ -113,15 +113,14 @@ function Registration() {
             .from("avatar-images")
             .upload(`public/${user.avatarURL}`, user.avatarFile);
         if (avatar_images_error) {
-          console.log(avatar_images_error);
+          navigate("/error");
         }
       }
 
       if (error) {
-        console.log(error);
+        navigate("/error");
       } else {
         // Redirect user to Thank You page
-        console.log(data);
         navigate("/thank-you");
       }
     }

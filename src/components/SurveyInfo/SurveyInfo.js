@@ -14,10 +14,6 @@ import openListingImg from "../../assets/open_listing_img.png";
 import emailImg from "../../assets/email_img.png";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-// Things left to implement:
-// 1. For surveyor
-//     a. Mark survey as complete
-
 function SurveyInfo() {
   let { surveyId } = useParams();
   let navigate = useNavigate();
@@ -60,7 +56,7 @@ function SurveyInfo() {
     // Update closing_date of survey to 2000-01-01
     const newClosingDate = "2000-01-01";
     const updateClosingDate = async () => {
-      console.log("Update closing data");
+      //console.log("Update closing data");
       const { data, error } = await supabaseClient
         .from("surveys")
         .update({ closing_date: newClosingDate })
@@ -75,7 +71,7 @@ function SurveyInfo() {
   function handleDeleteListing() {
     // update database is_closed = true
     const updateIsDeleted = async () => {
-      console.log("Deleting survey");
+      //console.log("Deleting survey");
       const { data, error } = await supabaseClient
         .from("surveys")
         .update({ is_deleted: true })
@@ -91,7 +87,7 @@ function SurveyInfo() {
     const newClosingDate = document.getElementById("newClosingDate").value;
     // update database closing_date to newClosingDate
     const updateClosingDate = async () => {
-      console.log("Update closing data");
+      //console.log("Update closing data");
       const { data, error } = await supabaseClient
         .from("surveys")
         .update({ closing_date: newClosingDate })
@@ -346,6 +342,7 @@ function SurveyInfo() {
 
 function MarkCompletedButton(props) {
   const { surveyId, userId, isCompleted, setIsCompleted } = props;
+  const navigate = useNavigate();
 
   function toggleCompleted() {
     setChange();
@@ -357,8 +354,8 @@ function MarkCompletedButton(props) {
   }
 
   async function updateCompletedDb(isCompleted) {
-    console.log("updating db");
-    console.log(isCompleted);
+    //console.log("updating db");
+    //console.log(isCompleted);
     if (isCompleted) {
       const { data, error } = await supabaseClient
         .from("completed_surveys")
@@ -382,7 +379,7 @@ function MarkCompletedButton(props) {
         ]);
 
       if (error) {
-        console.log(error);
+        navigate("/error");
       }
     }
   }
@@ -536,10 +533,6 @@ export const fetchSurveyInfo = async (surveyId) => {
     .eq("id", surveyId)
     .neq("is_deleted", true);
 
-  if (error) {
-    console.log(error);
-  }
-
   const survey = surveys[0];
   // console.log(survey);
   return survey;
@@ -570,6 +563,7 @@ function useFetchListingInfo(surveyId) {
 
   const { userInfo } = useAuth();
   const userFetchingId = userInfo?.id;
+  const navigate = useNavigate();
 
   const initialiseVariables = async () => {
     const survey = await fetchSurveyInfo(surveyId);
@@ -604,7 +598,7 @@ function useFetchListingInfo(surveyId) {
       .eq("survey_id", surveyId);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     setGenderEligibility(
@@ -619,7 +613,7 @@ function useFetchListingInfo(surveyId) {
       .eq("survey_id", surveyId);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     const { data: e2 } = await supabaseClient
@@ -642,7 +636,7 @@ function useFetchListingInfo(surveyId) {
       .eq("survey_id", surveyId);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     // if age == 0 --> set to null
@@ -671,7 +665,7 @@ function useFetchListingInfo(surveyId) {
       });
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
     if (imgURL) {
       setPhotoURL(imgURL.publicURL);
@@ -686,7 +680,7 @@ function useFetchListingInfo(surveyId) {
       .eq("user_id", userFetchingId);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     if (wishlisted_surveys?.length === 1) {
@@ -702,7 +696,7 @@ function useFetchListingInfo(surveyId) {
       .eq("user_id", userFetchingId);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
     if (completed_surveys?.length === 1) {
