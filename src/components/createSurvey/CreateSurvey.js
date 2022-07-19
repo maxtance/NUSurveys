@@ -79,17 +79,15 @@ function CreateSurvey() {
   }, [userId]);
 
   const handleFile = async (file) => {
-    console.log(file);
+    //console.log(file);
 
     const { data, error } = await supabaseClient.storage
       .from("survey-images")
       .upload(`public/${previewUrl}`, file);
 
     if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-    }
+      navigate("/error");
+    } 
   };
 
   const addSurveyListing = async () => {
@@ -103,10 +101,10 @@ function CreateSurvey() {
       .from("remunerations")
       .select("id", { count: "exact", head: true });
     if (error) {
-      console.log(error);
+      navigate("/error");
     } else {
       //insert into remunerations
-      console.log(survey.remuneration_id);
+      //console.log(survey.remuneration_id);
       if (survey.remuneration_id !== "3") {
         const { data: remunerationRecord, error } = await supabaseClient
           .from("remunerations")
@@ -114,9 +112,8 @@ function CreateSurvey() {
           .eq("category_id", survey.remuneration_id)
           .eq("amount", remunerationAmount);
         if (error) {
-          console.log(error);
+          navigate("/error");
         } else {
-          console.log(remunerationRecord);
           if (remunerationRecord.length === 0) {
             const { error } = await supabaseClient
               .from("remunerations")
@@ -127,7 +124,7 @@ function CreateSurvey() {
               });
             survey.remuneration_id = count + 1;
             if (error) {
-              console.log(error);
+              navigate("/error");
             }
           } else {
             survey.remuneration_id = remunerationRecord[0].id;
@@ -143,7 +140,7 @@ function CreateSurvey() {
         .from("surveys")
         .insert([survey]);
       if (error) {
-        console.log(error);
+        navigate("/error");
       } else {
         //insert into gender eligibilities
         const { error } = await supabaseClient
@@ -155,7 +152,7 @@ function CreateSurvey() {
             },
           ]);
         if (error) {
-          console.log(error);
+          navigate("/error");
         } else {
           //insert into age_eligibilities
           const { error } = await supabaseClient
@@ -168,7 +165,7 @@ function CreateSurvey() {
               },
             ]);
           if (error) {
-            console.log(error);
+            navigate("/error");
           }
 
           let allEthnicities = false;
@@ -182,13 +179,13 @@ function CreateSurvey() {
             allEthnicities = true;
           }
           for (var key in ethnicityEligibility) {
-            console.log("Insert!!!!!!!");
+            //console.log("Insert!!!!!!!");
             if (ethnicityEligibility[key] || allEthnicities) {
               const { data: ethnicity } = await supabaseClient
                 .from("ethnicities")
                 .select()
                 .ilike("name", key);
-              console.log(ethnicity);
+              //console.log(ethnicity);
               const { data, error } = await supabaseClient
                 .from("ethnicity_eligibilities")
                 .insert([
@@ -198,7 +195,7 @@ function CreateSurvey() {
                   },
                 ]);
               if (error) {
-                console.log(error);
+                navigate("/error");
               }
             }
           }

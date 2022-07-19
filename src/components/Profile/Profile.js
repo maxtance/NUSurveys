@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import { useAuth } from "../../contexts/Auth";
 import { useForm } from "react-hook-form";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Profile() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -268,6 +269,8 @@ async function GetAvatar(
   setPrevAvatarURL,
   setIsAvatarLoading
 ) {
+  const navigate = useNavigate();
+
   const { data, error } = await supabaseClient
     .from("users")
     .select("avatar")
@@ -283,7 +286,7 @@ async function GetAvatar(
     });
 
   if (error) {
-    console.log(error);
+    navigate("/error");
   }
   if (data) {
     setCurrAvatarURL(data.publicURL);
@@ -336,6 +339,7 @@ async function UpdateDB(
   } = newProfile;
   const fullName = firstName + " " + lastName;
   const ethnicityId = getIdFromEthnicity(ethnicity);
+  const navigate = useNavigate();
 
   const { data, error } = await supabaseClient
     .from("users")
@@ -349,7 +353,7 @@ async function UpdateDB(
     .eq("email", email);
 
   if (error) {
-    console.log(error);
+    navigate("/error");
   }
 
   // Update storage for avatar images. TODO: Remove image from data base (needed??)
@@ -362,6 +366,9 @@ async function UpdateDB(
       .from("users")
       .update({ avatar: "" })
       .eq("email", email);
+    if (users_error) {
+      navigate("/error");
+    }
   }
   // if updated, remove prev from storage, insert new avatar into storage. update users table
   else {
@@ -369,10 +376,16 @@ async function UpdateDB(
       await supabaseClient.storage
         .from("avatar-images")
         .upload(`public/${currAvatarURL}`, currAvatarFile);
+    if (avatar_images_error) {
+      navigate("/error");
+    }
     const { data: users, error: users_error } = await supabaseClient
       .from("users")
       .update({ avatar: `public/${currAvatarURL}` })
       .eq("email", email);
+    if (users_error) {
+      navigate("/error");
+    }
   }
 }
 

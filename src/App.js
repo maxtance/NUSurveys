@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  Navigate
 } from "react-router-dom";
 import "./App.css";
 import HomePage from "./components/HomePage/HomePage";
@@ -142,9 +143,23 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* I think need to protect route */}
-          <Route path="/surveys/:surveyId" element={<SurveyInfo />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/surveys/:surveyId"
+            element={
+              <ProtectedRoute>
+                <SurveyInfo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </div>

@@ -16,9 +16,13 @@ function ResetPassword() {
   } = useForm();
 
   const { state } = useLocation();
-  const { signOut } = useAuth();
-
   const navigate = useNavigate();
+
+  if (state === null) {
+    navigate("/error");
+  }
+
+  const { signOut } = useAuth();
 
   const warningIcon = (
     <svg
@@ -47,25 +51,23 @@ function ResetPassword() {
   passwordRef.current = watch("password");
 
   const onFormSubmit = async (e) => {
-    console.log("Submit clicked");
-
-    if (
-      state.type === "recovery" &&
-      state.access_token
-    ) {
+    if (state.type === "recovery" && state.access_token) {
       const { error, data } = await supabaseClient.auth.api.updateUser(
         state.access_token,
         { password: passwordRef.current }
       );
 
       if (error) {
-        console.log(error);
+        navigate("/error", {
+          title: "Oops!",
+          message: "There was an error updating your password. Please try again."
+        });
       } else if (data) {
         navigate("/success", {
-            state: {
-                title: "Password Changed",
-                message: "Your password has been updated successfully."
-            }
+          state: {
+            title: "Password Changed",
+            message: "Your password has been updated successfully.",
+          },
         });
       }
     }
@@ -73,11 +75,11 @@ function ResetPassword() {
 
   const logUserOut = async () => {
     await signOut();
-  }
+  };
 
   useEffect(() => {
     logUserOut();
-    console.log(state);
+    //console.log(state);
   }, []);
 
   const samePassword = (password) =>

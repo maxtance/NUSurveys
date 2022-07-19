@@ -62,7 +62,11 @@ function EditSurvey() {
       .from("ethnicity_eligibilities")
       .select("ethnicities(name)")
       .eq("survey_id", surveyId);
-    return data;
+    if (error) {
+      navigate("/error");
+    } else {
+      return data;
+    }
   };
 
   const initEthnicityEligibility = async () => {
@@ -70,7 +74,7 @@ function EditSurvey() {
     surveyInfo = { ...surveyInfo, ethnicityEligibility: {} };
     if (result.length !== 4) {
       result.map(async (record) => {
-        const { data } = await supabaseClient
+        const { data, error } = await supabaseClient
           .from("ethnicities")
           .select("id")
           .eq("name", record.ethnicities.name);
@@ -90,11 +94,15 @@ function EditSurvey() {
   };
 
   const fetchGenderEligibility = async () => {
-    const { data } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from("gender_eligibilities")
       .select("gender_eligibility_id")
       .eq("survey_id", surveyId);
-    return data[0];
+    if (error) {
+      navigate("/error");
+    } else {
+      return data[0];
+    }
   };
 
   const initGenderEligibility = async () => {
@@ -107,11 +115,15 @@ function EditSurvey() {
   };
 
   const fetchAgeEligibility = async () => {
-    const { data } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from("age_eligibilities")
       .select("min_age, max_age")
       .eq("survey_id", surveyId);
-    return data[0];
+    if (error) {
+      navigate("/error");
+    } else {
+      return data[0];
+    }
   };
 
   const initAgeEligibility = async () => {
@@ -133,7 +145,11 @@ function EditSurvey() {
       .from("remuneration_categories")
       .select("id")
       .eq("cat_name", surveyInfo.remunType.category_id.cat_name);
-    return data[0];
+    if (error) {
+      navigate("/error");
+    } else {
+      return data[0];
+    }
   };
 
   const initRemunerationInfo = async () => {
@@ -148,7 +164,11 @@ function EditSurvey() {
       .from("surveys")
       .select("category_id")
       .eq("id", surveyId);
-    return data[0];
+    if (error) {
+      navigate("/error");
+    } else {
+      return data[0];
+    }
   };
 
   const initSurveyType = async () => {
@@ -161,18 +181,23 @@ function EditSurvey() {
       .from("surveys")
       .select("photo")
       .eq("id", surveyId);
-
-    if (imgURL[0].photo) {
-      const { publicURL, error } = supabaseClient.storage
-        .from("survey-images")
-        .getPublicUrl(imgURL[0].photo);
-      console.log(imgURL);
-      setPreviewUrl(publicURL);
-      let arr = publicURL.split("/");
-      setImage({ name: arr[arr.length - 1] });
+    if (error) {
+      navigate("/error");
+    } else {
+      if (imgURL[0].photo) {
+        const { publicURL, error } = supabaseClient.storage
+          .from("survey-images")
+          .getPublicUrl(imgURL[0].photo);
+        if (error) {
+          navigate("/error");
+        }
+        //console.log(imgURL);
+        setPreviewUrl(publicURL);
+        let arr = publicURL.split("/");
+        setImage({ name: arr[arr.length - 1] });
+      }
     }
 
-    console.log(imgURL);
     // .then((photoLocation) => {
     //   if (photoLocation[0].photo) {
     //     supabaseClient.storage
@@ -228,7 +253,7 @@ function EditSurvey() {
           }
         }
       }
-      console.log(tempState);
+      //console.log(tempState);
       //setIsUpdating(false);
     });
     setUpdatedFields(tempState);
@@ -250,8 +275,11 @@ function EditSurvey() {
       .select("survey_id", { count: "exact", head: true })
       .eq("survey_id", surveyId);
 
+    if (error) {
+      navigate("/error");
+    }
+
     if (count === 0) {
-      console.log("Insert everything");
       const { data } = await supabaseClient
         .from("ethnicity_eligibilities")
         .insert([
@@ -271,9 +299,7 @@ function EditSurvey() {
   };
 
   const updateDatabaseRecords = () => {
-    console.log(updatedFields);
-    let counter = Object.keys(updatedFields).length;
-
+    //console.log(updatedFields);
     //update title, desc, link, cat_id in surveys first
     let promises = [];
     for (const key of Object.keys(updatedFields)) {
@@ -284,22 +310,29 @@ function EditSurvey() {
 
   async function update(key) {
     if (key === "photo") {
-      console.log(updatedFields[key]);
+      //console.log(updatedFields[key]);
       if (previewUrl === "" || updatedFields[key] === null) {
-        const { data } = await supabaseClient
+        const { data, error } = await supabaseClient
           .from("surveys")
           .update({ photo: "" })
           .match({ id: surveyId });
+        if (error) {
+          navigate("/error");
+        }
       } else {
         const { data, error } = await supabaseClient.storage
           .from("survey-images")
           .upload(`public/${previewUrl}`, updatedFields[key]);
-
-        if (!error) {
-          const { data } = await supabaseClient
+        if (error) {
+          navigate("/error");
+        } else {
+          const { data, error } = await supabaseClient
             .from("surveys")
             .update({ photo: `public/${previewUrl}` })
             .match({ id: surveyId });
+          if (error) {
+            navigate("/error");
+          }
         }
       }
     }
@@ -317,33 +350,31 @@ function EditSurvey() {
         .update({ [key]: updatedFields[key] })
         .match({ id: surveyId });
       if (error) {
-        console.log(error);
-      } else {
-        console.log(`Updated ${key} successfully`);
-      }
+        navigate("/error");
+      } 
     }
     //update remuneration info
     if (key === "remuneration_id") {
       if (updatedFields[key] == "3") {
-        const { data } = await supabaseClient
+        const { data, error } = await supabaseClient
           .from("surveys")
           .update({
             remuneration_id: 1,
           })
           .match({ id: surveyId });
+        if (error) {
+          navigate("/error");
+        }
       } else {
         if ("remunerationAmount" in updatedFields) {
           //counter--;
           return;
         } else {
-          console.log("reached");
           let currAmt = oldFields.remunAmount.amount;
-          console.log(currAmt);
           const { data: record } = await supabaseClient
             .from("remunerations")
             .select()
             .match({ category_id: updatedFields[key], amount: currAmt });
-          console.log(record);
           if (record.length === 0) {
             //no existing record found. insert
             const { count } = await supabaseClient
@@ -444,8 +475,8 @@ function EditSurvey() {
         })
         .match({ survey_id: surveyId });
 
-      if (!error) {
-        console.log("Updated gender eligibility successfully");
+      if (error) {
+        navigate("/error");
       }
     }
 
@@ -459,8 +490,8 @@ function EditSurvey() {
         })
         .match({ survey_id: surveyId });
 
-      if (!error) {
-        console.log("Updated age eligibility successfully");
+      if (error) {
+        navigate("/error");
       }
     }
 
@@ -475,11 +506,11 @@ function EditSurvey() {
         .from("ethnicities")
         .select()
         .ilike("name", key);
-      console.log(updatedFields);
-      console.log(ethnicity);
-      console.log(key);
+      // console.log(updatedFields);
+      // console.log(ethnicity);
+      // console.log(key);
       if (updatedFields[key]) {
-        console.log("Inserting ethnicity eligibility...");
+        //console.log("Inserting ethnicity eligibility...");
         const { data, error } = await supabaseClient
           .from("ethnicity_eligibilities")
           .insert([
@@ -489,17 +520,17 @@ function EditSurvey() {
             },
           ]);
         if (error) {
-          console.log(error);
-        } else {
-          console.log(data);
-        }
+          navigate("/error");
+        } 
       } else {
         const { data, error } = await supabaseClient
           .from("ethnicity_eligibilities")
           .delete()
           .match({ survey_id: surveyId, ethnicity_id: ethnicity[0].id });
+        if (error) {
+          navigate("/error");
+        }
       }
-      console.log("Updated ethnicity eligibility requirements");
     }
 
     // counter--;
@@ -518,7 +549,7 @@ function EditSurvey() {
         updateDatabaseRecords().then(async () => {
           await cleanUpAfterUpdate();
           setUpdatedFields({});
-          console.log("finished updating");
+          //console.log("finished updating");
           navigate("/surveys/" + surveyId);
         });
       }

@@ -59,13 +59,11 @@ function ForgotPassword() {
     setIsLoading(true);
     const email = emailRef.current;
 
-    console.log(email);
     const { data, error } = await supabaseClient.auth.api.resetPasswordForEmail(
       email
     );
 
     if (error) {
-      console.log(error);
       if (error.message === "User not found") {
         setErrorMsg(
           "This email is not registered with NUSurveys. Please try again."
@@ -74,7 +72,6 @@ function ForgotPassword() {
         setIsLoading(false);
       }
     } else {
-      console.log(data);
       setEmailSent(true);
       setIsLoading(false);
     }

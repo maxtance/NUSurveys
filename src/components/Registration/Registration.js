@@ -36,7 +36,7 @@ function Registration() {
     avatarURL: "",
   });
 
-  console.log(user.avatarFile, user.avatarURL);
+  //console.log(user.avatarFile, user.avatarURL);
 
   const {
     register,
@@ -94,7 +94,7 @@ function Registration() {
     const { user: userObj, error } = await signUp({ email, password });
     
     if (error) {
-      console.log(error);
+      navigate("/error");
     } else {
       const { data, error } = await supabaseClient.from("users").insert({
         full_name: user.firstName + " " + user.lastName,
@@ -113,10 +113,9 @@ function Registration() {
           .upload(`public/${user.avatarURL}`, user.avatarFile);
 
       if (error || avatar_images_error) {
-        console.log(error, avatar_images_error);
+        navigate("/error");
       } else {
         // Redirect user to Thank You page
-        console.log(data);
         navigate("/thank-you");
       }
     }

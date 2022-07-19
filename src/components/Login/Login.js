@@ -58,7 +58,6 @@ function LoginPage() {
     const { data, error } = await signIn({ email, password });
 
     if (error) {
-      console.log(error);
       if (error.message === "Email not confirmed") {
         setError("password", {
           type: "custom",

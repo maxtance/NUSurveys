@@ -89,6 +89,7 @@ function FetchCompletedSurveys() {
 
   const [completedSurveys, setCompletedSurveys] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +108,7 @@ function FetchCompletedSurveys() {
         .eq("surveys.is_deleted", false)
         .order("id", { ascending: false });
       if (error) {
-        console.log(error);
+        navigate("/error");
       }
       setCompletedSurveys(completed_surveys);
       setIsLoading(false);

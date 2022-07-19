@@ -21,6 +21,7 @@ function MySurveys() {
   const [sortBy, setSortBy] = useState("Last created");
   const [view, setView] = useState("View all");
   const [keyword, setKeyword] = useState("");
+  const navigate = useNavigate();
 
   function handleSortBy(sortValue) {
     setSortBy(sortValue);
@@ -64,12 +65,12 @@ function MySurveys() {
       .eq("is_deleted", false);
 
     if (error) {
-      console.log(error);
+      navigate("/error");
     }
 
      //searching logic
      if (keyword != "") {
-      console.log(keyword);
+      //console.log(keyword);
       surveys = surveys.filter((survey) => {
         return (
           survey.title.toLowerCase().includes(keyword.toLowerCase()) ||
