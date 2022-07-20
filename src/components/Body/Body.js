@@ -201,14 +201,14 @@ function Body({ page, filterCriteria, eligibility }) {
   };
 
   return (
-    <div className={styles.container}>
+    <div data-testid="surveyBody" className={styles.container}>
       <div>
         <div className={styles.searchBarForm}>
           <SearchBar setKeyword={setKeyword} />
         </div>
         <div className="d-flex justify-content-between pb-3">
           {page === "Home" ? (
-            <div className={styles.pageHeader}>
+            <div data-testid="header" className={styles.pageHeader}>
               Showing{" "}
               <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
               Survey Listing

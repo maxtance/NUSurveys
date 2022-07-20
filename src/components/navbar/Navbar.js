@@ -47,7 +47,10 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-md navbar-light bg-white">
+    <nav
+      data-testid="navbar"
+      className="navbar navbar-expand-md navbar-light bg-white"
+    >
       <div className="container-fluid">
         <Link to="/">
           <img
@@ -142,14 +145,15 @@ function Navbar() {
             <li className="nav-item">
               <span className="nav-link">
                 {avatarURL ? (
-                  <img className={styles.userAvatar} src={avatarURL} alt="" />
+                  <img data-testid="avatar" className={styles.userAvatar} src={avatarURL} alt="" />
                 ) : (
-                  <img className={styles.avatar} src={avatar} alt="" />
+                  <img data-testid="placeholder" className={styles.avatar} src={avatar} alt="" />
                 )}
               </span>
             </li>
             <li className="nav-item dropdown">
               <a
+                data-testid="username"
                 className="nav-link dropdown-toggle mt-2"
                 href="#"
                 id="navbarDropdownMenuLink"
