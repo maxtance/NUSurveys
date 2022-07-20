@@ -9,6 +9,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 function Profile() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const { navigate } = useForm();
   return (
     <>
       <Navbar />
@@ -30,7 +31,10 @@ function Profile() {
             </div>
           )}
           <h1 className={styles.profilePageHeader}>Edit Profile</h1>
-          <EditProfileForm setHasSubmitted={setHasSubmitted} />
+          <EditProfileForm
+            setHasSubmitted={setHasSubmitted}
+            navigate={navigate}
+          />
         </div>
       </div>
     </>
@@ -48,7 +52,8 @@ function EditProfileForm(props) {
       userInfo.email,
       setCurrAvatarURL,
       setPrevAvatarURL,
-      setIsAvatarLoading
+      setIsAvatarLoading,
+      props.navigate
     );
   }, []);
 
@@ -78,7 +83,13 @@ function EditProfileForm(props) {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
-    await UpdateDB(data, currAvatarFile, currAvatarURL, prevAvatarURL);
+    await UpdateDB(
+      data,
+      currAvatarFile,
+      currAvatarURL,
+      prevAvatarURL,
+      props.navigate
+    );
     props.setHasSubmitted(true);
     setChange((prevState) => !prevState);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -267,10 +278,9 @@ async function GetAvatar(
   userEmail,
   setCurrAvatarURL,
   setPrevAvatarURL,
-  setIsAvatarLoading
+  setIsAvatarLoading,
+  navigate
 ) {
-  const navigate = useNavigate();
-
   const { data, error } = await supabaseClient
     .from("users")
     .select("avatar")
@@ -326,7 +336,8 @@ async function UpdateDB(
   newProfile,
   currAvatarFile,
   currAvatarURL,
-  prevAvatarURL
+  prevAvatarURL,
+  navigate
 ) {
   const {
     firstName,
@@ -339,7 +350,6 @@ async function UpdateDB(
   } = newProfile;
   const fullName = firstName + " " + lastName;
   const ethnicityId = getIdFromEthnicity(ethnicity);
-  const navigate = useNavigate();
 
   const { data, error } = await supabaseClient
     .from("users")
