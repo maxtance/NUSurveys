@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../lib/client";
 
 const AuthContext = React.createContext();
@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [userLoading, setUserLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [userInfoLoading, setUserInfoLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [change, setChange] = useState(false);
 
@@ -29,6 +30,11 @@ export function AuthProvider({ children }) {
           .from("users")
           .select("*")
           .eq("email", userEmail);
+
+        if (error) {
+          navigate("/error");
+        }
+
         setUserInfo(users[0] ?? null);
         setUserInfoLoading(false);
 
@@ -36,7 +42,7 @@ export function AuthProvider({ children }) {
         setUserLoading(false);
       }
     );
-    console.log("checking");
+    //console.log("checking");
 
     return () => {
       listener?.unsubscribe();
@@ -52,9 +58,9 @@ export function AuthProvider({ children }) {
         .select("*")
         .eq("email", userEmail);
       if (error) {
-        console.log(error);
+        navigate("/error");
       }
-      console.log("setting user info");
+      //console.log("setting user info");
       setUserInfo(users[0]);
       setUserInfoLoading(false);
     };

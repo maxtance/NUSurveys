@@ -10,9 +10,10 @@ function Navbar() {
   const { userInfo, signOut } = useAuth();
   const userName = userInfo.full_name;
   const [avatarURL, setAvatarURL] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    function GetAvatarURL() {
+    function GetAvatarURL(navigate) {
       const { publicURL, error } = supabaseClient.storage
         .from("avatar-images")
         .getPublicUrl(userInfo.avatar);
@@ -23,13 +24,11 @@ function Navbar() {
       setAvatarURL(publicURL);
     }
     if (userInfo.avatar) {
-      GetAvatarURL();
+      GetAvatarURL(navigate);
     } else {
       setAvatarURL("");
     }
   }, [userInfo.avatar]);
-
-  const navigate = useNavigate();
 
   const location = useLocation();
   const locationArray = location.pathname.split("/");

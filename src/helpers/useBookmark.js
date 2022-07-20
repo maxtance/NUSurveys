@@ -20,7 +20,7 @@ function useBookmark(initValue, surveyId) {
 }
 
 async function updateWishlistDb(isBookmarked, surveyId, userId) {
-  console.log("useBookmark fetch data from wishlisted_surveys");
+  //console.log("useBookmark fetch data from wishlisted_surveys");
   if (isBookmarked) {
     // remove wishlist data from database
     const { data, error } = await supabaseClient

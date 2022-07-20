@@ -32,6 +32,8 @@ function CreateSurvey() {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const navigate = useNavigate();
+
   const [ethnicityEligibility, setEthnicityEligibility] = useState({
     chinese: false,
     malay: false,
@@ -50,7 +52,7 @@ function CreateSurvey() {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
 
-  const { userInfo } = useFetchUser();
+  const { userInfo } = useFetchUser(navigate);
   const userId = userInfo?.id;
   const [survey, setSurvey] = useState({
     title: "",
@@ -249,8 +251,6 @@ function CreateSurvey() {
     const { name, checked } = e.target;
     setEthnicityEligibility({ ...ethnicityEligibility, [name]: checked });
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className={styles.formBody}>

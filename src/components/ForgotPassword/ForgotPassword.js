@@ -1,6 +1,6 @@
 import styles from "./ForgotPassword.module.css";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Auth.js";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/Auth";
 import { supabaseClient } from "../lib/client";
 
@@ -33,24 +34,24 @@ import { supabaseClient } from "../lib/client";
 //   return users[0];
 // }
 
-function useFetchUser() {
+function useFetchUser(navigate) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const userEmail = user?.email;
 
   const fetchUserInfo = async (userEmail) => {
-    console.log("fetching data from users");
+    //console.log("fetching data from users");
     const { data: users, error } = await supabaseClient
       .from("users")
       .select("*")
       .eq("email", userEmail);
     if (error) {
-      console.log(error);
+      navigate("/error");
+    } else {
+      setData(users[0]);
+      setIsLoading(false);
     }
-
-    setData(users[0]);
-    setIsLoading(false);
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import styles from "./SurveyTable.module.css";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
 
 export const SurveyTable = ({ keyword, completedSurveys }) => {

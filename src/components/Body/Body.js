@@ -7,7 +7,7 @@ import { isSurveyClosed } from "../../helpers/helperFunctions";
 import { getDate } from "../createSurvey/CreateSurvey";
 import { useAuth } from "../../contexts/Auth";
 import moment from "moment";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Body({ page, filterCriteria, eligibility }) {
   const { userInfo } = useAuth();

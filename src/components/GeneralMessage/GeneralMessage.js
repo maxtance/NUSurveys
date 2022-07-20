@@ -1,6 +1,6 @@
 import styles from "./GeneralMessage.module.css";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function GeneralMessage() {
   let { state } = useLocation();

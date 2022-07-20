@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import { useAuth } from "../../contexts/Auth";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const { navigate } = useForm();
+  const { navigate } = useNavigate();
   return (
     <>
       <Navbar />

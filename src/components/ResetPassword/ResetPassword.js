@@ -1,6 +1,6 @@
 import styles from "./ResetPassword.module.css";
 import NUSurveysLogo from "../../assets/NUSurveysLogo.png";
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/Auth.js";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
