@@ -103,8 +103,7 @@ function FetchCompletedSurveys() {
         survey_id,
         date_added, 
         surveyTitle: surveys(title),
-        surveyClosingDate: surveys(closing_date),
-        surveys!inner(*)
+        surveyClosingDate: surveys(closing_date)
       `
         )
         .eq("user_id", userId)

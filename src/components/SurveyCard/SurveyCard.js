@@ -6,6 +6,8 @@ import useBookmark from "../../helpers/useBookmark";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
 
 function SurveyCard(props) {
+  console.log(props.userInfo);
+  console.log(props.survey);
   const userInfo = props.userInfo;
   const userId = userInfo?.id;
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ function SurveyCard(props) {
   }
 
   return (
-    <div className={styles.surveyCard}>
+    <div className={styles.surveyCard} data-testid="surveyCard">
       <div className={styles.surveyCard__body}>
         {userId && props.survey.published_by !== userId ? (
           <input

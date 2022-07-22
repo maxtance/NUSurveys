@@ -11,22 +11,29 @@ export const SurveyTable = ({ keyword, completedSurveys }) => {
   if (keyword != "") {
     //console.log(completedSurveys);
     completedSurveys = completedSurveys.filter((survey) => {
-      return survey.surveys.title.toLowerCase().includes(keyword.toLowerCase());
+      return survey.surveyTitle.title
+        .toLowerCase()
+        .includes(keyword.toLowerCase());
     });
   }
 
   return (
-    <table>
-      <tr>
-        <th className={styles.surveyTitle}>Survey Title</th>
-        <th className={styles.dateCompleted}>Date Completed</th>
-      </tr>
+    <table data-testid="surveyTable">
+      <thead>
+        <tr>
+          <th className={styles.surveyTitle}>Survey Title</th>
+          <th className={styles.dateCompleted}>Date Completed</th>
+        </tr>
+      </thead>
       {completedSurveys.map((completedSurvey) => {
         const isClosed = isSurveyClosed(
           completedSurvey.surveyClosingDate.closing_date
         );
         return (
-          <tr onClick={() => navigate("/surveys/" + completedSurvey.survey_id)}>
+          <tr
+            onClick={() => navigate("/surveys/" + completedSurvey.survey_id)}
+            data-testid="surveyRow"
+          >
             <td>
               <span className={styles.closedTitle}>
                 {isClosed ? "(CLOSED) " : ""}

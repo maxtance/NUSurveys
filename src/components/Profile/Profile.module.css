@@ -99,11 +99,11 @@ input[type="file"] {
     font-size: 0.9rem;
 }
 
+.saveChangesButton:hover {
+    border: 1px solid #f9f9f9;
+}
+
 .saveChangesButton:disabled {
     border: 1px solid transparent;
     background-color: rgba(6, 17, 79, 0.6);
-}
-
-.saveChangesButton:hover {
-    border: 1px solid #f9f9f9;
 }

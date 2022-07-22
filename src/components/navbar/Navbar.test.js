@@ -28,14 +28,14 @@ describe("Tests for Navbar Component", () => {
       userInfo: {
         avatar:
           "public/blob:http://localhost:3000/f8bc1506-d4f2-4d87-b86d-2f94bf9e803a",
-        created_at: "2022-06-20",
-        date_of_birth: "2000-01-01",
-        email: "testemail@gmail.com",
-        ethnicity_id: 1,
-        full_name: "Angela Mock",
-        gender: "Female",
-        id: 1000,
-        notification: true,
+        id: "1",
+        full_name: "Anthony Peach",
+        email: "apeach0@u.nus.edu",
+        gender: "Male",
+        ethnicity_id: "1",
+        date_of_birth: "2009-11-17",
+        created_at: "2022-05-15",
+        notification: "true",
       },
     };
     renderNavbar(mockValue);
@@ -49,15 +49,15 @@ describe("Tests for Navbar Component", () => {
     mockValue = {
       ...mockValue,
       userInfo: {
+        id: "1",
+        full_name: "Anthony Peach",
+        email: "apeach0@u.nus.edu",
+        gender: "Male",
+        ethnicity_id: "1",
+        date_of_birth: "2009-11-17",
+        created_at: "2022-05-15",
         avatar: "",
-        created_at: "2022-06-20",
-        date_of_birth: "2000-01-01",
-        email: "testemail@gmail.com",
-        ethnicity_id: 1,
-        full_name: "Angela Mock",
-        gender: "Female",
-        id: 1000,
-        notification: true,
+        notification: "true",
       },
     };
     renderNavbar(mockValue);
