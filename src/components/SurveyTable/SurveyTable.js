@@ -8,7 +8,7 @@ export const SurveyTable = ({ keyword, completedSurveys }) => {
   const [localKeyword, setLocalKeyword] = useState("");
 
   //searching logic
-  if (keyword != "") {
+  if (keyword !== "" && completedSurveys.length !== 0) {
     //console.log(completedSurveys);
     completedSurveys = completedSurveys.filter((survey) => {
       return survey.surveyTitle.title

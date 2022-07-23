@@ -112,7 +112,9 @@ function FetchCompletedSurveys() {
       if (error) {
         navigate("/error");
       }
-      setCompletedSurveys(completed_surveys);
+      setCompletedSurveys(
+        completed_surveys.filter((survey) => survey.surveyTitle)
+      );
       setIsLoading(false);
     };
 
