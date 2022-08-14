@@ -1,0 +1,6 @@
+.surveyListings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 18rem));
+    gap: 2rem;
+    justify-content: space-around;
+}

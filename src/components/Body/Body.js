@@ -3,6 +3,8 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/client";
 import SurveyCard from "../SurveyCard/SurveyCard";
+import SurveyCards from "../SurveyCards/SurveyCards";
+import SurveyHeader from "../SurveyHeader/SurveyHeader";
 import { isSurveyClosed } from "../../helpers/helperFunctions";
 import { getDate } from "../createSurvey/CreateSurvey";
 import { useAuth } from "../../contexts/Auth";
@@ -193,12 +195,12 @@ function Body({ page, filterCriteria, eligibility }) {
     setSurveysIsLoading(false);
   };
 
-  const renderSurveys = () => {
-    // console.log(surveys);
-    return surveys.map((survey) => {
-      return <SurveyCard survey={survey} userInfo={userInfo} />;
-    });
-  };
+  // const renderSurveys = () => {
+  //   // console.log(surveys);
+  //   return surveys.map((survey) => {
+  //     return <SurveyCard survey={survey} userInfo={userInfo} />;
+  //   });
+  // };
 
   return (
     <div data-testid="surveyBody" className={styles.container}>
@@ -207,7 +209,7 @@ function Body({ page, filterCriteria, eligibility }) {
           <SearchBar setKeyword={setKeyword} />
         </div>
         <div className="d-flex justify-content-between pb-3">
-          {page === "Home" ? (
+          {/* {page === "Home" ? (
             <div data-testid="header" className={styles.pageHeader}>
               Showing{" "}
               <span className={styles.numSurveysColor}>{numSurveys}</span>{" "}
@@ -222,7 +224,8 @@ function Body({ page, filterCriteria, eligibility }) {
               {numSurveys === 1 ? " " : "s "}
               in your Wishlist
             </div>
-          )}
+          )} */}
+          <SurveyHeader page={page} numSurveys={numSurveys} />
           <div className="dropdown">
             <span className={styles.sortBy}>Sort by:</span>
             <button
@@ -272,7 +275,8 @@ function Body({ page, filterCriteria, eligibility }) {
           Loading surveys...
         </div>
       ) : (
-        <div className={styles.surveyListings}>{renderSurveys()}</div>
+        <SurveyCards surveys={surveys} userInfo={userInfo} />
+        //<div className={styles.surveyListings}>{renderSurveys()}</div>
       )}
     </div>
   );

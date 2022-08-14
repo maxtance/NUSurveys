@@ -14,7 +14,7 @@ function Sidebar({
   setFilterCriteria,
   eligibility,
   handleEligibilityChange,
-  clearFilter
+  clearFilter,
 }) {
   // get setSurveys from HomeBody.js to set the changes when filter button is clicked
   // need to lift things up to HomePage since HomePage is the parent of Sidebar and HomeBody
@@ -65,7 +65,7 @@ function Sidebar({
   };
 
   return (
-    <div className={styles.container}>
+    <div data-testid="sidebar" className={styles.container}>
       <div className={styles.header}>
         <img className={styles.filterIcon} src={filterIcon} alt="" />
         Filter
@@ -74,6 +74,7 @@ function Sidebar({
         <div className={styles.filterEligibility}>
           <label for="eligibleSurveys">Only show eligible surveys: </label>
           <input
+            data-testid="eligibility"
             type="checkbox"
             className={styles.eligibilityCheckbox}
             value={eligibility}
@@ -102,6 +103,7 @@ function Sidebar({
           />
           <label for="researchPhysical">Research Study (Remote)</label> <br />
           <input
+            data-testid="remote"
             type="checkbox"
             name="3"
             className={styles.checkbox}
@@ -132,6 +134,7 @@ function Sidebar({
           />
           <label for="vouchers">Vouchers</label> <br />
           <input
+            data-testid="vouchers"
             type="checkbox"
             name="3"
             className={styles.checkbox}
@@ -153,6 +156,7 @@ function Sidebar({
           />
           <label for="ongoing">Ongoing</label> <br />
           <input
+            data-testid="ongoing"
             type="checkbox"
             name="closed"
             className={styles.checkbox}
@@ -166,6 +170,7 @@ function Sidebar({
           Filter
         </button>
         <button
+          data-testid="cancel"
           className={styles.cancelBtn}
           disabled={!filterPressed()}
           onClick={clearFilter}
