@@ -1,70 +1,26 @@
-# Getting Started with Create React App
+# NUSurveys (Orbital 2022)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## About NUSurveys
 
-## Available Scripts
+NUSurveys is a centralised survey platform that streamlines the process of disseminating and filling out surveys in the National University of Singapore (NUS). This platform allows both researchers to publicise and market their surveys effectively and students within the NUS community to source for and participate in surveys easily. 
 
-In the project directory, you can run:
+NUSurveys is a project developed over three months for NUS CP2106 (Orbital) 2022. The frontend is built using ReactJS, HTML, and CSS. Supabase was used as our backend service provider to support our database, authentication, and storage. 
 
-### `yarn start`
+<br/>
+<div align="center"> 
+  <i>Preview of NUSurveys</i>
+</div>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+<img src="/docs/Ui.png"/>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Try it out
 
-### `yarn test`
+You may access our website [here](https://nusurveys.vercel.app/). 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+_Note_: You will need to register for an account to access the application
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## More information
+Find out more about our project:
+- [Product pitch](https://drive.google.com/file/d/1NnrgPPn1STkk8jjyukf1tfahujZT6TZY/view?usp=sharing)
+- [NUSurveys poster](https://drive.google.com/file/d/17T0sK2yPAR39HFPM-bkm3OfXmPzd0gy4/view?usp=sharing)
+- [Project report](https://docs.google.com/document/d/1hqaQKGl9BtZQFc89qasxwHXMWxGqX3OiNhYOL79IJhs/edit?usp=sharing)
